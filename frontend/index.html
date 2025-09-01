@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Brownout Viewer</title>
+</head>
+<body>
+  <h1>Brownout Schedule</h1>
+  <pre id="output"></pre>
+
+  <script>
+    fetch("http://127.0.0.1:5000/")
+      .then(res => res.json())
+      .then(data => {
+        document.getElementById("output").textContent = JSON.stringify(data, null, 2);
+      });
+  </script>
+</body>
+</html>
