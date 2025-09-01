@@ -1,0 +1,10 @@
+flask
+opencv-python
+easyocr
+google-genai
+requests
+numpy
+rapidfuzz
+beautifulsoup4
+python-dotenv
+supabase>=2.5.0
