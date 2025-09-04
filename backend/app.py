@@ -7,6 +7,7 @@ from db import save_notices_to_supabase
 
 # --- Flask app setup ---
 app = Flask(__name__)
+CORS(app)  # <-- enable CORS here (before routes)
 load_dotenv()  # load .env file
 
 @app.route("/")
