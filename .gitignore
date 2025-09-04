@@ -1,3 +1,4 @@
 backend/.env
 backup_code_old.py
 .envbk
+backend/test_insert.py
