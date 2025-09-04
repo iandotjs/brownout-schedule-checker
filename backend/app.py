@@ -13,7 +13,7 @@ load_dotenv()  # load .env file
 def index():
     return "Hello Flask!"
 
-# API endpoint for notices
+### API endpoint for notices
 @app.route("/api/notices", methods=['GET', 'POST'])
 def scrape_and_save_notices():
     notices = get_notices()  # scrape fresh notices
