@@ -1,7 +1,7 @@
 from flask import Flask, jsonify
 from flask_cors import CORS
 from dotenv import load_dotenv
-from logic import get_notices  # <-- import from logic.py
+from logic import get_notices, fetch_and_cache_locations  # <-- import from logic.py
 from supabase_client import supabase
 from db import save_notices_to_supabase
 
@@ -34,6 +34,13 @@ def get_latest_notices():
         return jsonify(response.data), 200
     else:
         return jsonify({"message": "No notices found"}), 404
+
+@app.route("/api/locations", methods=["GET"])
+def get_locations():
+    # Convert dict to list of objects
+    locations = fetch_and_cache_locations()
+    return jsonify(locations), 200
+
 
 # ==============================
 # Flask entry point

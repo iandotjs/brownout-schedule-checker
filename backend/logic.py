@@ -105,12 +105,12 @@ def fetch_and_cache_locations(force_refresh=False):
         with open(CACHE_FILE, "r", encoding="utf-8") as f:
             return json.load(f)
 
-    locations = {}
     url = f"{PSGC_BASE}/provinces/{PROVINCE_CODE}/cities-municipalities/"
     resp = requests.get(url, headers={"accept": "application/json"})
     resp.raise_for_status()
     municipalities = resp.json()
 
+    locations = []
     for m in municipalities:
         muni_name = m["name"].upper().strip()
         muni_code = m["code"]
@@ -118,9 +118,17 @@ def fetch_and_cache_locations(force_refresh=False):
         bgy_url = f"{PSGC_BASE}/cities-municipalities/{muni_code}/barangays/"
         bgy_resp = requests.get(bgy_url, headers={"accept": "application/json"})
         bgy_resp.raise_for_status()
-        barangays = [b["name"].upper().strip() for b in bgy_resp.json()]
+        barangays = [
+            {"code": b["code"], "name": b["name"].upper().strip()}
+            for b in bgy_resp.json()
+        ]
 
-        locations[muni_name] = barangays
+        locations.append({
+            "code": muni_code,
+            "name": muni_name,
+            "barangays": barangays
+        })
+
         print(f"Fetched {len(barangays)} barangays for {muni_name}")
 
     with open(CACHE_FILE, "w", encoding="utf-8") as f:
