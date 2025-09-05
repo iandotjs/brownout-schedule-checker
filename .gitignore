@@ -3,3 +3,4 @@ backup_code_old.py
 backend/.envbk
 backend/test_insert.py
 issues.txt
+.gitgnore
