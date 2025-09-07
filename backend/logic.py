@@ -96,6 +96,10 @@ def pick_real_image_url(img_tag):
             return abs_u
     return None
 
+# ==============================
+# PSGC Reference JSON
+# ==============================
+
 PSGC_BASE = "https://psgc.gitlab.io/api"
 PROVINCE_CODE = "097200000"  # Zamboanga del Norte
 CACHE_FILE = Path("zamboanga_del_norte_locations.json")
@@ -138,11 +142,17 @@ def fetch_and_cache_locations(force_refresh=False):
 
 reference_json = fetch_and_cache_locations()
 
+if not reference_json or not isinstance(reference_json[0], dict):
+    raise RuntimeError("❌ Reference JSON corrupted, expected list of dicts but got something else.")
+
 def snap_to_reference(name, choices):
     match, score, _ = process.extractOne(name.upper(), [c.upper() for c in choices])
     return match if score > 80 else name
 
-# ✅ Use .env instead of hardcoded API key
+# ==============================
+# Gemini client
+# ==============================
+
 client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
 
 def load_image_from_url(url):
@@ -185,7 +195,10 @@ def safe_generate(prompt, retries=3, backoff=2):
         print(f"⚠️ Model {model} failed after {retries} retries, falling back...")
     raise RuntimeError("❌ All Gemini models failed after retries + fallback")
 
-# 🔑 Main function
+# ==============================
+# Main function
+# ==============================
+
 def get_notices():
     notices = scrape_notice_image_urls(limit=2)
     final_results = []
@@ -264,6 +277,31 @@ def get_notices():
                     except Exception:
                         continue
                 if keep:
+                    # ✅ Normalize municipality + barangay with PSGC reference
+                    new_locs = []
+                    for loc in sched.get("locations", []):
+                        muni_name = loc.get("municipality", "").upper()
+                        muni = next((m for m in reference_json if m["name"] == muni_name), None)
+                        if muni:
+                            muni_code = muni["code"]
+                            barangays = []
+                            for bname in loc.get("barangays", []):
+                                b = next((b for b in muni["barangays"] if b["name"] == bname.upper()), None)
+                                if b:
+                                    barangays.append({"code": b["code"], "name": b["name"]})
+                                else:
+                                    barangays.append({"code": None, "name": bname})
+                            new_locs.append({
+                                "municipality": {"code": muni_code, "name": muni["name"]},
+                                "barangays": barangays
+                            })
+                        else:
+                            # fallback if no match found
+                            new_locs.append({
+                                "municipality": {"code": None, "name": muni_name},
+                                "barangays": [{"code": None, "name": b} for b in loc.get("barangays", [])]
+                            })
+                    sched["locations"] = new_locs
                     valid_schedules.append(sched)
 
             notice_result["processed_images"].append({
