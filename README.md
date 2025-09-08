@@ -13,7 +13,7 @@ It is divided into two parts:
 ### 1️⃣ Clone the Repository
 
 ```bash
-git clone https://github.com/your-username/notice-scraper.git
+git clone https://github.com/iandotjs/brownout-schedule-checker.git
 cd notice-scraper
 ```
 
