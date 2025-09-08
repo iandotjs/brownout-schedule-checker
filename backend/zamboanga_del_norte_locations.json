@@ -1,747 +1,2928 @@
-{
-  "CITY OF DAPITAN": [
-    "ALIGUAY",
-    "ANTIPOLO",
-    "ASENIERO",
-    "BA-AO",
-    "BANBANAN",
-    "BARCELONA",
-    "BAYLIMANGO",
-    "BURGOS",
-    "CANLUCANI",
-    "CARANG",
-    "DAMPALAN",
-    "DARO",
-    "DIWA-AN",
-    "GUIMPUTLAN",
-    "HILLTOP",
-    "ILAYA",
-    "LARAYAN",
-    "LIYANG",
-    "MARIA CRISTINA",
-    "MARIA URAY",
-    "MASIDLAKON",
-    "NAPO",
-    "OPAO",
-    "ORO",
-    "OWAON",
-    "OYAN",
-    "POLO",
-    "POTUNGAN",
-    "SAN FRANCISCO",
-    "SAN NICOLAS",
-    "SAN PEDRO",
-    "SAN VICENTE",
-    "SICAYAB-BUCANA",
-    "SIGAYAN",
-    "SELINOG",
-    "SINONOC",
-    "SANTO NIÑO",
-    "SULANGON",
-    "TAG-ULO",
-    "TAGUILON",
-    "KAUSWAGAN",
-    "TAMION",
-    "BAGTING (POB.)",
-    "BANONONG (POB.)",
-    "CAWA-CAWA (POB.)",
-    "DAWO (POB.)",
-    "MATAGOBTOB POB.",
-    "LINABO (POB.)",
-    "POTOL (POB.)",
-    "SANTA CRUZ (POB.)"
-  ],
-  "CITY OF DIPOLOG": [
-    "COGON",
-    "DICAYAS",
-    "DIWAN",
-    "GALAS",
-    "GULAYON",
-    "LUGDUNGAN",
-    "MINAOG",
-    "OLINGAN",
-    "ESTACA (POB.)",
-    "BIASONG (POB.)",
-    "BARRA (POB.)",
-    "CENTRAL (POB.)",
-    "MIPUTAK (POB.)",
-    "PUNTA",
-    "SAN JOSE",
-    "SANGKOL",
-    "SANTA FILOMENA",
-    "SICAYAB",
-    "SINAMAN",
-    "TURNO",
-    "SANTA ISABEL"
-  ],
-  "KATIPUNAN": [
-    "BALOK",
-    "BASAGAN",
-    "BINIRAY",
-    "BULAWAN",
-    "DAANGLUNGSOD",
-    "DABIAK",
-    "DR. JOSE RIZAL",
-    "FIMAGAS",
-    "MALUGAS",
-    "MALASAY",
-    "MATAM",
-    "MIAS",
-    "MIATAN",
-    "NANGINAN",
-    "BARANGAY UNO (POB.)",
-    "BARANGAY DOS (POB.)",
-    "SAN ANTONIO",
-    "SERES",
-    "SEROAN",
-    "SINGATONG",
-    "SINUYAK",
-    "SITOG",
-    "TUBURAN",
-    "CARUPAY",
-    "LOYURAN",
-    "NEW TAMBO",
-    "PATIK",
-    "SANAO",
-    "SAN VICENTE",
-    "SANTO NIÑO"
-  ],
-  "LA LIBERTAD": [
-    "EL PARAISO",
-    "LA UNION",
-    "LA VICTORIA",
-    "MAUSWAGON",
-    "MERCEDES",
-    "NEW ARGAO",
-    "NEW BATAAN",
-    "NEW CARCAR",
-    "POBLACION",
-    "SAN JOSE",
-    "SANTA CATALINA",
-    "SANTA CRUZ",
-    "SINGARAN"
-  ],
-  "LABASON": [
-    "ANTONINO (POB.)",
-    "BALAS",
-    "BOBONGAN",
-    "DANSALAN",
-    "GABU",
-    "IMMACULADA",
-    "KIPIT",
-    "LA UNION",
-    "LAPATAN",
-    "LAWAGAN",
-    "LAWIGAN",
-    "LOPOC (POB.)",
-    "MALINTUBOAN",
-    "NEW SALVACION",
-    "OSUKAN",
-    "PATAWAG",
-    "SAN ISIDRO",
-    "UBAY",
-    "GIL SANCHEZ",
-    "IMELDA"
-  ],
-  "LILOY": [
-    "BANIGAN",
-    "BAYBAY (POB.)",
-    "CABANGCALAN",
-    "CANDELARIA",
-    "CAUSWAGAN",
-    "COMMUNAL",
-    "COMPRA",
-    "FATIMA",
-    "GOAW",
-    "GOIN",
-    "KAYOK",
-    "LAMAO",
-    "LA LIBERTAD",
-    "PANABANG",
-    "PATAWAG",
-    "PUNTA",
-    "SAN ISIDRO",
-    "SAN FRANCISCO",
-    "SAN MIGUEL",
-    "SANTA CRUZ",
-    "SANTO NIÑO",
-    "SILUCAP",
-    "TAPICAN",
-    "TIMAN",
-    "VILLA M. TEJERO",
-    "DELA PAZ",
-    "EL PARAISO",
-    "GANASE",
-    "MABUHAY",
-    "MAIGANG",
-    "MALILA",
-    "MAUSWAGON",
-    "NEW BETHLEHEM",
-    "OVERVIEW",
-    "SAN ROQUE",
-    "VILLA CALIXTO SUDIACAL",
-    "CANAAN"
-  ],
-  "MANUKAN": [
-    "DIPANE",
-    "DISAKAN",
-    "GUPOT",
-    "LIBUTON",
-    "LINAY",
-    "LUPASANG",
-    "MATE",
-    "POBLACION",
-    "SALUYONG",
-    "SERONGAN",
-    "VILLARAMOS",
-    "DON JOSE AGUIRRE",
-    "LINGATONGAN",
-    "MESES",
-    "PALARANAN",
-    "PANGANDAO",
-    "PATAGAN",
-    "SAN ANTONIO",
-    "UPPER DISAKAN",
-    "EAST POBLACION",
-    "PUNTA BLANCA",
-    "SUISAYAN"
-  ],
-  "MUTIA": [
-    "ALVENDA",
-    "BUENASUERTE",
-    "DILAND",
-    "DIOLEN",
-    "HEAD TIPAN",
-    "NEW CASUL",
-    "NEWLAND",
-    "NEW SIQUIJOR",
-    "PASO RIO",
-    "POBLACION",
-    "SAN MIGUEL",
-    "TINGLAN",
-    "TOTONGON",
-    "TUBAC",
-    "UNIDOS",
-    "SANTO TOMAS"
-  ],
-  "PIÑAN": [
-    "ADANTE",
-    "BACUYONG",
-    "BAGONG SILANG",
-    "CALICAN",
-    "UBAY",
-    "DEL PILAR",
-    "DILAWA",
-    "DESIN",
-    "DIONUM",
-    "LAPU-LAPU",
-    "LOWER GUMAY",
-    "LUZVILLA",
-    "POBLACION NORTH",
-    "SANTA FE",
-    "SEGABE",
-    "SIKITAN",
-    "SILANO",
-    "TERESITA",
-    "TINAYTAYAN",
-    "UPPER GUMAY",
-    "VILLARICO",
-    "POBLACION SOUTH"
-  ],
-  "POLANCO": [
-    "ANASTACIO",
-    "BANDERA",
-    "BETHLEHEM",
-    "DANGI",
-    "DANSULLAN",
-    "DE VENTA PERLA",
-    "GUINLES",
-    "ISIS",
-    "LABRADOR",
-    "LAPAYANBAJA",
-    "LETAPAN",
-    "LINABO",
-    "LINGASAD",
-    "MACLEODES",
-    "MAGANGON",
-    "MALIGAYA",
-    "MILAD",
-    "NEW LEBANGON",
-    "NEW SICAYAB",
-    "OBAY",
-    "PIAN",
-    "POBLACION SOUTH",
-    "SAN ANTONIO",
-    "SAN MIGUEL",
-    "SAN PEDRO",
-    "SANTO NIÑO",
-    "SILAWE",
-    "SIANIB",
-    "VILLAHERMOSA",
-    "POBLACION NORTH"
-  ],
-  "PRES. MANUEL A. ROXAS": [
-    "BALUBO",
-    "CANIBONGAN",
-    "CAPASE",
-    "DENOMAN",
-    "DOHINOB",
-    "LANGATIAN",
-    "LIPAKAN",
-    "MARUPAY",
-    "MOLITON",
-    "NABILID",
-    "PANGOLOGON",
-    "PIÑALAN",
-    "PIÑAMAR",
-    "SEBOD",
-    "TANAYAN",
-    "VILLAHERMOSO",
-    "BANBANAN",
-    "CAPE",
-    "GALOKSO",
-    "GUBAT",
-    "IRASAN",
-    "LABAKID",
-    "PANAMPALAY",
-    "PIAO",
-    "PONGOLAN",
-    "SALISIG",
-    "SIBATOG",
-    "SITUBO",
-    "TANTINGON",
-    "UPPER IRASAN",
-    "UPPER MINANG"
-  ],
-  "RIZAL": [
-    "BIRAYAN",
-    "DAMASING",
-    "LA ESPERANZA",
-    "MABUHAY",
-    "MABUNAO",
-    "NORTH MAPANG",
-    "MITIMOS",
-    "NANGCA",
-    "NANGCAAN",
-    "NAPILAN",
-    "NASIPANG",
-    "NEW DAPITAN",
-    "NILABO",
-    "EAST POBLACION",
-    "RIZALINA",
-    "SAN ROQUE",
-    "SEBACA",
-    "SIPAON",
-    "TOLON",
-    "BALUBOHAN",
-    "SOUTH MAPANG",
-    "WEST POBLACION"
-  ],
-  "SALUG": [
-    "BACONG",
-    "BALAKAN",
-    "BINONI",
-    "CALUCAP",
-    "CANAWAN",
-    "CARACOL",
-    "DANAO",
-    "DINOAN",
-    "DIPOLOD",
-    "FATIMA",
-    "LIGUAC",
-    "LIPAKAN",
-    "MUCAS",
-    "POBLACION",
-    "RAMON MAGSAYSAY",
-    "TAMBALANG",
-    "TAPALAN",
-    "IPILAN",
-    "LANAWAN",
-    "PUKAY",
-    "SANTO NIÑO",
-    "PACUHAN",
-    "POBLACION EAST"
-  ],
-  "SERGIO OSMEÑA SR.": [
-    "ANTONINO",
-    "BAGONG BAGUIO",
-    "BAGUMBAYAN",
-    "BIAYON",
-    "BUENAVISTA",
-    "DAMPALAN",
-    "DANAO",
-    "DON ELENO",
-    "KAUSWAGAN",
-    "LABIRAY",
-    "LIWANAG",
-    "MABUHAY",
-    "MACALIBRE",
-    "MAHAYAHAY",
-    "MARAPONG",
-    "NAZARETH",
-    "NEBO",
-    "NEW RIZAL",
-    "NEW TANGUB",
-    "NUEVAVISTA",
-    "PEDAGAN",
-    "PENACIO",
-    "POBLACION ALTO",
-    "POBLACION BAJO",
-    "PRINCESA LAMAYA",
-    "PRINCESA FRESHIA",
-    "SAN ANTONIO",
-    "SAN FRANCISCO",
-    "SAN ISIDRO",
-    "SAN JOSE",
-    "SAN JUAN",
-    "SINAAD",
-    "SINAI",
-    "SITUBO",
-    "TINAGO",
-    "TININDUGAN",
-    "TUBURAN",
-    "VENUS",
-    "WILBEN"
-  ],
-  "SIAYAN": [
-    "BALOK",
-    "DATAGAN",
-    "DENOYAN",
-    "DIONGAN",
-    "DOMOGOK",
-    "DUMPILAS",
-    "GONAYEN",
-    "GUIBO",
-    "GUNYAN",
-    "LITOLET",
-    "MACASING",
-    "MANGILAY",
-    "MOYO",
-    "PANGE",
-    "PARANGLUMBA (POB.)",
-    "POLAYO",
-    "SAYAW",
-    "SERIAC",
-    "SIAYAN PROPER (POB.)",
-    "BALUNOKAN",
-    "MUÑOZ",
-    "SUGUILON"
-  ],
-  "SIBUCO": [
-    "ANONGAN",
-    "BASAK",
-    "CAWIT-CAWIT",
-    "DINULAN",
-    "JATIAN",
-    "LAKIKI",
-    "LAMBAGOAN",
-    "LIMPAPA",
-    "LINGAYON",
-    "LINTANGAN",
-    "LITAWAN",
-    "LUNDAY",
-    "MALAYAL",
-    "MANTIVO",
-    "PANGANURAN",
-    "PANGIAN",
-    "PANIRAN",
-    "POBLACION",
-    "PULIRAN",
-    "SANTO NIÑO",
-    "BONGALAO",
-    "CABBUNAN",
-    "CULAGUAN",
-    "CUSIPAN",
-    "KAMARANGAN",
-    "NALA (POB.)",
-    "PASILNAHUT",
-    "TANGARAK"
-  ],
-  "SIBUTAD": [
-    "BAGACAY",
-    "CALILIC",
-    "CALUBE",
-    "KANIM",
-    "DELAPA",
-    "LIBAY",
-    "MAGSAYSAY",
-    "MARAPONG",
-    "MINLASAG",
-    "OYAN",
-    "PANGANURAN",
-    "POBLACION",
-    "SAWANG",
-    "SIBULOC",
-    "SINIPAY",
-    "SIPALOC"
-  ],
-  "SINDANGAN": [
-    "BAGO",
-    "BINUANGAN",
-    "BITOON",
-    "DICOYONG",
-    "DON RICARDO MACIAS",
-    "DUMALOGDOG",
-    "INUMAN",
-    "LA CONCEPCION",
-    "LAGAG",
-    "LAPERO",
-    "MANDIH",
-    "MARAS",
-    "MAWAL",
-    "MISOK",
-    "MOTIBOT",
-    "NATO",
-    "PANGALALAN",
-    "PIAO",
-    "POBLACION",
-    "SIARE",
-    "TALINGA",
-    "TINAPLAN",
-    "TIGBAO",
-    "TITIK",
-    "BATO",
-    "BUCANA",
-    "CALUAN",
-    "CALUBIAN",
-    "CALATUNAN",
-    "DAGOHOY",
-    "DATAGAN",
-    "DISUD",
-    "DOÑA JOSEFA",
-    "GAMPIS",
-    "GOLEO",
-    "IMELDA",
-    "JOAQUIN MACIAS",
-    "LABAKID",
-    "SANTO NIÑO",
-    "SANTO ROSARIO",
-    "UPPER NIPAAN",
-    "BENIGNO AQUINO JR.",
-    "FATIMA",
-    "BALOK",
-    "BANTAYAN",
-    "DAPAON",
-    "DATU TANGKILAN",
-    "LA ROCHE SAN MIGUEL",
-    "LAWIS",
-    "MAGSAYSAY",
-    "NIPAAN",
-    "UPPER INUMAN"
-  ],
-  "SIOCON": [
-    "BALAGUNAN",
-    "ANDRES MICUBO JR.",
-    "BUCANA",
-    "BULACAN",
-    "DIONISIO RICONALLA",
-    "CANDIZ",
-    "JOSE P. BRILLANTES, SR.",
-    "LATABON",
-    "MATEO FRANCISCO",
-    "MALIPOT",
-    "NEW LITUBAN",
-    "PISAWAK",
-    "POBLACION",
-    "SANTA MARIA",
-    "SUHAILE ARABI",
-    "TIBANGAO",
-    "S. CABRAL",
-    "DATU SAILILA",
-    "MAKIANG",
-    "MALAMBUHANGIN",
-    "MANAOL",
-    "MATIAG",
-    "PANGIAN",
-    "SIAY",
-    "TABAYO",
-    "TAGAYTAY"
-  ],
-  "SIRAWAI": [
-    "BALATAKAN",
-    "BALONKAN",
-    "BALUBUAN",
-    "BITUGAN",
-    "BONGON",
-    "CATUYAN",
-    "CULASIAN",
-    "DANGANON",
-    "DOÑA CECILIA",
-    "GUBAN",
-    "LAGUNDI",
-    "LIBUCON",
-    "LUBOK",
-    "MACUYON",
-    "MINANGA",
-    "MOTONG",
-    "NAPULAN",
-    "PANABUTAN",
-    "PIACAN",
-    "PIÑA",
-    "PISA PUTI",
-    "PISA ITOM",
-    "SAINT MARY (POB.)",
-    "SAN NICOLAS (POB.)",
-    "SAN VICENTE (POB.)",
-    "PUGOS",
-    "PULA BATO",
-    "PULANG LUPA",
-    "SAN ROQUE (POB.)",
-    "SIPAKIT",
-    "SIPAWA",
-    "SIRAWAI PROPER (POB.)",
-    "TALABIGA",
-    "TAPANAYAN"
-  ],
-  "TAMPILISAN": [
-    "CABONG",
-    "GALINGON",
-    "LAWAAN",
-    "MOLOS",
-    "NEW DAPITAN",
-    "SITUBO",
-    "POBLACION",
-    "BALACBAAN",
-    "BANBANAN",
-    "BARILI",
-    "CAMUL",
-    "FARMINGTON",
-    "LUMBAYAO",
-    "MALILA-T",
-    "SANDAYONG",
-    "SANTO NIÑO",
-    "TILUBOG",
-    "TININGGAAN",
-    "TUBOD",
-    "ZNAC"
-  ],
-  "JOSE DALMAN": [
-    "DINASAN",
-    "MADALAG",
-    "MANAWAN",
-    "POBLACION",
-    "SIPAROK",
-    "TABON",
-    "TAMIL",
-    "BALATAKAN",
-    "BITOON",
-    "ILIHAN",
-    "LABAKID",
-    "LIPAY",
-    "LITALIP",
-    "LOPERO",
-    "LUMANPING",
-    "MARUPAY",
-    "SIGAMOK",
-    "TAMAROK"
-  ],
-  "GUTALAC": [
-    "BANGANON",
-    "COCOB",
-    "POBLACION",
-    "LA LIBERTAD",
-    "LUX",
-    "PANGANURAN",
-    "PITAWE",
-    "CANUPONG",
-    "MAMAWAN",
-    "SIBALIC",
-    "TIPAN",
-    "BACONG",
-    "BAGONG SILANG",
-    "BAYANIHAN",
-    "BUENAVISTA",
-    "DATAGAN",
-    "IMELDA",
-    "LOAY",
-    "MALIAN",
-    "MAP",
-    "MATUNOY",
-    "NEW DAPITAN",
-    "PITOGO",
-    "SALVADOR",
-    "SAN ISIDRO",
-    "SAN JUAN",
-    "SAN ROQUE",
-    "SAN VICENTE",
-    "SANTO NIÑO",
-    "SAS",
-    "UPPER GUTALAC",
-    "IMMACULADA CONCEPCION",
-    "LOWER LUX"
-  ],
-  "BALIGUIAN": [
-    "ALEGRIA",
-    "DIANGAS",
-    "DICULOM",
-    "GUIMOTAN",
-    "KAUSWAGAN",
-    "KILALABAN",
-    "LINAY",
-    "LUMAY",
-    "MALINAO",
-    "MAMAD",
-    "MAMAWAN",
-    "MILIDAN",
-    "NONOYAN",
-    "POBLACION",
-    "SAN JOSE",
-    "TAMAO",
-    "TAN-AWAN"
-  ],
-  "GODOD": [
-    "BALUNO",
-    "BANUANGAN",
-    "BUNAWAN",
-    "DILUCOT",
-    "DIPOPOR",
-    "GUISAPONG",
-    "LIMBONGA",
-    "LOMOGOM",
-    "MAUSWAGON",
-    "MIAMPIC",
-    "POBLACION",
-    "RABA",
-    "RAMBON",
-    "SAN PEDRO",
-    "SARAWAGAN",
-    "SIANAN",
-    "SIORAN"
-  ],
-  "BACUNGAN": [
-    "BACUNGAN (POB.)",
-    "BOGABONGAN",
-    "DELUSOM",
-    "MANGOP",
-    "MANIL",
-    "MAWAL",
-    "MIDATAG",
-    "NASIBAC",
-    "RIZON",
-    "SIPACONG",
-    "SANTA MARIA",
-    "TALINGA",
-    "TINAPLAN",
-    "TINIGUIBAN",
-    "TINUYOP",
-    "TIOGAN",
-    "TITIK",
-    "MOROB"
-  ],
-  "KALAWIT": [
-    "BATAYAN",
-    "BOTONG",
-    "CONCEPCION",
-    "DANIEL MAING",
-    "FATIMA",
-    "GATAS",
-    "KALAWIT (POB.)",
-    "MARCELO",
-    "NEW CALAMBA",
-    "PALALIAN",
-    "PARAISO",
-    "PIANON",
-    "SAN JOSE",
-    "TUGOP*"
-  ]
-}
+[
+  {
+    "code": "097201000",
+    "name": "CITY OF DAPITAN",
+    "barangays": [
+      {
+        "code": "097201001",
+        "name": "ALIGUAY"
+      },
+      {
+        "code": "097201002",
+        "name": "ANTIPOLO"
+      },
+      {
+        "code": "097201003",
+        "name": "ASENIERO"
+      },
+      {
+        "code": "097201004",
+        "name": "BA-AO"
+      },
+      {
+        "code": "097201005",
+        "name": "BANBANAN"
+      },
+      {
+        "code": "097201006",
+        "name": "BARCELONA"
+      },
+      {
+        "code": "097201007",
+        "name": "BAYLIMANGO"
+      },
+      {
+        "code": "097201009",
+        "name": "BURGOS"
+      },
+      {
+        "code": "097201010",
+        "name": "CANLUCANI"
+      },
+      {
+        "code": "097201011",
+        "name": "CARANG"
+      },
+      {
+        "code": "097201012",
+        "name": "DAMPALAN"
+      },
+      {
+        "code": "097201013",
+        "name": "DARO"
+      },
+      {
+        "code": "097201014",
+        "name": "DIWA-AN"
+      },
+      {
+        "code": "097201016",
+        "name": "GUIMPUTLAN"
+      },
+      {
+        "code": "097201017",
+        "name": "HILLTOP"
+      },
+      {
+        "code": "097201018",
+        "name": "ILAYA"
+      },
+      {
+        "code": "097201019",
+        "name": "LARAYAN"
+      },
+      {
+        "code": "097201020",
+        "name": "LIYANG"
+      },
+      {
+        "code": "097201021",
+        "name": "MARIA CRISTINA"
+      },
+      {
+        "code": "097201022",
+        "name": "MARIA URAY"
+      },
+      {
+        "code": "097201023",
+        "name": "MASIDLAKON"
+      },
+      {
+        "code": "097201024",
+        "name": "NAPO"
+      },
+      {
+        "code": "097201025",
+        "name": "OPAO"
+      },
+      {
+        "code": "097201026",
+        "name": "ORO"
+      },
+      {
+        "code": "097201027",
+        "name": "OWAON"
+      },
+      {
+        "code": "097201028",
+        "name": "OYAN"
+      },
+      {
+        "code": "097201031",
+        "name": "POLO"
+      },
+      {
+        "code": "097201032",
+        "name": "POTUNGAN"
+      },
+      {
+        "code": "097201033",
+        "name": "SAN FRANCISCO"
+      },
+      {
+        "code": "097201034",
+        "name": "SAN NICOLAS"
+      },
+      {
+        "code": "097201035",
+        "name": "SAN PEDRO"
+      },
+      {
+        "code": "097201036",
+        "name": "SAN VICENTE"
+      },
+      {
+        "code": "097201038",
+        "name": "SICAYAB-BUCANA"
+      },
+      {
+        "code": "097201039",
+        "name": "SIGAYAN"
+      },
+      {
+        "code": "097201040",
+        "name": "SELINOG"
+      },
+      {
+        "code": "097201041",
+        "name": "SINONOC"
+      },
+      {
+        "code": "097201042",
+        "name": "SANTO NIÑO"
+      },
+      {
+        "code": "097201043",
+        "name": "SULANGON"
+      },
+      {
+        "code": "097201044",
+        "name": "TAG-ULO"
+      },
+      {
+        "code": "097201045",
+        "name": "TAGUILON"
+      },
+      {
+        "code": "097201046",
+        "name": "KAUSWAGAN"
+      },
+      {
+        "code": "097201047",
+        "name": "TAMION"
+      },
+      {
+        "code": "097201048",
+        "name": "BAGTING (POB.)"
+      },
+      {
+        "code": "097201049",
+        "name": "BANONONG (POB.)"
+      },
+      {
+        "code": "097201050",
+        "name": "CAWA-CAWA (POB.)"
+      },
+      {
+        "code": "097201051",
+        "name": "DAWO (POB.)"
+      },
+      {
+        "code": "097201052",
+        "name": "MATAGOBTOB POB."
+      },
+      {
+        "code": "097201053",
+        "name": "LINABO (POB.)"
+      },
+      {
+        "code": "097201054",
+        "name": "POTOL (POB.)"
+      },
+      {
+        "code": "097201055",
+        "name": "SANTA CRUZ (POB.)"
+      }
+    ]
+  },
+  {
+    "code": "097202000",
+    "name": "CITY OF DIPOLOG",
+    "barangays": [
+      {
+        "code": "097202001",
+        "name": "COGON"
+      },
+      {
+        "code": "097202002",
+        "name": "DICAYAS"
+      },
+      {
+        "code": "097202003",
+        "name": "DIWAN"
+      },
+      {
+        "code": "097202004",
+        "name": "GALAS"
+      },
+      {
+        "code": "097202005",
+        "name": "GULAYON"
+      },
+      {
+        "code": "097202006",
+        "name": "LUGDUNGAN"
+      },
+      {
+        "code": "097202007",
+        "name": "MINAOG"
+      },
+      {
+        "code": "097202008",
+        "name": "OLINGAN"
+      },
+      {
+        "code": "097202009",
+        "name": "ESTACA (POB.)"
+      },
+      {
+        "code": "097202010",
+        "name": "BIASONG (POB.)"
+      },
+      {
+        "code": "097202011",
+        "name": "BARRA (POB.)"
+      },
+      {
+        "code": "097202012",
+        "name": "CENTRAL (POB.)"
+      },
+      {
+        "code": "097202013",
+        "name": "MIPUTAK (POB.)"
+      },
+      {
+        "code": "097202014",
+        "name": "PUNTA"
+      },
+      {
+        "code": "097202015",
+        "name": "SAN JOSE"
+      },
+      {
+        "code": "097202016",
+        "name": "SANGKOL"
+      },
+      {
+        "code": "097202017",
+        "name": "SANTA FILOMENA"
+      },
+      {
+        "code": "097202018",
+        "name": "SICAYAB"
+      },
+      {
+        "code": "097202019",
+        "name": "SINAMAN"
+      },
+      {
+        "code": "097202020",
+        "name": "TURNO"
+      },
+      {
+        "code": "097202021",
+        "name": "SANTA ISABEL"
+      }
+    ]
+  },
+  {
+    "code": "097203000",
+    "name": "KATIPUNAN",
+    "barangays": [
+      {
+        "code": "097203001",
+        "name": "BALOK"
+      },
+      {
+        "code": "097203002",
+        "name": "BASAGAN"
+      },
+      {
+        "code": "097203003",
+        "name": "BINIRAY"
+      },
+      {
+        "code": "097203004",
+        "name": "BULAWAN"
+      },
+      {
+        "code": "097203005",
+        "name": "DAANGLUNGSOD"
+      },
+      {
+        "code": "097203006",
+        "name": "DABIAK"
+      },
+      {
+        "code": "097203007",
+        "name": "DR. JOSE RIZAL"
+      },
+      {
+        "code": "097203008",
+        "name": "FIMAGAS"
+      },
+      {
+        "code": "097203009",
+        "name": "MALUGAS"
+      },
+      {
+        "code": "097203010",
+        "name": "MALASAY"
+      },
+      {
+        "code": "097203011",
+        "name": "MATAM"
+      },
+      {
+        "code": "097203012",
+        "name": "MIAS"
+      },
+      {
+        "code": "097203013",
+        "name": "MIATAN"
+      },
+      {
+        "code": "097203014",
+        "name": "NANGINAN"
+      },
+      {
+        "code": "097203016",
+        "name": "BARANGAY UNO (POB.)"
+      },
+      {
+        "code": "097203017",
+        "name": "BARANGAY DOS (POB.)"
+      },
+      {
+        "code": "097203018",
+        "name": "SAN ANTONIO"
+      },
+      {
+        "code": "097203019",
+        "name": "SERES"
+      },
+      {
+        "code": "097203020",
+        "name": "SEROAN"
+      },
+      {
+        "code": "097203021",
+        "name": "SINGATONG"
+      },
+      {
+        "code": "097203022",
+        "name": "SINUYAK"
+      },
+      {
+        "code": "097203023",
+        "name": "SITOG"
+      },
+      {
+        "code": "097203024",
+        "name": "TUBURAN"
+      },
+      {
+        "code": "097203025",
+        "name": "CARUPAY"
+      },
+      {
+        "code": "097203026",
+        "name": "LOYURAN"
+      },
+      {
+        "code": "097203027",
+        "name": "NEW TAMBO"
+      },
+      {
+        "code": "097203028",
+        "name": "PATIK"
+      },
+      {
+        "code": "097203029",
+        "name": "SANAO"
+      },
+      {
+        "code": "097203030",
+        "name": "SAN VICENTE"
+      },
+      {
+        "code": "097203031",
+        "name": "SANTO NIÑO"
+      }
+    ]
+  },
+  {
+    "code": "097204000",
+    "name": "LA LIBERTAD",
+    "barangays": [
+      {
+        "code": "097204001",
+        "name": "EL PARAISO"
+      },
+      {
+        "code": "097204002",
+        "name": "LA UNION"
+      },
+      {
+        "code": "097204003",
+        "name": "LA VICTORIA"
+      },
+      {
+        "code": "097204004",
+        "name": "MAUSWAGON"
+      },
+      {
+        "code": "097204005",
+        "name": "MERCEDES"
+      },
+      {
+        "code": "097204006",
+        "name": "NEW ARGAO"
+      },
+      {
+        "code": "097204007",
+        "name": "NEW BATAAN"
+      },
+      {
+        "code": "097204008",
+        "name": "NEW CARCAR"
+      },
+      {
+        "code": "097204009",
+        "name": "POBLACION"
+      },
+      {
+        "code": "097204010",
+        "name": "SAN JOSE"
+      },
+      {
+        "code": "097204011",
+        "name": "SANTA CATALINA"
+      },
+      {
+        "code": "097204012",
+        "name": "SANTA CRUZ"
+      },
+      {
+        "code": "097204013",
+        "name": "SINGARAN"
+      }
+    ]
+  },
+  {
+    "code": "097205000",
+    "name": "LABASON",
+    "barangays": [
+      {
+        "code": "097205001",
+        "name": "ANTONINO (POB.)"
+      },
+      {
+        "code": "097205002",
+        "name": "BALAS"
+      },
+      {
+        "code": "097205005",
+        "name": "BOBONGAN"
+      },
+      {
+        "code": "097205009",
+        "name": "DANSALAN"
+      },
+      {
+        "code": "097205011",
+        "name": "GABU"
+      },
+      {
+        "code": "097205013",
+        "name": "IMMACULADA"
+      },
+      {
+        "code": "097205015",
+        "name": "KIPIT"
+      },
+      {
+        "code": "097205017",
+        "name": "LA UNION"
+      },
+      {
+        "code": "097205019",
+        "name": "LAPATAN"
+      },
+      {
+        "code": "097205020",
+        "name": "LAWAGAN"
+      },
+      {
+        "code": "097205021",
+        "name": "LAWIGAN"
+      },
+      {
+        "code": "097205022",
+        "name": "LOPOC (POB.)"
+      },
+      {
+        "code": "097205024",
+        "name": "MALINTUBOAN"
+      },
+      {
+        "code": "097205026",
+        "name": "NEW SALVACION"
+      },
+      {
+        "code": "097205027",
+        "name": "OSUKAN"
+      },
+      {
+        "code": "097205030",
+        "name": "PATAWAG"
+      },
+      {
+        "code": "097205033",
+        "name": "SAN ISIDRO"
+      },
+      {
+        "code": "097205035",
+        "name": "UBAY"
+      },
+      {
+        "code": "097205036",
+        "name": "GIL SANCHEZ"
+      },
+      {
+        "code": "097205037",
+        "name": "IMELDA"
+      }
+    ]
+  },
+  {
+    "code": "097206000",
+    "name": "LILOY",
+    "barangays": [
+      {
+        "code": "097206001",
+        "name": "BANIGAN"
+      },
+      {
+        "code": "097206002",
+        "name": "BAYBAY (POB.)"
+      },
+      {
+        "code": "097206003",
+        "name": "CABANGCALAN"
+      },
+      {
+        "code": "097206006",
+        "name": "CANDELARIA"
+      },
+      {
+        "code": "097206007",
+        "name": "CAUSWAGAN"
+      },
+      {
+        "code": "097206008",
+        "name": "COMMUNAL"
+      },
+      {
+        "code": "097206009",
+        "name": "COMPRA"
+      },
+      {
+        "code": "097206010",
+        "name": "FATIMA"
+      },
+      {
+        "code": "097206012",
+        "name": "GOAW"
+      },
+      {
+        "code": "097206013",
+        "name": "GOIN"
+      },
+      {
+        "code": "097206014",
+        "name": "KAYOK"
+      },
+      {
+        "code": "097206015",
+        "name": "LAMAO"
+      },
+      {
+        "code": "097206017",
+        "name": "LA LIBERTAD"
+      },
+      {
+        "code": "097206020",
+        "name": "PANABANG"
+      },
+      {
+        "code": "097206021",
+        "name": "PATAWAG"
+      },
+      {
+        "code": "097206022",
+        "name": "PUNTA"
+      },
+      {
+        "code": "097206023",
+        "name": "SAN ISIDRO"
+      },
+      {
+        "code": "097206024",
+        "name": "SAN FRANCISCO"
+      },
+      {
+        "code": "097206025",
+        "name": "SAN MIGUEL"
+      },
+      {
+        "code": "097206026",
+        "name": "SANTA CRUZ"
+      },
+      {
+        "code": "097206027",
+        "name": "SANTO NIÑO"
+      },
+      {
+        "code": "097206028",
+        "name": "SILUCAP"
+      },
+      {
+        "code": "097206031",
+        "name": "TAPICAN"
+      },
+      {
+        "code": "097206032",
+        "name": "TIMAN"
+      },
+      {
+        "code": "097206033",
+        "name": "VILLA M. TEJERO"
+      },
+      {
+        "code": "097206034",
+        "name": "DELA PAZ"
+      },
+      {
+        "code": "097206035",
+        "name": "EL PARAISO"
+      },
+      {
+        "code": "097206036",
+        "name": "GANASE"
+      },
+      {
+        "code": "097206037",
+        "name": "MABUHAY"
+      },
+      {
+        "code": "097206038",
+        "name": "MAIGANG"
+      },
+      {
+        "code": "097206039",
+        "name": "MALILA"
+      },
+      {
+        "code": "097206040",
+        "name": "MAUSWAGON"
+      },
+      {
+        "code": "097206041",
+        "name": "NEW BETHLEHEM"
+      },
+      {
+        "code": "097206042",
+        "name": "OVERVIEW"
+      },
+      {
+        "code": "097206043",
+        "name": "SAN ROQUE"
+      },
+      {
+        "code": "097206044",
+        "name": "VILLA CALIXTO SUDIACAL"
+      },
+      {
+        "code": "097206045",
+        "name": "CANAAN"
+      }
+    ]
+  },
+  {
+    "code": "097207000",
+    "name": "MANUKAN",
+    "barangays": [
+      {
+        "code": "097207002",
+        "name": "DIPANE"
+      },
+      {
+        "code": "097207003",
+        "name": "DISAKAN"
+      },
+      {
+        "code": "097207004",
+        "name": "GUPOT"
+      },
+      {
+        "code": "097207005",
+        "name": "LIBUTON"
+      },
+      {
+        "code": "097207006",
+        "name": "LINAY"
+      },
+      {
+        "code": "097207007",
+        "name": "LUPASANG"
+      },
+      {
+        "code": "097207010",
+        "name": "MATE"
+      },
+      {
+        "code": "097207011",
+        "name": "POBLACION"
+      },
+      {
+        "code": "097207013",
+        "name": "SALUYONG"
+      },
+      {
+        "code": "097207014",
+        "name": "SERONGAN"
+      },
+      {
+        "code": "097207018",
+        "name": "VILLARAMOS"
+      },
+      {
+        "code": "097207019",
+        "name": "DON JOSE AGUIRRE"
+      },
+      {
+        "code": "097207020",
+        "name": "LINGATONGAN"
+      },
+      {
+        "code": "097207021",
+        "name": "MESES"
+      },
+      {
+        "code": "097207022",
+        "name": "PALARANAN"
+      },
+      {
+        "code": "097207023",
+        "name": "PANGANDAO"
+      },
+      {
+        "code": "097207024",
+        "name": "PATAGAN"
+      },
+      {
+        "code": "097207025",
+        "name": "SAN ANTONIO"
+      },
+      {
+        "code": "097207026",
+        "name": "UPPER DISAKAN"
+      },
+      {
+        "code": "097207027",
+        "name": "EAST POBLACION"
+      },
+      {
+        "code": "097207028",
+        "name": "PUNTA BLANCA"
+      },
+      {
+        "code": "097207029",
+        "name": "SUISAYAN"
+      }
+    ]
+  },
+  {
+    "code": "097208000",
+    "name": "MUTIA",
+    "barangays": [
+      {
+        "code": "097208001",
+        "name": "ALVENDA"
+      },
+      {
+        "code": "097208002",
+        "name": "BUENASUERTE"
+      },
+      {
+        "code": "097208003",
+        "name": "DILAND"
+      },
+      {
+        "code": "097208004",
+        "name": "DIOLEN"
+      },
+      {
+        "code": "097208005",
+        "name": "HEAD TIPAN"
+      },
+      {
+        "code": "097208006",
+        "name": "NEW CASUL"
+      },
+      {
+        "code": "097208007",
+        "name": "NEWLAND"
+      },
+      {
+        "code": "097208008",
+        "name": "NEW SIQUIJOR"
+      },
+      {
+        "code": "097208009",
+        "name": "PASO RIO"
+      },
+      {
+        "code": "097208010",
+        "name": "POBLACION"
+      },
+      {
+        "code": "097208011",
+        "name": "SAN MIGUEL"
+      },
+      {
+        "code": "097208012",
+        "name": "TINGLAN"
+      },
+      {
+        "code": "097208013",
+        "name": "TOTONGON"
+      },
+      {
+        "code": "097208014",
+        "name": "TUBAC"
+      },
+      {
+        "code": "097208015",
+        "name": "UNIDOS"
+      },
+      {
+        "code": "097208016",
+        "name": "SANTO TOMAS"
+      }
+    ]
+  },
+  {
+    "code": "097209000",
+    "name": "PIÑAN",
+    "barangays": [
+      {
+        "code": "097209001",
+        "name": "ADANTE"
+      },
+      {
+        "code": "097209002",
+        "name": "BACUYONG"
+      },
+      {
+        "code": "097209003",
+        "name": "BAGONG SILANG"
+      },
+      {
+        "code": "097209004",
+        "name": "CALICAN"
+      },
+      {
+        "code": "097209005",
+        "name": "UBAY"
+      },
+      {
+        "code": "097209006",
+        "name": "DEL PILAR"
+      },
+      {
+        "code": "097209007",
+        "name": "DILAWA"
+      },
+      {
+        "code": "097209008",
+        "name": "DESIN"
+      },
+      {
+        "code": "097209009",
+        "name": "DIONUM"
+      },
+      {
+        "code": "097209010",
+        "name": "LAPU-LAPU"
+      },
+      {
+        "code": "097209011",
+        "name": "LOWER GUMAY"
+      },
+      {
+        "code": "097209012",
+        "name": "LUZVILLA"
+      },
+      {
+        "code": "097209013",
+        "name": "POBLACION NORTH"
+      },
+      {
+        "code": "097209015",
+        "name": "SANTA FE"
+      },
+      {
+        "code": "097209016",
+        "name": "SEGABE"
+      },
+      {
+        "code": "097209017",
+        "name": "SIKITAN"
+      },
+      {
+        "code": "097209018",
+        "name": "SILANO"
+      },
+      {
+        "code": "097209019",
+        "name": "TERESITA"
+      },
+      {
+        "code": "097209020",
+        "name": "TINAYTAYAN"
+      },
+      {
+        "code": "097209022",
+        "name": "UPPER GUMAY"
+      },
+      {
+        "code": "097209023",
+        "name": "VILLARICO"
+      },
+      {
+        "code": "097209024",
+        "name": "POBLACION SOUTH"
+      }
+    ]
+  },
+  {
+    "code": "097210000",
+    "name": "POLANCO",
+    "barangays": [
+      {
+        "code": "097210001",
+        "name": "ANASTACIO"
+      },
+      {
+        "code": "097210002",
+        "name": "BANDERA"
+      },
+      {
+        "code": "097210003",
+        "name": "BETHLEHEM"
+      },
+      {
+        "code": "097210004",
+        "name": "DANGI"
+      },
+      {
+        "code": "097210005",
+        "name": "DANSULLAN"
+      },
+      {
+        "code": "097210006",
+        "name": "DE VENTA PERLA"
+      },
+      {
+        "code": "097210007",
+        "name": "GUINLES"
+      },
+      {
+        "code": "097210008",
+        "name": "ISIS"
+      },
+      {
+        "code": "097210009",
+        "name": "LABRADOR"
+      },
+      {
+        "code": "097210010",
+        "name": "LAPAYANBAJA"
+      },
+      {
+        "code": "097210011",
+        "name": "LETAPAN"
+      },
+      {
+        "code": "097210012",
+        "name": "LINABO"
+      },
+      {
+        "code": "097210013",
+        "name": "LINGASAD"
+      },
+      {
+        "code": "097210014",
+        "name": "MACLEODES"
+      },
+      {
+        "code": "097210015",
+        "name": "MAGANGON"
+      },
+      {
+        "code": "097210016",
+        "name": "MALIGAYA"
+      },
+      {
+        "code": "097210017",
+        "name": "MILAD"
+      },
+      {
+        "code": "097210018",
+        "name": "NEW LEBANGON"
+      },
+      {
+        "code": "097210019",
+        "name": "NEW SICAYAB"
+      },
+      {
+        "code": "097210020",
+        "name": "OBAY"
+      },
+      {
+        "code": "097210021",
+        "name": "PIAN"
+      },
+      {
+        "code": "097210022",
+        "name": "POBLACION SOUTH"
+      },
+      {
+        "code": "097210023",
+        "name": "SAN ANTONIO"
+      },
+      {
+        "code": "097210024",
+        "name": "SAN MIGUEL"
+      },
+      {
+        "code": "097210025",
+        "name": "SAN PEDRO"
+      },
+      {
+        "code": "097210026",
+        "name": "SANTO NIÑO"
+      },
+      {
+        "code": "097210027",
+        "name": "SILAWE"
+      },
+      {
+        "code": "097210028",
+        "name": "SIANIB"
+      },
+      {
+        "code": "097210029",
+        "name": "VILLAHERMOSA"
+      },
+      {
+        "code": "097210030",
+        "name": "POBLACION NORTH"
+      }
+    ]
+  },
+  {
+    "code": "097211000",
+    "name": "PRES. MANUEL A. ROXAS",
+    "barangays": [
+      {
+        "code": "097211001",
+        "name": "BALUBO"
+      },
+      {
+        "code": "097211002",
+        "name": "CANIBONGAN"
+      },
+      {
+        "code": "097211003",
+        "name": "CAPASE"
+      },
+      {
+        "code": "097211004",
+        "name": "DENOMAN"
+      },
+      {
+        "code": "097211005",
+        "name": "DOHINOB"
+      },
+      {
+        "code": "097211006",
+        "name": "LANGATIAN"
+      },
+      {
+        "code": "097211007",
+        "name": "LIPAKAN"
+      },
+      {
+        "code": "097211008",
+        "name": "MARUPAY"
+      },
+      {
+        "code": "097211009",
+        "name": "MOLITON"
+      },
+      {
+        "code": "097211010",
+        "name": "NABILID"
+      },
+      {
+        "code": "097211011",
+        "name": "PANGOLOGON"
+      },
+      {
+        "code": "097211012",
+        "name": "PIÑALAN"
+      },
+      {
+        "code": "097211013",
+        "name": "PIÑAMAR"
+      },
+      {
+        "code": "097211014",
+        "name": "SEBOD"
+      },
+      {
+        "code": "097211015",
+        "name": "TANAYAN"
+      },
+      {
+        "code": "097211017",
+        "name": "VILLAHERMOSO"
+      },
+      {
+        "code": "097211018",
+        "name": "BANBANAN"
+      },
+      {
+        "code": "097211019",
+        "name": "CAPE"
+      },
+      {
+        "code": "097211020",
+        "name": "GALOKSO"
+      },
+      {
+        "code": "097211021",
+        "name": "GUBAT"
+      },
+      {
+        "code": "097211022",
+        "name": "IRASAN"
+      },
+      {
+        "code": "097211023",
+        "name": "LABAKID"
+      },
+      {
+        "code": "097211024",
+        "name": "PANAMPALAY"
+      },
+      {
+        "code": "097211025",
+        "name": "PIAO"
+      },
+      {
+        "code": "097211026",
+        "name": "PONGOLAN"
+      },
+      {
+        "code": "097211027",
+        "name": "SALISIG"
+      },
+      {
+        "code": "097211028",
+        "name": "SIBATOG"
+      },
+      {
+        "code": "097211029",
+        "name": "SITUBO"
+      },
+      {
+        "code": "097211030",
+        "name": "TANTINGON"
+      },
+      {
+        "code": "097211031",
+        "name": "UPPER IRASAN"
+      },
+      {
+        "code": "097211032",
+        "name": "UPPER MINANG"
+      }
+    ]
+  },
+  {
+    "code": "097212000",
+    "name": "RIZAL",
+    "barangays": [
+      {
+        "code": "097212001",
+        "name": "BIRAYAN"
+      },
+      {
+        "code": "097212002",
+        "name": "DAMASING"
+      },
+      {
+        "code": "097212003",
+        "name": "LA ESPERANZA"
+      },
+      {
+        "code": "097212004",
+        "name": "MABUHAY"
+      },
+      {
+        "code": "097212005",
+        "name": "MABUNAO"
+      },
+      {
+        "code": "097212006",
+        "name": "NORTH MAPANG"
+      },
+      {
+        "code": "097212007",
+        "name": "MITIMOS"
+      },
+      {
+        "code": "097212008",
+        "name": "NANGCA"
+      },
+      {
+        "code": "097212009",
+        "name": "NANGCAAN"
+      },
+      {
+        "code": "097212010",
+        "name": "NAPILAN"
+      },
+      {
+        "code": "097212011",
+        "name": "NASIPANG"
+      },
+      {
+        "code": "097212012",
+        "name": "NEW DAPITAN"
+      },
+      {
+        "code": "097212013",
+        "name": "NILABO"
+      },
+      {
+        "code": "097212014",
+        "name": "EAST POBLACION"
+      },
+      {
+        "code": "097212015",
+        "name": "RIZALINA"
+      },
+      {
+        "code": "097212016",
+        "name": "SAN ROQUE"
+      },
+      {
+        "code": "097212017",
+        "name": "SEBACA"
+      },
+      {
+        "code": "097212018",
+        "name": "SIPAON"
+      },
+      {
+        "code": "097212019",
+        "name": "TOLON"
+      },
+      {
+        "code": "097212020",
+        "name": "BALUBOHAN"
+      },
+      {
+        "code": "097212021",
+        "name": "SOUTH MAPANG"
+      },
+      {
+        "code": "097212022",
+        "name": "WEST POBLACION"
+      }
+    ]
+  },
+  {
+    "code": "097213000",
+    "name": "SALUG",
+    "barangays": [
+      {
+        "code": "097213001",
+        "name": "BACONG"
+      },
+      {
+        "code": "097213002",
+        "name": "BALAKAN"
+      },
+      {
+        "code": "097213004",
+        "name": "BINONI"
+      },
+      {
+        "code": "097213006",
+        "name": "CALUCAP"
+      },
+      {
+        "code": "097213007",
+        "name": "CANAWAN"
+      },
+      {
+        "code": "097213008",
+        "name": "CARACOL"
+      },
+      {
+        "code": "097213009",
+        "name": "DANAO"
+      },
+      {
+        "code": "097213010",
+        "name": "DINOAN"
+      },
+      {
+        "code": "097213011",
+        "name": "DIPOLOD"
+      },
+      {
+        "code": "097213013",
+        "name": "FATIMA"
+      },
+      {
+        "code": "097213015",
+        "name": "LIGUAC"
+      },
+      {
+        "code": "097213017",
+        "name": "LIPAKAN"
+      },
+      {
+        "code": "097213019",
+        "name": "MUCAS"
+      },
+      {
+        "code": "097213020",
+        "name": "POBLACION"
+      },
+      {
+        "code": "097213021",
+        "name": "RAMON MAGSAYSAY"
+      },
+      {
+        "code": "097213027",
+        "name": "TAMBALANG"
+      },
+      {
+        "code": "097213028",
+        "name": "TAPALAN"
+      },
+      {
+        "code": "097213031",
+        "name": "IPILAN"
+      },
+      {
+        "code": "097213032",
+        "name": "LANAWAN"
+      },
+      {
+        "code": "097213035",
+        "name": "PUKAY"
+      },
+      {
+        "code": "097213036",
+        "name": "SANTO NIÑO"
+      },
+      {
+        "code": "097213037",
+        "name": "PACUHAN"
+      },
+      {
+        "code": "097213038",
+        "name": "POBLACION EAST"
+      }
+    ]
+  },
+  {
+    "code": "097214000",
+    "name": "SERGIO OSMEÑA SR.",
+    "barangays": [
+      {
+        "code": "097214001",
+        "name": "ANTONINO"
+      },
+      {
+        "code": "097214002",
+        "name": "BAGONG BAGUIO"
+      },
+      {
+        "code": "097214003",
+        "name": "BAGUMBAYAN"
+      },
+      {
+        "code": "097214004",
+        "name": "BIAYON"
+      },
+      {
+        "code": "097214005",
+        "name": "BUENAVISTA"
+      },
+      {
+        "code": "097214006",
+        "name": "DAMPALAN"
+      },
+      {
+        "code": "097214007",
+        "name": "DANAO"
+      },
+      {
+        "code": "097214008",
+        "name": "DON ELENO"
+      },
+      {
+        "code": "097214009",
+        "name": "KAUSWAGAN"
+      },
+      {
+        "code": "097214010",
+        "name": "LABIRAY"
+      },
+      {
+        "code": "097214011",
+        "name": "LIWANAG"
+      },
+      {
+        "code": "097214012",
+        "name": "MABUHAY"
+      },
+      {
+        "code": "097214013",
+        "name": "MACALIBRE"
+      },
+      {
+        "code": "097214014",
+        "name": "MAHAYAHAY"
+      },
+      {
+        "code": "097214015",
+        "name": "MARAPONG"
+      },
+      {
+        "code": "097214016",
+        "name": "NAZARETH"
+      },
+      {
+        "code": "097214017",
+        "name": "NEBO"
+      },
+      {
+        "code": "097214018",
+        "name": "NEW RIZAL"
+      },
+      {
+        "code": "097214019",
+        "name": "NEW TANGUB"
+      },
+      {
+        "code": "097214020",
+        "name": "NUEVAVISTA"
+      },
+      {
+        "code": "097214021",
+        "name": "PEDAGAN"
+      },
+      {
+        "code": "097214022",
+        "name": "PENACIO"
+      },
+      {
+        "code": "097214023",
+        "name": "POBLACION ALTO"
+      },
+      {
+        "code": "097214024",
+        "name": "POBLACION BAJO"
+      },
+      {
+        "code": "097214026",
+        "name": "PRINCESA LAMAYA"
+      },
+      {
+        "code": "097214027",
+        "name": "PRINCESA FRESHIA"
+      },
+      {
+        "code": "097214028",
+        "name": "SAN ANTONIO"
+      },
+      {
+        "code": "097214029",
+        "name": "SAN FRANCISCO"
+      },
+      {
+        "code": "097214030",
+        "name": "SAN ISIDRO"
+      },
+      {
+        "code": "097214031",
+        "name": "SAN JOSE"
+      },
+      {
+        "code": "097214032",
+        "name": "SAN JUAN"
+      },
+      {
+        "code": "097214033",
+        "name": "SINAAD"
+      },
+      {
+        "code": "097214034",
+        "name": "SINAI"
+      },
+      {
+        "code": "097214035",
+        "name": "SITUBO"
+      },
+      {
+        "code": "097214036",
+        "name": "TINAGO"
+      },
+      {
+        "code": "097214037",
+        "name": "TININDUGAN"
+      },
+      {
+        "code": "097214038",
+        "name": "TUBURAN"
+      },
+      {
+        "code": "097214039",
+        "name": "VENUS"
+      },
+      {
+        "code": "097214040",
+        "name": "WILBEN"
+      }
+    ]
+  },
+  {
+    "code": "097215000",
+    "name": "SIAYAN",
+    "barangays": [
+      {
+        "code": "097215001",
+        "name": "BALOK"
+      },
+      {
+        "code": "097215003",
+        "name": "DATAGAN"
+      },
+      {
+        "code": "097215004",
+        "name": "DENOYAN"
+      },
+      {
+        "code": "097215005",
+        "name": "DIONGAN"
+      },
+      {
+        "code": "097215006",
+        "name": "DOMOGOK"
+      },
+      {
+        "code": "097215007",
+        "name": "DUMPILAS"
+      },
+      {
+        "code": "097215008",
+        "name": "GONAYEN"
+      },
+      {
+        "code": "097215010",
+        "name": "GUIBO"
+      },
+      {
+        "code": "097215011",
+        "name": "GUNYAN"
+      },
+      {
+        "code": "097215012",
+        "name": "LITOLET"
+      },
+      {
+        "code": "097215013",
+        "name": "MACASING"
+      },
+      {
+        "code": "097215014",
+        "name": "MANGILAY"
+      },
+      {
+        "code": "097215015",
+        "name": "MOYO"
+      },
+      {
+        "code": "097215016",
+        "name": "PANGE"
+      },
+      {
+        "code": "097215017",
+        "name": "PARANGLUMBA (POB.)"
+      },
+      {
+        "code": "097215019",
+        "name": "POLAYO"
+      },
+      {
+        "code": "097215020",
+        "name": "SAYAW"
+      },
+      {
+        "code": "097215021",
+        "name": "SERIAC"
+      },
+      {
+        "code": "097215022",
+        "name": "SIAYAN PROPER (POB.)"
+      },
+      {
+        "code": "097215023",
+        "name": "BALUNOKAN"
+      },
+      {
+        "code": "097215024",
+        "name": "MUÑOZ"
+      },
+      {
+        "code": "097215025",
+        "name": "SUGUILON"
+      }
+    ]
+  },
+  {
+    "code": "097216000",
+    "name": "SIBUCO",
+    "barangays": [
+      {
+        "code": "097216001",
+        "name": "ANONGAN"
+      },
+      {
+        "code": "097216002",
+        "name": "BASAK"
+      },
+      {
+        "code": "097216003",
+        "name": "CAWIT-CAWIT"
+      },
+      {
+        "code": "097216004",
+        "name": "DINULAN"
+      },
+      {
+        "code": "097216005",
+        "name": "JATIAN"
+      },
+      {
+        "code": "097216006",
+        "name": "LAKIKI"
+      },
+      {
+        "code": "097216007",
+        "name": "LAMBAGOAN"
+      },
+      {
+        "code": "097216008",
+        "name": "LIMPAPA"
+      },
+      {
+        "code": "097216009",
+        "name": "LINGAYON"
+      },
+      {
+        "code": "097216010",
+        "name": "LINTANGAN"
+      },
+      {
+        "code": "097216011",
+        "name": "LITAWAN"
+      },
+      {
+        "code": "097216012",
+        "name": "LUNDAY"
+      },
+      {
+        "code": "097216013",
+        "name": "MALAYAL"
+      },
+      {
+        "code": "097216014",
+        "name": "MANTIVO"
+      },
+      {
+        "code": "097216015",
+        "name": "PANGANURAN"
+      },
+      {
+        "code": "097216016",
+        "name": "PANGIAN"
+      },
+      {
+        "code": "097216017",
+        "name": "PANIRAN"
+      },
+      {
+        "code": "097216018",
+        "name": "POBLACION"
+      },
+      {
+        "code": "097216019",
+        "name": "PULIRAN"
+      },
+      {
+        "code": "097216020",
+        "name": "SANTO NIÑO"
+      },
+      {
+        "code": "097216021",
+        "name": "BONGALAO"
+      },
+      {
+        "code": "097216022",
+        "name": "CABBUNAN"
+      },
+      {
+        "code": "097216023",
+        "name": "CULAGUAN"
+      },
+      {
+        "code": "097216024",
+        "name": "CUSIPAN"
+      },
+      {
+        "code": "097216025",
+        "name": "KAMARANGAN"
+      },
+      {
+        "code": "097216026",
+        "name": "NALA (POB.)"
+      },
+      {
+        "code": "097216027",
+        "name": "PASILNAHUT"
+      },
+      {
+        "code": "097216028",
+        "name": "TANGARAK"
+      }
+    ]
+  },
+  {
+    "code": "097217000",
+    "name": "SIBUTAD",
+    "barangays": [
+      {
+        "code": "097217001",
+        "name": "BAGACAY"
+      },
+      {
+        "code": "097217002",
+        "name": "CALILIC"
+      },
+      {
+        "code": "097217003",
+        "name": "CALUBE"
+      },
+      {
+        "code": "097217004",
+        "name": "KANIM"
+      },
+      {
+        "code": "097217005",
+        "name": "DELAPA"
+      },
+      {
+        "code": "097217006",
+        "name": "LIBAY"
+      },
+      {
+        "code": "097217007",
+        "name": "MAGSAYSAY"
+      },
+      {
+        "code": "097217008",
+        "name": "MARAPONG"
+      },
+      {
+        "code": "097217009",
+        "name": "MINLASAG"
+      },
+      {
+        "code": "097217010",
+        "name": "OYAN"
+      },
+      {
+        "code": "097217011",
+        "name": "PANGANURAN"
+      },
+      {
+        "code": "097217012",
+        "name": "POBLACION"
+      },
+      {
+        "code": "097217013",
+        "name": "SAWANG"
+      },
+      {
+        "code": "097217014",
+        "name": "SIBULOC"
+      },
+      {
+        "code": "097217015",
+        "name": "SINIPAY"
+      },
+      {
+        "code": "097217016",
+        "name": "SIPALOC"
+      }
+    ]
+  },
+  {
+    "code": "097218000",
+    "name": "SINDANGAN",
+    "barangays": [
+      {
+        "code": "097218003",
+        "name": "BAGO"
+      },
+      {
+        "code": "097218004",
+        "name": "BINUANGAN"
+      },
+      {
+        "code": "097218005",
+        "name": "BITOON"
+      },
+      {
+        "code": "097218007",
+        "name": "DICOYONG"
+      },
+      {
+        "code": "097218009",
+        "name": "DON RICARDO MACIAS"
+      },
+      {
+        "code": "097218010",
+        "name": "DUMALOGDOG"
+      },
+      {
+        "code": "097218011",
+        "name": "INUMAN"
+      },
+      {
+        "code": "097218012",
+        "name": "LA CONCEPCION"
+      },
+      {
+        "code": "097218013",
+        "name": "LAGAG"
+      },
+      {
+        "code": "097218014",
+        "name": "LAPERO"
+      },
+      {
+        "code": "097218015",
+        "name": "MANDIH"
+      },
+      {
+        "code": "097218018",
+        "name": "MARAS"
+      },
+      {
+        "code": "097218019",
+        "name": "MAWAL"
+      },
+      {
+        "code": "097218020",
+        "name": "MISOK"
+      },
+      {
+        "code": "097218021",
+        "name": "MOTIBOT"
+      },
+      {
+        "code": "097218022",
+        "name": "NATO"
+      },
+      {
+        "code": "097218023",
+        "name": "PANGALALAN"
+      },
+      {
+        "code": "097218024",
+        "name": "PIAO"
+      },
+      {
+        "code": "097218025",
+        "name": "POBLACION"
+      },
+      {
+        "code": "097218026",
+        "name": "SIARE"
+      },
+      {
+        "code": "097218028",
+        "name": "TALINGA"
+      },
+      {
+        "code": "097218029",
+        "name": "TINAPLAN"
+      },
+      {
+        "code": "097218030",
+        "name": "TIGBAO"
+      },
+      {
+        "code": "097218031",
+        "name": "TITIK"
+      },
+      {
+        "code": "097218032",
+        "name": "BATO"
+      },
+      {
+        "code": "097218033",
+        "name": "BUCANA"
+      },
+      {
+        "code": "097218034",
+        "name": "CALUAN"
+      },
+      {
+        "code": "097218035",
+        "name": "CALUBIAN"
+      },
+      {
+        "code": "097218036",
+        "name": "CALATUNAN"
+      },
+      {
+        "code": "097218037",
+        "name": "DAGOHOY"
+      },
+      {
+        "code": "097218038",
+        "name": "DATAGAN"
+      },
+      {
+        "code": "097218039",
+        "name": "DISUD"
+      },
+      {
+        "code": "097218040",
+        "name": "DOÑA JOSEFA"
+      },
+      {
+        "code": "097218041",
+        "name": "GAMPIS"
+      },
+      {
+        "code": "097218042",
+        "name": "GOLEO"
+      },
+      {
+        "code": "097218043",
+        "name": "IMELDA"
+      },
+      {
+        "code": "097218044",
+        "name": "JOAQUIN MACIAS"
+      },
+      {
+        "code": "097218045",
+        "name": "LABAKID"
+      },
+      {
+        "code": "097218050",
+        "name": "SANTO NIÑO"
+      },
+      {
+        "code": "097218051",
+        "name": "SANTO ROSARIO"
+      },
+      {
+        "code": "097218054",
+        "name": "UPPER NIPAAN"
+      },
+      {
+        "code": "097218055",
+        "name": "BENIGNO AQUINO JR."
+      },
+      {
+        "code": "097218056",
+        "name": "FATIMA"
+      },
+      {
+        "code": "097218057",
+        "name": "BALOK"
+      },
+      {
+        "code": "097218058",
+        "name": "BANTAYAN"
+      },
+      {
+        "code": "097218059",
+        "name": "DAPAON"
+      },
+      {
+        "code": "097218060",
+        "name": "DATU TANGKILAN"
+      },
+      {
+        "code": "097218061",
+        "name": "LA ROCHE SAN MIGUEL"
+      },
+      {
+        "code": "097218062",
+        "name": "LAWIS"
+      },
+      {
+        "code": "097218063",
+        "name": "MAGSAYSAY"
+      },
+      {
+        "code": "097218064",
+        "name": "NIPAAN"
+      },
+      {
+        "code": "097218065",
+        "name": "UPPER INUMAN"
+      }
+    ]
+  },
+  {
+    "code": "097219000",
+    "name": "SIOCON",
+    "barangays": [
+      {
+        "code": "097219002",
+        "name": "BALAGUNAN"
+      },
+      {
+        "code": "097219004",
+        "name": "ANDRES MICUBO JR."
+      },
+      {
+        "code": "097219005",
+        "name": "BUCANA"
+      },
+      {
+        "code": "097219006",
+        "name": "BULACAN"
+      },
+      {
+        "code": "097219008",
+        "name": "DIONISIO RICONALLA"
+      },
+      {
+        "code": "097219009",
+        "name": "CANDIZ"
+      },
+      {
+        "code": "097219011",
+        "name": "JOSE P. BRILLANTES, SR."
+      },
+      {
+        "code": "097219012",
+        "name": "LATABON"
+      },
+      {
+        "code": "097219013",
+        "name": "MATEO FRANCISCO"
+      },
+      {
+        "code": "097219014",
+        "name": "MALIPOT"
+      },
+      {
+        "code": "097219016",
+        "name": "NEW LITUBAN"
+      },
+      {
+        "code": "097219018",
+        "name": "PISAWAK"
+      },
+      {
+        "code": "097219019",
+        "name": "POBLACION"
+      },
+      {
+        "code": "097219021",
+        "name": "SANTA MARIA"
+      },
+      {
+        "code": "097219022",
+        "name": "SUHAILE ARABI"
+      },
+      {
+        "code": "097219023",
+        "name": "TIBANGAO"
+      },
+      {
+        "code": "097219024",
+        "name": "S. CABRAL"
+      },
+      {
+        "code": "097219025",
+        "name": "DATU SAILILA"
+      },
+      {
+        "code": "097219026",
+        "name": "MAKIANG"
+      },
+      {
+        "code": "097219027",
+        "name": "MALAMBUHANGIN"
+      },
+      {
+        "code": "097219028",
+        "name": "MANAOL"
+      },
+      {
+        "code": "097219029",
+        "name": "MATIAG"
+      },
+      {
+        "code": "097219030",
+        "name": "PANGIAN"
+      },
+      {
+        "code": "097219031",
+        "name": "SIAY"
+      },
+      {
+        "code": "097219032",
+        "name": "TABAYO"
+      },
+      {
+        "code": "097219033",
+        "name": "TAGAYTAY"
+      }
+    ]
+  },
+  {
+    "code": "097220000",
+    "name": "SIRAWAI",
+    "barangays": [
+      {
+        "code": "097220001",
+        "name": "BALATAKAN"
+      },
+      {
+        "code": "097220002",
+        "name": "BALONKAN"
+      },
+      {
+        "code": "097220003",
+        "name": "BALUBUAN"
+      },
+      {
+        "code": "097220004",
+        "name": "BITUGAN"
+      },
+      {
+        "code": "097220005",
+        "name": "BONGON"
+      },
+      {
+        "code": "097220007",
+        "name": "CATUYAN"
+      },
+      {
+        "code": "097220009",
+        "name": "CULASIAN"
+      },
+      {
+        "code": "097220010",
+        "name": "DANGANON"
+      },
+      {
+        "code": "097220011",
+        "name": "DOÑA CECILIA"
+      },
+      {
+        "code": "097220013",
+        "name": "GUBAN"
+      },
+      {
+        "code": "097220014",
+        "name": "LAGUNDI"
+      },
+      {
+        "code": "097220015",
+        "name": "LIBUCON"
+      },
+      {
+        "code": "097220016",
+        "name": "LUBOK"
+      },
+      {
+        "code": "097220017",
+        "name": "MACUYON"
+      },
+      {
+        "code": "097220018",
+        "name": "MINANGA"
+      },
+      {
+        "code": "097220019",
+        "name": "MOTONG"
+      },
+      {
+        "code": "097220020",
+        "name": "NAPULAN"
+      },
+      {
+        "code": "097220021",
+        "name": "PANABUTAN"
+      },
+      {
+        "code": "097220022",
+        "name": "PIACAN"
+      },
+      {
+        "code": "097220024",
+        "name": "PIÑA"
+      },
+      {
+        "code": "097220025",
+        "name": "PISA PUTI"
+      },
+      {
+        "code": "097220026",
+        "name": "PISA ITOM"
+      },
+      {
+        "code": "097220028",
+        "name": "SAINT MARY (POB.)"
+      },
+      {
+        "code": "097220029",
+        "name": "SAN NICOLAS (POB.)"
+      },
+      {
+        "code": "097220030",
+        "name": "SAN VICENTE (POB.)"
+      },
+      {
+        "code": "097220031",
+        "name": "PUGOS"
+      },
+      {
+        "code": "097220032",
+        "name": "PULA BATO"
+      },
+      {
+        "code": "097220033",
+        "name": "PULANG LUPA"
+      },
+      {
+        "code": "097220035",
+        "name": "SAN ROQUE (POB.)"
+      },
+      {
+        "code": "097220036",
+        "name": "SIPAKIT"
+      },
+      {
+        "code": "097220037",
+        "name": "SIPAWA"
+      },
+      {
+        "code": "097220038",
+        "name": "SIRAWAI PROPER (POB.)"
+      },
+      {
+        "code": "097220039",
+        "name": "TALABIGA"
+      },
+      {
+        "code": "097220040",
+        "name": "TAPANAYAN"
+      }
+    ]
+  },
+  {
+    "code": "097221000",
+    "name": "TAMPILISAN",
+    "barangays": [
+      {
+        "code": "097221001",
+        "name": "CABONG"
+      },
+      {
+        "code": "097221002",
+        "name": "GALINGON"
+      },
+      {
+        "code": "097221003",
+        "name": "LAWAAN"
+      },
+      {
+        "code": "097221004",
+        "name": "MOLOS"
+      },
+      {
+        "code": "097221005",
+        "name": "NEW DAPITAN"
+      },
+      {
+        "code": "097221006",
+        "name": "SITUBO"
+      },
+      {
+        "code": "097221007",
+        "name": "POBLACION"
+      },
+      {
+        "code": "097221008",
+        "name": "BALACBAAN"
+      },
+      {
+        "code": "097221009",
+        "name": "BANBANAN"
+      },
+      {
+        "code": "097221010",
+        "name": "BARILI"
+      },
+      {
+        "code": "097221011",
+        "name": "CAMUL"
+      },
+      {
+        "code": "097221012",
+        "name": "FARMINGTON"
+      },
+      {
+        "code": "097221013",
+        "name": "LUMBAYAO"
+      },
+      {
+        "code": "097221014",
+        "name": "MALILA-T"
+      },
+      {
+        "code": "097221015",
+        "name": "SANDAYONG"
+      },
+      {
+        "code": "097221016",
+        "name": "SANTO NIÑO"
+      },
+      {
+        "code": "097221017",
+        "name": "TILUBOG"
+      },
+      {
+        "code": "097221018",
+        "name": "TININGGAAN"
+      },
+      {
+        "code": "097221019",
+        "name": "TUBOD"
+      },
+      {
+        "code": "097221020",
+        "name": "ZNAC"
+      }
+    ]
+  },
+  {
+    "code": "097222000",
+    "name": "JOSE DALMAN",
+    "barangays": [
+      {
+        "code": "097222001",
+        "name": "DINASAN"
+      },
+      {
+        "code": "097222002",
+        "name": "MADALAG"
+      },
+      {
+        "code": "097222003",
+        "name": "MANAWAN"
+      },
+      {
+        "code": "097222004",
+        "name": "POBLACION"
+      },
+      {
+        "code": "097222005",
+        "name": "SIPAROK"
+      },
+      {
+        "code": "097222006",
+        "name": "TABON"
+      },
+      {
+        "code": "097222007",
+        "name": "TAMIL"
+      },
+      {
+        "code": "097222008",
+        "name": "BALATAKAN"
+      },
+      {
+        "code": "097222009",
+        "name": "BITOON"
+      },
+      {
+        "code": "097222010",
+        "name": "ILIHAN"
+      },
+      {
+        "code": "097222011",
+        "name": "LABAKID"
+      },
+      {
+        "code": "097222012",
+        "name": "LIPAY"
+      },
+      {
+        "code": "097222013",
+        "name": "LITALIP"
+      },
+      {
+        "code": "097222014",
+        "name": "LOPERO"
+      },
+      {
+        "code": "097222015",
+        "name": "LUMANPING"
+      },
+      {
+        "code": "097222016",
+        "name": "MARUPAY"
+      },
+      {
+        "code": "097222017",
+        "name": "SIGAMOK"
+      },
+      {
+        "code": "097222018",
+        "name": "TAMAROK"
+      }
+    ]
+  },
+  {
+    "code": "097223000",
+    "name": "GUTALAC",
+    "barangays": [
+      {
+        "code": "097223001",
+        "name": "BANGANON"
+      },
+      {
+        "code": "097223002",
+        "name": "COCOB"
+      },
+      {
+        "code": "097223003",
+        "name": "POBLACION"
+      },
+      {
+        "code": "097223004",
+        "name": "LA LIBERTAD"
+      },
+      {
+        "code": "097223005",
+        "name": "LUX"
+      },
+      {
+        "code": "097223006",
+        "name": "PANGANURAN"
+      },
+      {
+        "code": "097223007",
+        "name": "PITAWE"
+      },
+      {
+        "code": "097223008",
+        "name": "CANUPONG"
+      },
+      {
+        "code": "097223009",
+        "name": "MAMAWAN"
+      },
+      {
+        "code": "097223010",
+        "name": "SIBALIC"
+      },
+      {
+        "code": "097223011",
+        "name": "TIPAN"
+      },
+      {
+        "code": "097223012",
+        "name": "BACONG"
+      },
+      {
+        "code": "097223013",
+        "name": "BAGONG SILANG"
+      },
+      {
+        "code": "097223014",
+        "name": "BAYANIHAN"
+      },
+      {
+        "code": "097223015",
+        "name": "BUENAVISTA"
+      },
+      {
+        "code": "097223016",
+        "name": "DATAGAN"
+      },
+      {
+        "code": "097223017",
+        "name": "IMELDA"
+      },
+      {
+        "code": "097223018",
+        "name": "LOAY"
+      },
+      {
+        "code": "097223019",
+        "name": "MALIAN"
+      },
+      {
+        "code": "097223020",
+        "name": "MAP"
+      },
+      {
+        "code": "097223021",
+        "name": "MATUNOY"
+      },
+      {
+        "code": "097223022",
+        "name": "NEW DAPITAN"
+      },
+      {
+        "code": "097223023",
+        "name": "PITOGO"
+      },
+      {
+        "code": "097223024",
+        "name": "SALVADOR"
+      },
+      {
+        "code": "097223025",
+        "name": "SAN ISIDRO"
+      },
+      {
+        "code": "097223026",
+        "name": "SAN JUAN"
+      },
+      {
+        "code": "097223027",
+        "name": "SAN ROQUE"
+      },
+      {
+        "code": "097223028",
+        "name": "SAN VICENTE"
+      },
+      {
+        "code": "097223029",
+        "name": "SANTO NIÑO"
+      },
+      {
+        "code": "097223030",
+        "name": "SAS"
+      },
+      {
+        "code": "097223031",
+        "name": "UPPER GUTALAC"
+      },
+      {
+        "code": "097223032",
+        "name": "IMMACULADA CONCEPCION"
+      },
+      {
+        "code": "097223033",
+        "name": "LOWER LUX"
+      }
+    ]
+  },
+  {
+    "code": "097224000",
+    "name": "BALIGUIAN",
+    "barangays": [
+      {
+        "code": "097224001",
+        "name": "ALEGRIA"
+      },
+      {
+        "code": "097224002",
+        "name": "DIANGAS"
+      },
+      {
+        "code": "097224003",
+        "name": "DICULOM"
+      },
+      {
+        "code": "097224004",
+        "name": "GUIMOTAN"
+      },
+      {
+        "code": "097224005",
+        "name": "KAUSWAGAN"
+      },
+      {
+        "code": "097224006",
+        "name": "KILALABAN"
+      },
+      {
+        "code": "097224007",
+        "name": "LINAY"
+      },
+      {
+        "code": "097224008",
+        "name": "LUMAY"
+      },
+      {
+        "code": "097224009",
+        "name": "MALINAO"
+      },
+      {
+        "code": "097224010",
+        "name": "MAMAD"
+      },
+      {
+        "code": "097224011",
+        "name": "MAMAWAN"
+      },
+      {
+        "code": "097224012",
+        "name": "MILIDAN"
+      },
+      {
+        "code": "097224013",
+        "name": "NONOYAN"
+      },
+      {
+        "code": "097224014",
+        "name": "POBLACION"
+      },
+      {
+        "code": "097224015",
+        "name": "SAN JOSE"
+      },
+      {
+        "code": "097224016",
+        "name": "TAMAO"
+      },
+      {
+        "code": "097224017",
+        "name": "TAN-AWAN"
+      }
+    ]
+  },
+  {
+    "code": "097225000",
+    "name": "GODOD",
+    "barangays": [
+      {
+        "code": "097225001",
+        "name": "BALUNO"
+      },
+      {
+        "code": "097225002",
+        "name": "BANUANGAN"
+      },
+      {
+        "code": "097225003",
+        "name": "BUNAWAN"
+      },
+      {
+        "code": "097225004",
+        "name": "DILUCOT"
+      },
+      {
+        "code": "097225005",
+        "name": "DIPOPOR"
+      },
+      {
+        "code": "097225006",
+        "name": "GUISAPONG"
+      },
+      {
+        "code": "097225007",
+        "name": "LIMBONGA"
+      },
+      {
+        "code": "097225008",
+        "name": "LOMOGOM"
+      },
+      {
+        "code": "097225009",
+        "name": "MAUSWAGON"
+      },
+      {
+        "code": "097225010",
+        "name": "MIAMPIC"
+      },
+      {
+        "code": "097225011",
+        "name": "POBLACION"
+      },
+      {
+        "code": "097225012",
+        "name": "RABA"
+      },
+      {
+        "code": "097225013",
+        "name": "RAMBON"
+      },
+      {
+        "code": "097225014",
+        "name": "SAN PEDRO"
+      },
+      {
+        "code": "097225015",
+        "name": "SARAWAGAN"
+      },
+      {
+        "code": "097225016",
+        "name": "SIANAN"
+      },
+      {
+        "code": "097225017",
+        "name": "SIORAN"
+      }
+    ]
+  },
+  {
+    "code": "097226000",
+    "name": "BACUNGAN",
+    "barangays": [
+      {
+        "code": "097226001",
+        "name": "BACUNGAN (POB.)"
+      },
+      {
+        "code": "097226002",
+        "name": "BOGABONGAN"
+      },
+      {
+        "code": "097226003",
+        "name": "DELUSOM"
+      },
+      {
+        "code": "097226004",
+        "name": "MANGOP"
+      },
+      {
+        "code": "097226005",
+        "name": "MANIL"
+      },
+      {
+        "code": "097226006",
+        "name": "MAWAL"
+      },
+      {
+        "code": "097226007",
+        "name": "MIDATAG"
+      },
+      {
+        "code": "097226008",
+        "name": "NASIBAC"
+      },
+      {
+        "code": "097226009",
+        "name": "RIZON"
+      },
+      {
+        "code": "097226010",
+        "name": "SIPACONG"
+      },
+      {
+        "code": "097226011",
+        "name": "SANTA MARIA"
+      },
+      {
+        "code": "097226012",
+        "name": "TALINGA"
+      },
+      {
+        "code": "097226013",
+        "name": "TINAPLAN"
+      },
+      {
+        "code": "097226014",
+        "name": "TINIGUIBAN"
+      },
+      {
+        "code": "097226015",
+        "name": "TINUYOP"
+      },
+      {
+        "code": "097226016",
+        "name": "TIOGAN"
+      },
+      {
+        "code": "097226017",
+        "name": "TITIK"
+      },
+      {
+        "code": "097226018",
+        "name": "MOROB"
+      }
+    ]
+  },
+  {
+    "code": "097227000",
+    "name": "KALAWIT",
+    "barangays": [
+      {
+        "code": "097227001",
+        "name": "BATAYAN"
+      },
+      {
+        "code": "097227002",
+        "name": "BOTONG"
+      },
+      {
+        "code": "097227003",
+        "name": "CONCEPCION"
+      },
+      {
+        "code": "097227004",
+        "name": "DANIEL MAING"
+      },
+      {
+        "code": "097227005",
+        "name": "FATIMA"
+      },
+      {
+        "code": "097227006",
+        "name": "GATAS"
+      },
+      {
+        "code": "097227007",
+        "name": "KALAWIT (POB.)"
+      },
+      {
+        "code": "097227008",
+        "name": "MARCELO"
+      },
+      {
+        "code": "097227009",
+        "name": "NEW CALAMBA"
+      },
+      {
+        "code": "097227010",
+        "name": "PALALIAN"
+      },
+      {
+        "code": "097227011",
+        "name": "PARAISO"
+      },
+      {
+        "code": "097227012",
+        "name": "PIANON"
+      },
+      {
+        "code": "097227013",
+        "name": "SAN JOSE"
+      },
+      {
+        "code": "097227014",
+        "name": "TUGOP*"
+      }
+    ]
+  }
+]

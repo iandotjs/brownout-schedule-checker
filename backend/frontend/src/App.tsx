@@ -62,21 +62,42 @@ function App() {
       });
   }, []);
 
-  // Filter schedules based on barangay selection
-  const filteredNotices = notices.filter((n) => {
-    if (!selectedCity || !selectedBarangay) return false; // don't show anything until both are chosen
-    if (!n.data || !Array.isArray(n.data.structured)) return false;
+// Filter schedules based on barangay selection, with debug logs
+const filteredNotices = notices.filter((n) => {
+  if (!selectedCity || !selectedBarangay) return false;
+  if (!n.data?.processed_images) return false;
 
-    return n.data.structured.some((s: any) =>
-      s.locations?.some(
-        (loc: any) =>
-          loc.municipality?.toLowerCase() === selectedCity.toLowerCase() &&
-          loc.barangays?.some(
-            (b: string) => b.toLowerCase() === selectedBarangay.toLowerCase()
-          )
-      )
-    );
+  let matched = false;
+
+  n.data.processed_images.forEach((img: any, pi: number) => {
+    if (!Array.isArray(img.structured)) return;
+
+    img.structured.forEach((s: any, si: number) => {
+      console.log(`🔎 Checking img[${pi}].structured[${si}]`, s);
+
+      s.locations?.forEach((loc: any, li: number) => {
+        console.log(
+          `  ➡️ loc[${li}] muni=${loc.municipality?.code} vs selected=${selectedCity}`
+        );
+
+        if (loc.municipality?.code === selectedCity) {
+          loc.barangays?.forEach((b: any, bi: number) => {
+            console.log(
+              `    🏘️ barangay[${bi}] code=${b.code} vs selected=${selectedBarangay}`
+            );
+            if (b.code === selectedBarangay) {
+              console.log("✅ MATCH FOUND!");
+              matched = true;
+            }
+          });
+        }
+      });
+    });
   });
+
+  if (!matched) console.log("❌ No match for notice:", n.id);
+  return matched;
+});
 
   const barangays =
     locations.find((loc) => loc.code === selectedCity)?.barangays || [];
