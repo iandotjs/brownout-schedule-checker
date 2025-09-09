@@ -23,17 +23,20 @@ def scrape_and_save_notices():
 
 @app.route("/api/notices/latest", methods=["GET"])
 def get_latest_notices():
-    # Query Supabase, ordered by created_at
-    response = supabase.table("notices") \
-                       .select("id, title, url, created_at, data") \
-                       .order("created_at", desc=True) \
-                       .limit(10) \
-                       .execute()
+    try:
+        response = supabase.table("notices") \
+                           .select("id, title, url, created_at, data, status") \
+                           .eq("status", "active") \
+                           .order("created_at", desc=True) \
+                           .limit(10) \
+                           .execute()
 
-    if response.data:
-        return jsonify(response.data), 200
-    else:
-        return jsonify({"message": "No notices found"}), 404
+        if response.data:
+            return jsonify(response.data), 200
+        else:
+            return jsonify({"message": "No active notices found"}), 404
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 @app.route("/api/locations", methods=["GET"])
 def get_locations():

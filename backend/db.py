@@ -31,8 +31,9 @@ def flatten_notice_for_db(n: Dict[str, Any]) -> Dict[str, Any]:
     row = {
         "title": n.get("title"),
         "url": n.get("url"),
+        "status": n.get("status", "active"),
         "created_at": (n.get("created_at") or datetime.utcnow()).isoformat(),
-        "data": {k: v for k, v in n.items() if k not in ("title", "url")},
+        "data": {k: v for k, v in n.items() if k not in ("title", "url", "status")},
     }
     return row
 

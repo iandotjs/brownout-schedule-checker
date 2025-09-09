@@ -33,7 +33,7 @@ def parse_notice_date(soup):
             pass
     return date.today()
 
-def scrape_notice_image_urls(limit=2):
+def scrape_notice_image_urls(limit=None):
     notices = []
     resp = requests.get(CATEGORY_URL)
     resp.raise_for_status()
@@ -43,6 +43,12 @@ def scrape_notice_image_urls(limit=2):
     for a in articles[:limit]:
         title = a.get_text(strip=True)
         post_url = a["href"]
+
+        # Detect status
+        if "cancelled" in title.lower():
+            status = "cancelled"
+        else:
+            status = "active"   # default for non-cancelled notices
 
         post_resp = requests.get(post_url)
         post_resp.raise_for_status()
@@ -63,6 +69,7 @@ def scrape_notice_image_urls(limit=2):
         notices.append({
             "title": title,
             "url": post_url,
+            "status": status,
             "images": imgs,
             "publish_date": notice_date.isoformat()
         })
@@ -200,7 +207,7 @@ def safe_generate(prompt, retries=3, backoff=2):
 # ==============================
 
 def get_notices():
-    notices = scrape_notice_image_urls(limit=2)
+    notices = scrape_notice_image_urls()  
     final_results = []
 
     for notice in notices:
@@ -263,7 +270,7 @@ def get_notices():
             response_text = safe_generate(image_prompt)
             result_json = extract_json(response_text)
 
-            today = datetime.strptime("2025-09-02", "%Y-%m-%d").date()
+            today = date.today()
             valid_schedules = []
             for sched in result_json.get("notices", []):
                 dates = sched.get("dates", [])

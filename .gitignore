@@ -4,3 +4,4 @@ backend/.envbk
 backend/test_insert.py
 issues.txt
 .gitgnore
+backend/__pycache__/
