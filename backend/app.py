@@ -1,14 +1,20 @@
+import truststore
+truststore.inject_into_ssl()
+
 from flask import Flask, jsonify
 from flask_cors import CORS
 from dotenv import load_dotenv
-from logic import get_notices, fetch_and_cache_locations  # <-- import from logic.py
+
+# Load .env at the very beginning
+load_dotenv()
+
+from logic import get_notices, fetch_and_cache_locations
 from supabase_client import supabase
 from db import save_notices_to_supabase
 
 # --- Flask app setup ---
 app = Flask(__name__)
-CORS(app)  # <-- enable CORS here (before routes)
-load_dotenv()  # load .env file
+CORS(app)
 
 @app.route("/")
 def index():
@@ -31,10 +37,7 @@ def get_latest_notices():
                            .limit(10) \
                            .execute()
 
-        if response.data:
-            return jsonify(response.data), 200
-        else:
-            return jsonify({"message": "No active notices found"}), 404
+        return jsonify(response.data or []), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 

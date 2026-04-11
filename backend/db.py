@@ -49,3 +49,11 @@ def save_notices_to_supabase(final_results: List[Dict[str, Any]]) -> dict:
     # upsert using unique index on url
     res = supabase.table("notices").upsert(rows, on_conflict="url").execute()
     return {"inserted": len(res.data or []), "data": res.data}
+
+def get_processed_urls() -> set:
+    try:
+        res = supabase.table("notices").select("url").execute()
+        return {row["url"] for row in res.data}
+    except Exception as e:
+        print(f"Error fetching processed urls: {e}")
+        return set()
