@@ -1,19 +1,19 @@
-import cv2
-import easyocr
 from google import genai
 import json
 import re
 import requests
-import numpy as np
+from io import BytesIO
+from PIL import Image
 from rapidfuzz import process
 from pathlib import Path
 from bs4 import BeautifulSoup
 from urllib.parse import urljoin 
 import time
 from google.genai import errors as genai_errors
-from datetime import datetime, date
+from datetime import datetime, date, timedelta
 import os
 from dotenv import load_dotenv
+from db import get_processed_urls
 
 load_dotenv()  # load .env file here too (for GEMINI_API_KEY)
 
@@ -33,8 +33,13 @@ def parse_notice_date(soup):
             pass
     return date.today()
 
-def scrape_notice_image_urls(limit=2):
+def scrape_notice_image_urls(limit=None):
     notices = []
+    
+    # Get previously processed URLs to save rate limits
+    processed_urls = get_processed_urls()
+    print(f"Skipping {len(processed_urls)} already processed URLs...")
+
     resp = requests.get(CATEGORY_URL)
     resp.raise_for_status()
     soup = BeautifulSoup(resp.text, "html.parser")
@@ -44,11 +49,28 @@ def scrape_notice_image_urls(limit=2):
         title = a.get_text(strip=True)
         post_url = a["href"]
 
+        if post_url in processed_urls:
+            # We already ran this through OCR and Gemini! Skip.
+            continue
+
+        # Check if the title text indicates a very old notice date? (Optional but handled below)
+
+        # Detect status
+        if "cancelled" in title.lower():
+            status = "cancelled"
+        else:
+            status = "active"   # default for non-cancelled notices
+
         post_resp = requests.get(post_url)
         post_resp.raise_for_status()
         post_soup = BeautifulSoup(post_resp.text, "html.parser")
 
         notice_date = parse_notice_date(post_soup)
+        
+        # If the notice was published more than 14 days ago, it's definitely past. Skip it.
+        if notice_date < date.today() - timedelta(days=14):
+            print(f"Skipping {post_url} as it is too old ({notice_date})")
+            continue
 
         imgs = []
         content_div = post_soup.select_one("div.entry-content")
@@ -63,6 +85,7 @@ def scrape_notice_image_urls(limit=2):
         notices.append({
             "title": title,
             "url": post_url,
+            "status": status,
             "images": imgs,
             "publish_date": notice_date.isoformat()
         })
@@ -158,8 +181,8 @@ client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
 def load_image_from_url(url):
     resp = requests.get(url, stream=True)
     resp.raise_for_status()
-    img_array = np.asarray(bytearray(resp.content), dtype=np.uint8)
-    img = cv2.imdecode(img_array, cv2.IMREAD_COLOR)
+    # load directly into PIL memory safely
+    img = Image.open(BytesIO(resp.content))
     return img
 
 def extract_json(text: str):
@@ -175,32 +198,75 @@ def extract_json(text: str):
         print("⚠️ JSON parsing failed:", e)
         return {}
 
-def safe_generate(prompt, retries=3, backoff=2):
-    models = ["gemini-2.5-flash", "gemini-1.5-flash", "gemini-1.5-pro"]
+def safe_generate(prompt, retries=5, backoff=30):
+    models = ["gemini-3.1-flash-lite-preview", "gemini-3-flash-preview", "gemini-2.5-flash", "gemini-2.5-flash-lite"]
+    last_error = None
+
     for model in models:
         for attempt in range(retries):
             try:
+                print(f"    >> Trying {model} (attempt {attempt+1}/{retries})...")
                 response = client.models.generate_content(
                     model=model,
                     contents=prompt
                 )
+                print(f"    >> {model} SUCCESS")
                 return response.text
+            except genai_errors.ClientError as e:
+                error_str = str(e)
+                last_error = e
+
+                if "RESOURCE_EXHAUSTED" in error_str or "429" in error_str:
+                    # Rate limited — wait and retry the SAME model
+                    # Try to extract retry delay from error message
+                    wait_time = backoff
+                    import re as _re
+                    delay_match = _re.search(r'retry in (\d+)', error_str)
+                    if delay_match:
+                        wait_time = int(delay_match.group(1)) + 2  # add small buffer
+                    print(f"    >> {model} rate limited (attempt {attempt+1}/{retries}), waiting {wait_time}s...")
+                    time.sleep(wait_time)
+                    continue  # retry same model
+                else:
+                    # Other client errors (invalid key, location, etc.) — skip to next model
+                    print(f"    >> {model} ClientError: {error_str[:200]}. Trying next model...")
+                    break
             except genai_errors.ServerError as e:
+                last_error = e
                 if "UNAVAILABLE" in str(e) or "overloaded" in str(e).lower():
-                    wait_time = backoff ** attempt
-                    print(f"⚠️ {model} overloaded (attempt {attempt+1}/{retries}), retrying in {wait_time}s...")
+                    wait_time = backoff
+                    print(f"    >> {model} overloaded (attempt {attempt+1}/{retries}), retrying in {wait_time}s...")
                     time.sleep(wait_time)
                 else:
-                    raise
-        print(f"⚠️ Model {model} failed after {retries} retries, falling back...")
-    raise RuntimeError("❌ All Gemini models failed after retries + fallback")
+                    print(f"    >> {model} ServerError: {e}. Trying next model...")
+                    break
+        else:
+            print(f"    >> {model} failed after {retries} attempts, trying next model...")
+
+    raise RuntimeError(f"All Gemini models failed. Last error: {last_error}")
+
+def is_filename_date_past(url: str) -> bool:
+    """
+    Attempts to extract an explicit date like APRIL-8-2026 from the filename/URL.
+    If it exists and is earlier than today, return True (past).
+    """
+    # Regex out something like 'april-8-2026' or 'january-15-2025'
+    match = re.search(r'(january|february|march|april|may|june|july|august|september|october|november|december)-(\d{1,2})-(\d{4})', url.lower())
+    if match:
+        try:
+            date_str = match.group(0) # e.g. april-8-2026
+            parsed_date = datetime.strptime(date_str, "%B-%d-%Y").date()
+            return parsed_date < date.today()
+        except Exception:
+            pass
+    return False
 
 # ==============================
 # Main function
 # ==============================
 
 def get_notices():
-    notices = scrape_notice_image_urls(limit=2)
+    notices = scrape_notice_image_urls()  
     final_results = []
 
     for notice in notices:
@@ -211,20 +277,19 @@ def get_notices():
         }
 
         for img_url in notice["images"]:
+            # Rapid-skip if URL specifies a fully past date
+            if is_filename_date_past(img_url):
+                print(f"Skipping past schedule image based on filename: {img_url}")
+                continue
+                
             print(f"Processing image: {img_url}")
             img = load_image_from_url(img_url)
 
-            gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-            _, thresh = cv2.threshold(gray, 150, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
-            denoised = cv2.medianBlur(thresh, 3)
-
-            reader = easyocr.Reader(['en'])
-            results = reader.readtext(denoised)
-            ocr_text = " ".join([res[1] for res in results])
-
             image_prompt = f"""
-            The following text is extracted from a single power interruption notice image via OCR.
-            It may contain misreads, weird formatting, and grammar errors.
+            The attached image is a power interruption schedule/notice.
+            Carefully read the text and details natively from the image.
+            For context, the image was extracted from this URL filename: {img_url.split('/')[-1]}
+            Use the date/year in the filename to infer the exact date if it's missing from the visual text.
 
             Correct errors and map municipality + barangay names strictly using the provided location reference JSON.
 
@@ -232,7 +297,7 @@ def get_notices():
             {{
               "notices": [
                 {{
-                  "dates": ["August 27, 2025"],
+                  "dates": ["April 14, 2026"],
                   "times": ["8:30AM - 5:00PM"],
                   "duration_hours": 8.5,
                   "locations": [
@@ -255,27 +320,34 @@ def get_notices():
 
             Location reference:
             {json.dumps(reference_json, ensure_ascii=False)}
-
-            Text:
-            {ocr_text}
             """
 
-            response_text = safe_generate(image_prompt)
+            # Pass both the text prompt and the raw PIL image natively to Gemini!
+            response_text = safe_generate([image_prompt, img])
             result_json = extract_json(response_text)
 
-            today = datetime.strptime("2025-09-02", "%Y-%m-%d").date()
+            today = date.today()
             valid_schedules = []
             for sched in result_json.get("notices", []):
                 dates = sched.get("dates", [])
-                keep = False
+                
+                # Default keep to True. We only discard if we CONFIDENTLY parse a date and it's in the past.
+                # Do NOT discard just because the date parsing fails or is weird.
+                keep = True 
+                
                 for d in dates:
                     try:
-                        parsed = datetime.strptime(d, "%B %d, %Y").date()
-                        if parsed >= today:
-                            keep = True
-                            break
+                        # Try parsing various formats Gemini might return
+                        from dateutil import parser
+                        parsed = parser.parse(d).date()
+                        if parsed < today:
+                            keep = False
+                        else:
+                            keep = True 
+                            break # Found at least one valid future/today date, keep it!
                     except Exception:
-                        continue
+                        pass # Ignore parsing errors, default to keep=True
+                        
                 if keep:
                     # ✅ Normalize municipality + barangay with PSGC reference
                     new_locs = []
@@ -306,7 +378,7 @@ def get_notices():
 
             notice_result["processed_images"].append({
                 "image_url": img_url,
-                "ocr_text": ocr_text,
+                "ocr_text": "Processed directly via Gemini Multimodal Vision",
                 "structured": valid_schedules
             })
 

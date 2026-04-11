@@ -1,10 +1,10 @@
 flask
-opencv-python
-easyocr
+flask-cors
 google-genai
 requests
-numpy
+pillow
 rapidfuzz
 beautifulsoup4
 python-dotenv
 supabase>=2.5.0
+python-dateutil

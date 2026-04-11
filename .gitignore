@@ -4,3 +4,5 @@ backend/.envbk
 backend/test_insert.py
 issues.txt
 .gitgnore
+backend/__pycache__/
+backend/test_gemini.py
