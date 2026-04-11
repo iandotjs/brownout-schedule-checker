@@ -1,10 +1,9 @@
-import cv2
-import easyocr
 from google import genai
 import json
 import re
 import requests
-import numpy as np
+from io import BytesIO
+from PIL import Image
 from rapidfuzz import process
 from pathlib import Path
 from bs4 import BeautifulSoup
@@ -182,8 +181,8 @@ client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
 def load_image_from_url(url):
     resp = requests.get(url, stream=True)
     resp.raise_for_status()
-    img_array = np.asarray(bytearray(resp.content), dtype=np.uint8)
-    img = cv2.imdecode(img_array, cv2.IMREAD_COLOR)
+    # load directly into PIL memory safely
+    img = Image.open(BytesIO(resp.content))
     return img
 
 def extract_json(text: str):
@@ -286,17 +285,11 @@ def get_notices():
             print(f"Processing image: {img_url}")
             img = load_image_from_url(img_url)
 
-            gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-            _, thresh = cv2.threshold(gray, 150, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
-            denoised = cv2.medianBlur(thresh, 3)
-
-            reader = easyocr.Reader(['en'])
-            results = reader.readtext(denoised)
-            ocr_text = " ".join([res[1] for res in results])
-
             image_prompt = f"""
-            The following text is extracted from a single power interruption notice image via OCR.
-            It may contain misreads, weird formatting, and grammar errors.
+            The attached image is a power interruption schedule/notice.
+            Carefully read the text and details natively from the image.
+            For context, the image was extracted from this URL filename: {img_url.split('/')[-1]}
+            Use the date/year in the filename to infer the exact date if it's missing from the visual text.
 
             Correct errors and map municipality + barangay names strictly using the provided location reference JSON.
 
@@ -304,7 +297,7 @@ def get_notices():
             {{
               "notices": [
                 {{
-                  "dates": ["August 27, 2025"],
+                  "dates": ["April 14, 2026"],
                   "times": ["8:30AM - 5:00PM"],
                   "duration_hours": 8.5,
                   "locations": [
@@ -327,27 +320,34 @@ def get_notices():
 
             Location reference:
             {json.dumps(reference_json, ensure_ascii=False)}
-
-            Text:
-            {ocr_text}
             """
 
-            response_text = safe_generate(image_prompt)
+            # Pass both the text prompt and the raw PIL image natively to Gemini!
+            response_text = safe_generate([image_prompt, img])
             result_json = extract_json(response_text)
 
             today = date.today()
             valid_schedules = []
             for sched in result_json.get("notices", []):
                 dates = sched.get("dates", [])
-                keep = False
+                
+                # Default keep to True. We only discard if we CONFIDENTLY parse a date and it's in the past.
+                # Do NOT discard just because the date parsing fails or is weird.
+                keep = True 
+                
                 for d in dates:
                     try:
-                        parsed = datetime.strptime(d, "%B %d, %Y").date()
-                        if parsed >= today:
-                            keep = True
-                            break
+                        # Try parsing various formats Gemini might return
+                        from dateutil import parser
+                        parsed = parser.parse(d).date()
+                        if parsed < today:
+                            keep = False
+                        else:
+                            keep = True 
+                            break # Found at least one valid future/today date, keep it!
                     except Exception:
-                        continue
+                        pass # Ignore parsing errors, default to keep=True
+                        
                 if keep:
                     # ✅ Normalize municipality + barangay with PSGC reference
                     new_locs = []
@@ -378,7 +378,7 @@ def get_notices():
 
             notice_result["processed_images"].append({
                 "image_url": img_url,
-                "ocr_text": ocr_text,
+                "ocr_text": "Processed directly via Gemini Multimodal Vision",
                 "structured": valid_schedules
             })
 

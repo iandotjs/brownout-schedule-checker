@@ -10,7 +10,7 @@ load_dotenv()
 
 from logic import get_notices, fetch_and_cache_locations
 from supabase_client import supabase
-from db import save_notices_to_supabase
+from db import save_notices_to_supabase, delete_old_notices
 
 # --- Flask app setup ---
 app = Flask(__name__)
@@ -25,7 +25,8 @@ def index():
 def scrape_and_save_notices():
     notices = get_notices()  # scrape fresh notices
     result = save_notices_to_supabase(notices)  # save via db.py
-    return jsonify({"message": f"Saved {result['inserted']} notices to Supabase"}), 201
+    deleted = delete_old_notices() # clean up fully expired schedules
+    return jsonify({"message": f"Saved {result['inserted']} notices. Deleted {deleted} old notices."}), 201
 
 @app.route("/api/notices/latest", methods=["GET"])
 def get_latest_notices():
