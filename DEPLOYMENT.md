@@ -39,7 +39,7 @@ Frontend is already set up for Vercel. To redeploy with latest changes:
    ```
    GEMINI_API_KEY=your-gemini-api-key
    SUPABASE_URL=your-supabase-url
-   SUPABASE_KEY=your-supabase-key
+   SUPABASE_SERVICE_ROLE_KEY=your-supabase-service-role-key
    FLASK_ENV=production
    ```
 
@@ -61,7 +61,7 @@ Frontend is already set up for Vercel. To redeploy with latest changes:
    ```
    GEMINI_API_KEY=your-gemini-api-key
    SUPABASE_URL=your-supabase-url
-   SUPABASE_KEY=your-supabase-key
+   SUPABASE_SERVICE_ROLE_KEY=your-supabase-service-role-key
    FLASK_ENV=production
    ```
 
@@ -71,7 +71,7 @@ Frontend is already set up for Vercel. To redeploy with latest changes:
 
 ## GitHub Actions Scheduled Scraper (Automatic)
 
-The repository now includes a GitHub Actions workflow that automatically scrapes notices at **12:00 AM UTC daily**.
+The repository now includes a GitHub Actions workflow that automatically scrapes notices at **12:00 AM Philippine Time (UTC+8) daily**.
 
 ### Setup
 
@@ -80,21 +80,22 @@ The repository now includes a GitHub Actions workflow that automatically scrapes
 2. **Add these secrets**:
    - `GEMINI_API_KEY`: Your Google Gemini API key
    - `SUPABASE_URL`: Your Supabase URL
-   - `SUPABASE_KEY`: Your Supabase anon key
+   - `SUPABASE_SERVICE_ROLE_KEY`: Your Supabase service role key
 
 3. **Verify workflow**:
    - Go to **Actions** tab
    - See "Daily Brownout Notice Scraper" workflow
-   - It will run automatically at 12 AM UTC
+   - It will run automatically at 12 AM Philippine Time
    - You can also click "Run workflow" to test manually
 
 ### Timezone Adjustment
 
-The default schedule is 12:00 AM **UTC**. To adjust for your timezone:
+The default schedule is already set to 12:00 AM **Philippine Time**.
 
-Edit `.github/workflows/scraper.yml` line 10:
-- **Manila (UTC+8)**: Change `0 0` to `16 0` (4 PM previous day in UTC)
-- **Other timezones**: Use [crontab.guru](https://crontab.guru) to convert
+Current cron in `.github/workflows/scraper.yml`:
+- `0 16 * * *` (which is 12:00 AM PH time / 4:00 PM UTC previous day)
+
+For other timezones, use [crontab.guru](https://crontab.guru) to convert.
 
 ---
 
