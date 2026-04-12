@@ -2,9 +2,9 @@ name: Daily Brownout Notice Scraper
 
 on:
   schedule:
-    # Runs at 12:00 AM Philippine Time (UTC+8) daily
-    # In UTC, this is 4:00 PM (16:00) the previous day
-    - cron: '0 16 * * *'
+    # Runs at 12:43 AM Philippine Time (UTC+8) daily
+    # In UTC, this is 4:43 PM (16:43) the previous day
+    - cron: '43 16 * * *'
   
   # Allow manual triggering from GitHub Actions tab
   workflow_dispatch:
@@ -73,6 +73,6 @@ jobs:
       - name: Sync schema to prod (if prod run)
         if: github.event_name == 'schedule' || inputs.target_environment == 'prod'
         run: |
-          npm install -g supabase
+          curl -fsSL https://cli.supabase.io/install.sh | sh
           supabase db pull --db-url "${{ secrets.DEV_DATABASE_URL }}"
           supabase db push --db-url "${{ secrets.PROD_DATABASE_URL }}"
