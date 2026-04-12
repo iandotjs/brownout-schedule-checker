@@ -332,12 +332,24 @@ def is_filename_date_past(url: str) -> bool:
     """
     Attempts to extract an explicit date like APRIL-8-2026 from the filename/URL.
     If it exists and is earlier than today, return True (past).
+    Handles both full and abbreviated month names (e.g., April or Apr).
     """
-    # Regex out something like 'april-8-2026' or 'january-15-2025'
-    match = re.search(r'(january|february|march|april|may|june|july|august|september|october|november|december)-(\d{1,2})-(\d{4})', url.lower())
+    # Regex to match both full and abbreviated month names
+    match = re.search(r'(january|february|march|april|may|june|july|august|september|october|november|december|jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)-(\d{1,2})-(\d{4})', url.lower())
     if match:
         try:
-            date_str = match.group(0) # e.g. april-8-2026
+            month_str = match.group(1)
+            day = match.group(2)
+            year = match.group(3)
+            
+            # Map abbreviated months to full names for parsing
+            month_map = {
+                'jan': 'january', 'feb': 'february', 'mar': 'march', 'apr': 'april',
+                'may': 'may', 'jun': 'june', 'jul': 'july', 'aug': 'august',
+                'sep': 'september', 'oct': 'october', 'nov': 'november', 'dec': 'december'
+            }
+            full_month = month_map.get(month_str[:3], month_str)
+            date_str = f"{full_month.capitalize()}-{day}-{year}"
             parsed_date = datetime.strptime(date_str, "%B-%d-%Y").date()
             return parsed_date < date.today()
         except Exception:
