@@ -1,5 +1,6 @@
 flask
 flask-cors
+truststore
 google-genai
 requests
 pillow

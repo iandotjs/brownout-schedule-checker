@@ -38,7 +38,7 @@ cd notice-scraper
 
 ```bash
 SUPABASE_URL=https://your-project.supabase.co
-SUPABASE_KEY=your-anon-or-service-role-key
+SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
 ```
 
 #### 📌 Install Dependencies
