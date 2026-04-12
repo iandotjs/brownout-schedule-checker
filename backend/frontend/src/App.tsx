@@ -1,6 +1,6 @@
 import { useEffect, useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { MapPin, Building2, Zap, Calendar, Clock, CheckCircle2, AlertCircle, Info } from 'lucide-react';
+import { MapPin, Building2, Zap, Calendar, Clock, CheckCircle2, AlertCircle, Info, Sun, Moon } from 'lucide-react';
 import localLocations from './locations.json';
 import { Analytics } from '@vercel/analytics/react';
 
@@ -28,6 +28,7 @@ interface MatchedSchedule {
 
 type MunicipalityValue = { code?: string | null; name?: string | null } | string | null | undefined;
 type BarangayValue = { code?: string | null; name?: string | null } | string | null | undefined;
+type ThemeMode = 'light' | 'dark';
 
 const SUPABASE_URL = (import.meta.env.VITE_SUPABASE_URL || '').replace(/\/$/, '');
 const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY || '';
@@ -134,6 +135,34 @@ export default function App() {
   const [loading, setLoading] = useState(false);
   const [scraping, setScraping] = useState(false);
   const [scrapeStatus, setScrapeStatus] = useState<{ ok: boolean; msg: string } | null>(null);
+  const [useLowPowerVisuals, setUseLowPowerVisuals] = useState(false);
+  const [themeMode, setThemeMode] = useState<ThemeMode>(() => {
+    const saved = localStorage.getItem('themeMode');
+    if (saved === 'light' || saved === 'dark') return saved;
+    return 'dark';
+  });
+
+  useEffect(() => {
+    const mobileQuery = window.matchMedia('(max-width: 640px)');
+    const reducedMotionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+    const updateVisualMode = () => {
+      setUseLowPowerVisuals(mobileQuery.matches || reducedMotionQuery.matches);
+    };
+
+    updateVisualMode();
+    mobileQuery.addEventListener('change', updateVisualMode);
+    reducedMotionQuery.addEventListener('change', updateVisualMode);
+
+    return () => {
+      mobileQuery.removeEventListener('change', updateVisualMode);
+      reducedMotionQuery.removeEventListener('change', updateVisualMode);
+    };
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem('themeMode', themeMode);
+  }, [themeMode]);
 
   const isAdmin = ADMIN_KEY && new URLSearchParams(window.location.search).get('admin') === ADMIN_KEY;
 
@@ -257,11 +286,27 @@ export default function App() {
     setSelectedBarangay('');
   };
 
+  const isLightMode = themeMode === 'light';
+  const containerBgClass = isLightMode
+    ? 'bg-gradient-to-br from-amber-100 via-sky-100 to-emerald-100'
+    : 'bg-gradient-to-br from-slate-950 via-blue-950 to-slate-900';
+  const cardClass = isLightMode
+    ? 'bg-white/70 border border-amber-200/70 shadow-2xl shadow-amber-200/40'
+    : 'bg-white/10 border border-white/20 shadow-2xl';
+  const sectionTextClass = isLightMode ? 'text-slate-800' : 'text-white';
+  const mutedTextClass = isLightMode ? 'text-slate-600' : 'text-white/60';
+  const fieldClass = isLightMode
+    ? 'w-full px-5 py-4 bg-white/80 border border-amber-200 rounded-2xl text-slate-800 appearance-none cursor-pointer focus:outline-none focus:border-amber-500 focus:bg-white transition-all duration-300 hover:bg-white'
+    : 'w-full px-5 py-4 bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl text-white appearance-none cursor-pointer focus:outline-none focus:border-yellow-400 focus:bg-white/20 transition-all duration-300 hover:bg-white/15';
+  const panelClass = isLightMode
+    ? 'relative bg-white/80 border border-amber-200/70'
+    : 'relative bg-white/10 backdrop-blur-sm border border-white/20';
+
   return (
-    <div className="size-full relative overflow-hidden bg-gradient-to-br from-slate-950 via-blue-950 to-slate-900 min-h-screen flex flex-col">
+    <div className={`size-full relative overflow-hidden min-h-screen flex flex-col transition-colors duration-500 ${containerBgClass}`}>
       {/* City skyline silhouette */}
-      <div className="absolute bottom-0 left-0 right-0 h-64 bg-gradient-to-t from-black/80 to-transparent z-0">
-        <svg className="absolute bottom-0 w-full h-48 text-black/60" viewBox="0 0 1440 320" preserveAspectRatio="none">
+      <div className={`absolute bottom-0 left-0 right-0 h-64 z-0 ${isLightMode ? 'bg-gradient-to-t from-amber-200/30 to-transparent' : 'bg-gradient-to-t from-black/80 to-transparent'}`}>
+        <svg className={`absolute bottom-0 w-full h-48 ${isLightMode ? 'text-amber-400/25' : 'text-black/60'}`} viewBox="0 0 1440 320" preserveAspectRatio="none">
           <path fill="currentColor" d="M0,192L48,176C96,160,192,128,288,128C384,128,480,160,576,165.3C672,171,768,149,864,154.7C960,160,1056,192,1152,186.7C1248,181,1344,139,1392,117.3L1440,96L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path>
         </svg>
       </div>
@@ -269,49 +314,62 @@ export default function App() {
       {/* Electric grid lines */}
       <div className="absolute inset-0 opacity-10 z-0 pointer-events-none">
         <div className="absolute inset-0" style={{
-          backgroundImage: 'linear-gradient(rgba(251, 191, 36, 0.3) 1px, transparent 1px), linear-gradient(90deg, rgba(251, 191, 36, 0.3) 1px, transparent 1px)',
+          backgroundImage: isLightMode
+            ? 'linear-gradient(rgba(59, 130, 246, 0.2) 1px, transparent 1px), linear-gradient(90deg, rgba(16, 185, 129, 0.2) 1px, transparent 1px)'
+            : 'linear-gradient(rgba(251, 191, 36, 0.3) 1px, transparent 1px), linear-gradient(90deg, rgba(251, 191, 36, 0.3) 1px, transparent 1px)',
           backgroundSize: '50px 50px'
         }}></div>
       </div>
 
       {/* Animated electric orbs */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
-        <motion.div
-          className="absolute -top-40 -left-40 w-96 h-96 bg-yellow-400/30 rounded-full blur-3xl"
-          animate={{ scale: [1, 1.3, 1], opacity: [0.3, 0.5, 0.3] }}
-          transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-        />
-        <motion.div
-          className="absolute top-20 right-20 w-72 h-72 bg-cyan-400/20 rounded-full blur-3xl"
-          animate={{ scale: [1.2, 1, 1.2], opacity: [0.2, 0.4, 0.2] }}
-          transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
-        />
-        <motion.div
-          className="absolute bottom-40 left-1/3 w-80 h-80 bg-blue-500/20 rounded-full blur-3xl"
-          animate={{ scale: [1, 1.4, 1], opacity: [0.2, 0.3, 0.2] }}
-          transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
-        />
+        {!useLowPowerVisuals ? (
+          <>
+            <motion.div
+              className={`absolute -top-40 -left-40 w-96 h-96 rounded-full blur-3xl ${isLightMode ? 'bg-amber-300/40' : 'bg-yellow-400/30'}`}
+              animate={{ scale: [1, 1.3, 1], opacity: [0.3, 0.5, 0.3] }}
+              transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+            />
+            <motion.div
+              className={`absolute top-20 right-20 w-72 h-72 rounded-full blur-3xl ${isLightMode ? 'bg-sky-300/35' : 'bg-cyan-400/20'}`}
+              animate={{ scale: [1.2, 1, 1.2], opacity: [0.2, 0.4, 0.2] }}
+              transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
+            />
+            <motion.div
+              className={`absolute bottom-40 left-1/3 w-80 h-80 rounded-full blur-3xl ${isLightMode ? 'bg-emerald-300/30' : 'bg-blue-500/20'}`}
+              animate={{ scale: [1, 1.4, 1], opacity: [0.2, 0.3, 0.2] }}
+              transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+            />
+          </>
+        ) : (
+          <div className={`absolute -top-24 -left-24 w-64 h-64 rounded-full blur-3xl ${isLightMode ? 'bg-amber-300/30' : 'bg-yellow-400/20'}`} />
+        )}
       </div>
 
       {/* Electric sparks/particles */}
       <div className="pointer-events-none z-0">
-        {[...Array(30)].map((_, i) => (
+        {[...Array(useLowPowerVisuals ? 10 : 30)].map((_, i) => (
           <motion.div
             key={i}
-            className="absolute bg-yellow-400 rounded-full"
+            className={`absolute rounded-full ${isLightMode ? 'bg-emerald-400' : 'bg-yellow-400'}`}
             style={{
               width: Math.random() * 3 + 1,
               height: Math.random() * 3 + 1,
               left: `${Math.random() * 100}%`,
               top: `${Math.random() * 100}%`,
             }}
-            animate={{ opacity: [0, 1, 0], scale: [0, 1, 0] }}
-            transition={{ duration: Math.random() * 2 + 1, repeat: Infinity, delay: Math.random() * 3 }}
+            animate={useLowPowerVisuals ? { opacity: 0.25 } : { opacity: [0, 1, 0], scale: [0, 1, 0] }}
+            transition={
+              useLowPowerVisuals
+                ? { duration: 0 }
+                : { duration: Math.random() * 2 + 1, repeat: Infinity, delay: Math.random() * 3 }
+            }
           />
         ))}
       </div>
 
-      {/* Lightning strikes */}
+      {/* Lightning strikes for brownout theme */}
+      {!useLowPowerVisuals && !isLightMode && (
       <div className="pointer-events-none z-0">
         {[...Array(3)].map((_, i) => (
           <motion.div
@@ -328,6 +386,18 @@ export default function App() {
           />
         ))}
       </div>
+      )}
+
+      {/* Soft sunlight glow for electricity theme */}
+      {!useLowPowerVisuals && isLightMode && (
+        <div className="pointer-events-none z-0 absolute inset-0 overflow-hidden">
+          <motion.div
+            className="absolute -top-44 left-1/2 -translate-x-1/2 w-[34rem] h-[34rem] rounded-full bg-gradient-to-b from-amber-200/45 via-yellow-200/20 to-transparent blur-3xl"
+            animate={{ opacity: [0.35, 0.6, 0.35], scale: [0.95, 1.05, 0.95] }}
+            transition={{ duration: 4.5, repeat: Infinity, ease: 'easeInOut' }}
+          />
+        </div>
+      )}
 
       {/* Content */}
       <div className="relative z-10 w-full flex-grow flex flex-col items-center justify-center p-4 md:p-8">
@@ -338,9 +408,18 @@ export default function App() {
           className="w-full max-w-2xl"
         >
           {/* Glassmorphic Card */}
-          <div className="bg-white/10 backdrop-blur-xl rounded-3xl border border-white/20 shadow-2xl overflow-hidden pointer-events-auto">
+          <div className={`backdrop-blur-xl rounded-3xl overflow-hidden pointer-events-auto transition-colors duration-500 ${cardClass}`}>
             {/* Header with gradient */}
-            <div className="relative bg-gradient-to-r from-yellow-400 via-orange-400 to-pink-500 p-8 md:p-10">
+            <div className={`relative p-8 md:p-10 ${isLightMode ? 'bg-gradient-to-r from-emerald-400 via-cyan-400 to-sky-500' : 'bg-gradient-to-r from-yellow-400 via-orange-400 to-pink-500'}`}>
+              <button
+                onClick={() => setThemeMode((prev) => (prev === 'dark' ? 'light' : 'dark'))}
+                className={`absolute right-4 top-4 inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-semibold transition-colors ${isLightMode ? 'bg-white/80 text-slate-700 hover:bg-white' : 'bg-black/30 text-white hover:bg-black/40'}`}
+                title={isLightMode ? 'Switch to dark mode' : 'Switch to light mode'}
+                type="button"
+              >
+                {isLightMode ? <Moon className="w-4 h-4" /> : <Sun className="w-4 h-4" />}
+                {isLightMode ? 'Dark Mode' : 'Light Mode'}
+              </button>
               <motion.div
                 initial={{ opacity: 0, y: -20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -365,7 +444,7 @@ export default function App() {
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.3 }}
               >
-                <label htmlFor="city" className="flex items-center gap-2 mb-3 text-white/90 font-medium">
+                <label htmlFor="city" className={`flex items-center gap-2 mb-3 font-medium ${isLightMode ? 'text-slate-700' : 'text-white/90'}`}>
                   <Building2 className="w-4 h-4" />
                   City / Municipality
                 </label>
@@ -374,16 +453,16 @@ export default function App() {
                     id="city"
                     value={selectedCity}
                     onChange={(e) => handleCityChange(e.target.value)}
-                    className="w-full px-5 py-4 bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl text-white appearance-none cursor-pointer focus:outline-none focus:border-yellow-400 focus:bg-white/20 transition-all duration-300 hover:bg-white/15"
+                    className={fieldClass}
                   >
-                    <option value="" className="bg-gray-900">Select a city</option>
+                    <option value="" className={isLightMode ? 'bg-white text-slate-800' : 'bg-gray-900'}>Select a city</option>
                     {locations.map((loc) => (
-                      <option key={loc.code} value={loc.code} className="bg-gray-900 border-none">
+                      <option key={loc.code} value={loc.code} className={isLightMode ? 'bg-white text-slate-800 border-none' : 'bg-gray-900 border-none'}>
                         {loc.name}
                       </option>
                     ))}
                   </select>
-                  <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-white/60">
+                  <div className={`absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none ${isLightMode ? 'text-slate-500' : 'text-white/60'}`}>
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                     </svg>
@@ -397,7 +476,7 @@ export default function App() {
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.4 }}
               >
-                <label htmlFor="barangay" className="flex items-center gap-2 mb-3 text-white/90 font-medium">
+                <label htmlFor="barangay" className={`flex items-center gap-2 mb-3 font-medium ${isLightMode ? 'text-slate-700' : 'text-white/90'}`}>
                   <MapPin className="w-4 h-4" />
                   Barangay
                 </label>
@@ -407,16 +486,16 @@ export default function App() {
                     value={selectedBarangay}
                     onChange={(e) => setSelectedBarangay(e.target.value)}
                     disabled={!selectedCity}
-                    className="w-full px-5 py-4 bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl text-white appearance-none cursor-pointer focus:outline-none focus:border-yellow-400 focus:bg-white/20 transition-all duration-300 hover:bg-white/15 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-white/10"
+                    className={`${fieldClass} disabled:opacity-50 disabled:cursor-not-allowed ${isLightMode ? 'disabled:hover:bg-white/80' : 'disabled:hover:bg-white/10'}`}
                   >
-                    <option value="" className="bg-gray-900">Select a barangay</option>
+                    <option value="" className={isLightMode ? 'bg-white text-slate-800' : 'bg-gray-900'}>Select a barangay</option>
                     {availableBarangays.map((barangay) => (
-                      <option key={barangay.code} value={barangay.code} className="bg-gray-900 border-none">
+                      <option key={barangay.code} value={barangay.code} className={isLightMode ? 'bg-white text-slate-800 border-none' : 'bg-gray-900 border-none'}>
                         {barangay.name}
                       </option>
                     ))}
                   </select>
-                  <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-white/60">
+                  <div className={`absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none ${isLightMode ? 'text-slate-500' : 'text-white/60'}`}>
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                     </svg>
@@ -434,7 +513,7 @@ export default function App() {
                     exit={{ opacity: 0, scale: 0.95 }}
                     className="mt-8 text-center"
                   >
-                     <p className="text-white/60">Scanning schedules from ZANECO...</p>
+                     <p className={mutedTextClass}>Scanning schedules from ZANECO...</p>
                   </motion.div>
                 ) : matchedSchedules !== null && (
                   <motion.div
@@ -447,7 +526,7 @@ export default function App() {
                   >
                     {matchedSchedules.length === 0 ? (
                       <motion.div
-                        className="relative overflow-hidden bg-gradient-to-r from-emerald-500/20 to-teal-500/20 backdrop-blur-sm border border-emerald-400/30 rounded-2xl p-6"
+                        className={`overflow-hidden backdrop-blur-sm rounded-2xl p-6 ${isLightMode ? 'bg-gradient-to-r from-emerald-100 to-teal-100 border border-emerald-300/70' : 'bg-gradient-to-r from-emerald-500/20 to-teal-500/20 border border-emerald-400/30'}`}
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                       >
@@ -459,14 +538,14 @@ export default function App() {
                           >
                             <CheckCircle2 className="w-6 h-6 text-emerald-400 flex-shrink-0" />
                           </motion.div>
-                          <p className="text-emerald-100 font-medium">
+                          <p className={`font-medium ${isLightMode ? 'text-emerald-800' : 'text-emerald-100'}`}>
                             Great news! No scheduled brownout in your area.
                           </p>
                         </div>
                       </motion.div>
                     ) : (
                       <div className="space-y-4">
-                        <div className="flex items-center gap-2 text-orange-300">
+                        <div className={`flex items-center gap-2 ${isLightMode ? 'text-orange-700' : 'text-orange-300'}`}>
                           <AlertCircle className="w-5 h-5" />
                           <span className="text-sm font-semibold">Scheduled brownouts found</span>
                         </div>
@@ -477,13 +556,13 @@ export default function App() {
                               initial={{ opacity: 0, x: -20 }}
                               animate={{ opacity: 1, x: 0 }}
                               transition={{ delay: index * 0.1 }}
-                              className="relative bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-5 hover:bg-white/15 transition-all duration-300 group"
+                              className={`${panelClass} rounded-2xl p-5 transition-all duration-300 group ${isLightMode ? 'hover:bg-white' : 'hover:bg-white/15'}`}
                             >
                               <a 
                                 href={schedule.url} 
                                 target="_blank" 
                                 rel="noopener noreferrer"
-                                className="absolute top-4 right-4 text-white/50 hover:text-white transition-colors"
+                                className={`absolute top-4 right-4 transition-colors ${isLightMode ? 'text-slate-500 hover:text-slate-800' : 'text-white/50 hover:text-white'}`}
                                 title="View the official notice details"
                               >
                                 <Info className="w-5 h-5" />
@@ -492,18 +571,18 @@ export default function App() {
                                 <div className="flex items-start gap-3">
                                   <MapPin className="w-5 h-5 text-yellow-400 flex-shrink-0 mt-0.5" />
                                   <div className="flex-1">
-                                    <div className="text-xs text-white/60 mb-1">Location</div>
-                                    <div className="text-white text-sm font-medium">
+                                    <div className={`text-xs mb-1 ${mutedTextClass}`}>Location</div>
+                                    <div className={`text-sm font-medium ${sectionTextClass}`}>
                                       {schedule.locationStr}
                                     </div>
                                   </div>
                                 </div>
-                                <div className="grid grid-cols-2 gap-4">
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                   <div className="flex items-start gap-3">
                                     <Calendar className="w-5 h-5 text-blue-400 flex-shrink-0 mt-0.5" />
                                     <div className="flex-1">
-                                      <div className="text-xs text-white/60 mb-1">Date</div>
-                                      <div className="text-white text-sm font-medium">
+                                      <div className={`text-xs mb-1 ${mutedTextClass}`}>Date</div>
+                                      <div className={`text-sm font-medium break-words ${sectionTextClass}`}>
                                         {schedule.dateStr}
                                       </div>
                                     </div>
@@ -511,8 +590,8 @@ export default function App() {
                                   <div className="flex items-start gap-3">
                                     <Clock className="w-5 h-5 text-purple-400 flex-shrink-0 mt-0.5" />
                                     <div className="flex-1">
-                                      <div className="text-xs text-white/60 mb-1">Time</div>
-                                      <div className="text-white text-sm font-medium">
+                                      <div className={`text-xs mb-1 ${mutedTextClass}`}>Time</div>
+                                      <div className={`text-sm font-medium break-words ${sectionTextClass}`}>
                                         {schedule.timeStr}
                                       </div>
                                     </div>
@@ -536,7 +615,7 @@ export default function App() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.8 }}
-          className="mt-8 text-center text-white/50 text-sm space-y-2"
+          className={`mt-8 text-center text-sm space-y-2 ${isLightMode ? 'text-slate-600' : 'text-white/50'}`}
         >
           <p>Data sourced from official ZANECO announcements.</p>
           <p>
@@ -545,7 +624,7 @@ export default function App() {
               href="https://github.com/iandotjs"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-white/70 hover:text-white transition-colors underline"
+              className={`${isLightMode ? 'text-slate-800 hover:text-slate-950' : 'text-white/70 hover:text-white'} transition-colors underline`}
             >
               @iandotjs
             </a>
@@ -558,9 +637,9 @@ export default function App() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 1 }}
-            className="mt-6 w-full max-w-2xl bg-white/5 border border-white/10 rounded-2xl p-5 space-y-3"
+            className={`mt-6 w-full max-w-2xl rounded-2xl p-5 space-y-3 ${isLightMode ? 'bg-white/80 border border-amber-200/70' : 'bg-white/5 border border-white/10'}`}
           >
-            <p className="text-white/40 text-xs uppercase tracking-widest font-semibold">Admin</p>
+            <p className={`text-xs uppercase tracking-widest font-semibold ${isLightMode ? 'text-slate-500' : 'text-white/40'}`}>Admin</p>
             <div className="flex items-center gap-3 flex-wrap">
               <button
                 onClick={triggerScrape}
@@ -570,7 +649,7 @@ export default function App() {
                 {scraping ? 'Fetching...' : 'Fetch New Notices'}
               </button>
               {scrapeStatus && (
-                <p className={`text-sm ${scrapeStatus.ok ? 'text-emerald-400' : 'text-red-400'}`}>
+                <p className={`text-sm ${scrapeStatus.ok ? (isLightMode ? 'text-emerald-700' : 'text-emerald-400') : (isLightMode ? 'text-red-700' : 'text-red-400')}`}>
                   {scrapeStatus.msg}
                 </p>
               )}
