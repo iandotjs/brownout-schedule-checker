@@ -2,6 +2,7 @@ import { useEffect, useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { MapPin, Building2, Zap, Calendar, Clock, CheckCircle2, AlertCircle, Info } from 'lucide-react';
 import localLocations from './locations.json';
+import { Analytics } from '@vercel/analytics/react';
 
 interface Location {
   code: string;
@@ -509,6 +510,7 @@ export default function App() {
           </p>
         </motion.div>
       </div>
+    <Analytics />
     </div>
   );
 }
