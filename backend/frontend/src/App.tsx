@@ -1,6 +1,7 @@
 import { useEffect, useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { MapPin, Building2, Zap, Calendar, Clock, CheckCircle2, AlertCircle, Info } from 'lucide-react';
+import localLocations from './locations.json';
 
 interface Location {
   code: string;
@@ -24,54 +25,129 @@ interface MatchedSchedule {
   timeStr: string;
 }
 
+type MunicipalityValue = { code?: string | null; name?: string | null } | string | null | undefined;
+type BarangayValue = { code?: string | null; name?: string | null } | string | null | undefined;
+
+const SUPABASE_URL = (import.meta.env.VITE_SUPABASE_URL || '').replace(/\/$/, '');
+const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY || '';
+
+const normalizeLocations = (data: unknown): Location[] => {
+  if (Array.isArray(data)) {
+    return data as Location[];
+  }
+
+  if (data && typeof data === 'object') {
+    return Object.entries(data as Record<string, string[]>).map(([city, barangays], idx) => ({
+      code: `CITY-${idx}`,
+      name: city,
+      barangays: barangays.map((b, i) => ({
+        code: `BRGY-${idx}-${i}`,
+        name: b,
+      })),
+    }));
+  }
+
+  return [];
+};
+
+const normalizeText = (value: unknown): string =>
+  String(value ?? '')
+    .toUpperCase()
+    .replace(/[^A-Z0-9\s]/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+
+const matchesMunicipality = (
+  municipality: MunicipalityValue,
+  selectedCityCode: string,
+  selectedCityName: string
+): boolean => {
+  if (!municipality) return false;
+
+  const selectedCode = String(selectedCityCode || '').trim();
+  const selectedName = normalizeText(selectedCityName);
+
+  if (typeof municipality === 'string') {
+    const muniValue = municipality.trim();
+    return muniValue === selectedCode || normalizeText(muniValue) === selectedName;
+  }
+
+  const muniCode = String(municipality.code ?? '').trim();
+  const muniName = normalizeText(municipality.name ?? '');
+  return muniCode === selectedCode || muniName === selectedName;
+};
+
+const matchesBarangay = (
+  barangay: BarangayValue,
+  selectedBarangayCode: string,
+  selectedBarangayName: string
+): boolean => {
+  if (!barangay) return false;
+
+  const selectedCode = String(selectedBarangayCode || '').trim();
+  const selectedName = normalizeText(selectedBarangayName);
+
+  if (typeof barangay === 'string') {
+    const brgyValue = barangay.trim();
+    return brgyValue === selectedCode || normalizeText(brgyValue) === selectedName;
+  }
+
+  const brgyCode = String(barangay.code ?? '').trim();
+  const brgyName = normalizeText(barangay.name ?? '');
+  return brgyCode === selectedCode || brgyName === selectedName;
+};
+
+const fetchNoticesFromSupabase = async (): Promise<Notice[]> => {
+  if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
+    return [];
+  }
+
+  const url = new URL(`${SUPABASE_URL}/rest/v1/notices`);
+  url.searchParams.set('select', 'id,title,url,created_at,data,status');
+  url.searchParams.set('status', 'eq.active');
+  url.searchParams.set('order', 'created_at.desc');
+  url.searchParams.set('limit', '20');
+
+  const res = await fetch(url.toString(), {
+    headers: {
+      apikey: SUPABASE_ANON_KEY,
+      Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
+    },
+  });
+
+  if (!res.ok) {
+    throw new Error(`Supabase request failed: ${res.status}`);
+  }
+
+  const data = await res.json();
+  return Array.isArray(data) ? data : [];
+};
+
 export default function App() {
-  const [locations, setLocations] = useState<Location[]>([]);
+  const [locations] = useState<Location[]>(normalizeLocations(localLocations));
   const [selectedCity, setSelectedCity] = useState('');
   const [selectedBarangay, setSelectedBarangay] = useState('');
   const [notices, setNotices] = useState<Notice[]>([]);
   const [loading, setLoading] = useState(false);
 
-  // Fetch cached PSGC locations from backend
-  useEffect(() => {
-    fetch("http://127.0.0.1:5000/api/locations")
-      .then((res) => res.json())
-      .then((data) => {
-        let normalized: Location[] = [];
-        if (!Array.isArray(data)) {
-          normalized = Object.entries(data).map(([city, barangays], idx) => ({
-            code: `CITY-${idx}`,
-            name: city,
-            barangays: (barangays as string[]).map((b, i) => ({
-              code: `BRGY-${idx}-${i}`,
-              name: b,
-            })),
-          }));
-        } else {
-          normalized = data;
-        }
-        setLocations(normalized);
-      })
-      .catch((err) => console.error("Error fetching locations:", err));
-  }, []);
+  // Locations are bundled so dropdown works without backend runtime dependencies.
 
-  // Fetch notices
+  // Fetch notices directly from Supabase
   useEffect(() => {
     setLoading(true);
-    fetch("http://127.0.0.1:5000/api/notices/latest")
-      .then((res) => res.json())
-      .then((data) => {
-        if (Array.isArray(data)) {
-          setNotices(data);
-        } else {
-          setNotices([]);
-        }
-        setLoading(false);
-      })
-      .catch((err) => {
-        console.error("Error fetching notices:", err);
+    const loadNotices = async () => {
+      try {
+        const supabaseNotices = await fetchNoticesFromSupabase();
+        setNotices(supabaseNotices);
+      } catch (err) {
+        console.error('Error fetching notices from Supabase:', err);
         setNotices([]);
+      } finally {
         setLoading(false);
-      });
+      }
+    };
+
+    void loadNotices();
   }, []);
 
   const availableBarangays = useMemo(() => {
@@ -82,6 +158,11 @@ export default function App() {
   // Filter schedules and flatten them exactly to specific dates/times
   const matchedSchedules = useMemo(() => {
     if (!selectedCity || !selectedBarangay) return null;
+
+    const selectedCityObj = locations.find((l) => l.code === selectedCity);
+    const selectedCityName = selectedCityObj?.name || '';
+    const selectedBarangayName =
+      selectedCityObj?.barangays.find((b) => b.code === selectedBarangay)?.name || '';
     
     const matches: MatchedSchedule[] = [];
 
@@ -96,12 +177,16 @@ export default function App() {
           let matchedLocStr = "";
           
           s.locations?.forEach((loc: any) => {
-            if (loc.municipality?.code === selectedCity || loc.municipality === selectedCity) {
+            if (matchesMunicipality(loc.municipality, selectedCity, selectedCityName)) {
               loc.barangays?.forEach((b: any) => {
-                if (b.code === selectedBarangay || b === selectedBarangay) {
+                if (matchesBarangay(b, selectedBarangay, selectedBarangayName)) {
                   hasMatch = true;
-                  const cityName = locations.find(l => l.code === selectedCity)?.name || String(loc.municipality?.name || loc.municipality);
-                  const brgyName = locations.find(l => l.code === selectedCity)?.barangays.find(brp => brp.code === selectedBarangay)?.name || String(b.name || b);
+                  const cityName =
+                    selectedCityName ||
+                    String((typeof loc.municipality === 'object' && loc.municipality?.name) || loc.municipality || '');
+                  const brgyName =
+                    selectedBarangayName ||
+                    String((typeof b === 'object' && b?.name) || b || '');
                   matchedLocStr = `${brgyName}, ${cityName}`;
                 }
               });
@@ -401,6 +486,27 @@ export default function App() {
               </AnimatePresence>
             </div>
           </div>
+        </motion.div>
+
+        {/* Attribution Footer */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.8 }}
+          className="mt-8 text-center text-white/50 text-sm space-y-2"
+        >
+          <p>Data sourced from official ZANECO announcements.</p>
+          <p>
+            Made by{' '}
+            <a
+              href="https://github.com/iandotjs"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-white/70 hover:text-white transition-colors underline"
+            >
+              @iandotjs
+            </a>
+          </p>
         </motion.div>
       </div>
     </div>

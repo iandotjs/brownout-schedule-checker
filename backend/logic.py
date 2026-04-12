@@ -21,6 +21,9 @@ load_dotenv()  # load .env file here too (for GEMINI_API_KEY)
 # Your scraper + OCR + Gemini code
 # ==============================
 
+USER_AGENT = "ZNBrownoutChecker-Bot/1.0 (contact: dinopol.ianjay@gmail.com)"
+REQUEST_HEADERS = {"User-Agent": USER_AGENT}
+
 ZANECO_BASE = "https://zaneco.ph"
 CATEGORY_URL = f"{ZANECO_BASE}/category/power-interruption-update/"
 
@@ -40,7 +43,7 @@ def scrape_notice_image_urls(limit=None):
     processed_urls = get_processed_urls()
     print(f"Skipping {len(processed_urls)} already processed URLs...")
 
-    resp = requests.get(CATEGORY_URL)
+    resp = requests.get(CATEGORY_URL, headers=REQUEST_HEADERS)
     resp.raise_for_status()
     soup = BeautifulSoup(resp.text, "html.parser")
 
@@ -61,7 +64,7 @@ def scrape_notice_image_urls(limit=None):
         else:
             status = "active"   # default for non-cancelled notices
 
-        post_resp = requests.get(post_url)
+        post_resp = requests.get(post_url, headers=REQUEST_HEADERS)
         post_resp.raise_for_status()
         post_soup = BeautifulSoup(post_resp.text, "html.parser")
 
@@ -133,7 +136,8 @@ def fetch_and_cache_locations(force_refresh=False):
             return json.load(f)
 
     url = f"{PSGC_BASE}/provinces/{PROVINCE_CODE}/cities-municipalities/"
-    resp = requests.get(url, headers={"accept": "application/json"})
+    headers = {**REQUEST_HEADERS, "accept": "application/json"}
+    resp = requests.get(url, headers=headers)
     resp.raise_for_status()
     municipalities = resp.json()
 
@@ -143,7 +147,8 @@ def fetch_and_cache_locations(force_refresh=False):
         muni_code = m["code"]
 
         bgy_url = f"{PSGC_BASE}/cities-municipalities/{muni_code}/barangays/"
-        bgy_resp = requests.get(bgy_url, headers={"accept": "application/json"})
+        headers = {**REQUEST_HEADERS, "accept": "application/json"}
+        bgy_resp = requests.get(bgy_url, headers=headers)
         bgy_resp.raise_for_status()
         barangays = [
             {"code": b["code"], "name": b["name"].upper().strip()}
@@ -179,7 +184,7 @@ def snap_to_reference(name, choices):
 client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
 
 def load_image_from_url(url):
-    resp = requests.get(url, stream=True)
+    resp = requests.get(url, headers=REQUEST_HEADERS, stream=True)
     resp.raise_for_status()
     # load directly into PIL memory safely
     img = Image.open(BytesIO(resp.content))

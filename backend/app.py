@@ -8,8 +8,7 @@ from dotenv import load_dotenv
 # Load .env at the very beginning
 load_dotenv()
 
-from logic import get_notices, fetch_and_cache_locations
-from supabase_client import supabase
+from logic import get_notices
 from db import save_notices_to_supabase, delete_old_notices
 
 # --- Flask app setup ---
@@ -28,25 +27,7 @@ def scrape_and_save_notices():
     deleted = delete_old_notices() # clean up fully expired schedules
     return jsonify({"message": f"Saved {result['inserted']} notices. Deleted {deleted} old notices."}), 201
 
-@app.route("/api/notices/latest", methods=["GET"])
-def get_latest_notices():
-    try:
-        response = supabase.table("notices") \
-                           .select("id, title, url, created_at, data, status") \
-                           .eq("status", "active") \
-                           .order("created_at", desc=True) \
-                           .limit(10) \
-                           .execute()
 
-        return jsonify(response.data or []), 200
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
-
-@app.route("/api/locations", methods=["GET"])
-def get_locations():
-    # Convert dict to list of objects
-    locations = fetch_and_cache_locations()
-    return jsonify(locations), 200
 
 
 # ==============================
