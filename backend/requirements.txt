@@ -8,3 +8,4 @@ beautifulsoup4
 python-dotenv
 supabase>=2.5.0
 python-dateutil
+gunicorn

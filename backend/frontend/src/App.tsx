@@ -31,6 +31,8 @@ type BarangayValue = { code?: string | null; name?: string | null } | string | n
 
 const SUPABASE_URL = (import.meta.env.VITE_SUPABASE_URL || '').replace(/\/$/, '');
 const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY || '';
+const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL || '').replace(/\/$/, '');
+const ADMIN_KEY = import.meta.env.VITE_ADMIN_KEY || '';
 
 const normalizeLocations = (data: unknown): Location[] => {
   if (Array.isArray(data)) {
@@ -130,6 +132,35 @@ export default function App() {
   const [selectedBarangay, setSelectedBarangay] = useState('');
   const [notices, setNotices] = useState<Notice[]>([]);
   const [loading, setLoading] = useState(false);
+  const [scraping, setScraping] = useState(false);
+  const [scrapeStatus, setScrapeStatus] = useState<{ ok: boolean; msg: string } | null>(null);
+
+  const isAdmin = ADMIN_KEY && new URLSearchParams(window.location.search).get('admin') === ADMIN_KEY;
+
+  const triggerScrape = async () => {
+    if (!API_BASE_URL) {
+      setScrapeStatus({ ok: false, msg: 'VITE_API_BASE_URL is not configured.' });
+      return;
+    }
+    setScraping(true);
+    setScrapeStatus(null);
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/notices`, { method: 'POST' });
+      const json = await res.json();
+      if (res.ok) {
+        setScrapeStatus({ ok: true, msg: json.message || 'Done.' });
+        // Reload notices after scrape
+        const updated = await fetchNoticesFromSupabase();
+        setNotices(updated);
+      } else {
+        setScrapeStatus({ ok: false, msg: json.error || `Error ${res.status}` });
+      }
+    } catch (err) {
+      setScrapeStatus({ ok: false, msg: String(err) });
+    } finally {
+      setScraping(false);
+    }
+  };
 
   // Locations are bundled so dropdown works without backend runtime dependencies.
 
@@ -509,6 +540,32 @@ export default function App() {
             </a>
           </p>
         </motion.div>
+
+        {/* Admin Panel — only visible when ?admin=<key> matches VITE_ADMIN_KEY */}
+        {isAdmin && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 1 }}
+            className="mt-6 w-full max-w-2xl bg-white/5 border border-white/10 rounded-2xl p-5 space-y-3"
+          >
+            <p className="text-white/40 text-xs uppercase tracking-widest font-semibold">Admin</p>
+            <div className="flex items-center gap-3 flex-wrap">
+              <button
+                onClick={triggerScrape}
+                disabled={scraping}
+                className="px-5 py-2.5 bg-yellow-400 hover:bg-yellow-300 disabled:opacity-50 disabled:cursor-not-allowed text-black font-semibold rounded-xl text-sm transition-colors"
+              >
+                {scraping ? 'Fetching...' : 'Fetch New Notices'}
+              </button>
+              {scrapeStatus && (
+                <p className={`text-sm ${scrapeStatus.ok ? 'text-emerald-400' : 'text-red-400'}`}>
+                  {scrapeStatus.msg}
+                </p>
+              )}
+            </div>
+          </motion.div>
+        )}
       </div>
     <Analytics />
     </div>
