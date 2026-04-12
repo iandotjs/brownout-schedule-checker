@@ -128,11 +128,17 @@ const fetchNoticesFromSupabase = async (): Promise<Notice[]> => {
 };
 
 export default function App() {
+  // Dev-only crash test: open /?crash=1 to trigger the ErrorBoundary maintenance page
+  // if (import.meta.env.DEV && new URLSearchParams(window.location.search).get('crash') === '1') {
+  //   throw new Error('Manual crash test');
+  // }
+
   const [locations] = useState<Location[]>(normalizeLocations(localLocations));
   const [selectedCity, setSelectedCity] = useState('');
   const [selectedBarangay, setSelectedBarangay] = useState('');
   const [notices, setNotices] = useState<Notice[]>([]);
   const [loading, setLoading] = useState(false);
+  const [loadError, setLoadError] = useState<string | null>(null);
   const [scraping, setScraping] = useState(false);
   const [scrapeStatus, setScrapeStatus] = useState<{ ok: boolean; msg: string } | null>(null);
   const [useLowPowerVisuals, setUseLowPowerVisuals] = useState(false);
@@ -205,20 +211,22 @@ export default function App() {
   // Locations are bundled so dropdown works without backend runtime dependencies.
 
   // Fetch notices directly from Supabase
-  useEffect(() => {
+  const loadNotices = async () => {
     setLoading(true);
-    const loadNotices = async () => {
-      try {
-        const supabaseNotices = await fetchNoticesFromSupabase();
-        setNotices(supabaseNotices);
-      } catch (err) {
-        console.error('Error fetching notices from Supabase:', err);
-        setNotices([]);
-      } finally {
-        setLoading(false);
-      }
-    };
+    setLoadError(null);
+    try {
+      const supabaseNotices = await fetchNoticesFromSupabase();
+      setNotices(supabaseNotices);
+    } catch (err) {
+      console.error('Error fetching notices from Supabase:', err);
+      setNotices([]);
+      setLoadError('Unable to load latest schedules right now.');
+    } finally {
+      setLoading(false);
+    }
+  };
 
+  useEffect(() => {
     void loadNotices();
   }, []);
 
@@ -301,6 +309,39 @@ export default function App() {
   const panelClass = isLightMode
     ? 'relative bg-white/80 border border-amber-200/70'
     : 'relative bg-white/10 backdrop-blur-sm border border-white/20';
+
+  if (loadError) {
+    return (
+      <div className={`min-h-screen w-full flex items-center justify-center p-6 transition-colors duration-500 ${containerBgClass}`}>
+        <div className={`w-full max-w-xl rounded-3xl p-8 text-center backdrop-blur-xl ${cardClass}`}>
+          <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-red-500/20">
+            <AlertCircle className="h-7 w-7 text-red-300" />
+          </div>
+          <h1 className={`text-2xl font-bold ${sectionTextClass}`}>Maintenance in progress</h1>
+          <p className={`mt-3 text-sm ${mutedTextClass}`}>
+            {loadError} Please try reloading. If this continues, check back in a few minutes.
+          </p>
+          <div className="mt-6 flex flex-wrap justify-center gap-3">
+            <button
+              type="button"
+              onClick={() => void loadNotices()}
+              className="rounded-xl bg-yellow-400 px-4 py-2 text-sm font-semibold text-slate-900 hover:bg-yellow-300 transition-colors"
+            >
+              Try Again
+            </button>
+            <a
+              href="https://zaneco.ph"
+              target="_blank"
+              rel="noopener noreferrer"
+              className={`rounded-xl border px-4 py-2 text-sm font-semibold transition-colors ${isLightMode ? 'border-slate-300 text-slate-700 hover:bg-white/70' : 'border-white/20 text-white hover:bg-white/10'}`}
+            >
+              Official Site
+            </a>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className={`size-full relative overflow-hidden min-h-screen flex flex-col transition-colors duration-500 ${containerBgClass}`}>

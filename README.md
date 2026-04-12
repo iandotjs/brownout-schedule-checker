@@ -42,6 +42,40 @@ backend/
 	frontend/              # React + Vite frontend app
 ```
 
+## Environment Strategy (Dev and Prod)
+
+Use one codebase for both development and production. Separate environments are handled by branch + environment variables.
+
+- Local development defaults to Dev/Test values
+- `dev` branch targets Dev services
+- `main` branch targets Production services
+
+### Branch to Environment Mapping
+
+- `dev` branch:
+	- Render Dev backend
+	- Vercel Preview deployment
+	- Dev Supabase project
+- `main` branch:
+	- Render Prod backend
+	- Vercel Production deployment
+	- Prod Supabase project
+
+### Why This Setup
+
+- No duplicate repositories or code copies
+- Safe testing without touching production data
+- Same deployment workflow you already use
+
+### Local Development Rule
+
+Before running locally, set your local env files to Dev values:
+
+- `backend/.env` -> Dev Supabase + backend keys
+- `backend/frontend/.env` -> Dev Vite/Supabase/backend URL values
+
+Use `backend/.env.example` as the template for backend variables.
+
 ## Local Setup
 
 ### 1. Clone Repository
