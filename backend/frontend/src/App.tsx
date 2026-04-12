@@ -28,8 +28,6 @@ interface MatchedSchedule {
 type MunicipalityValue = { code?: string | null; name?: string | null } | string | null | undefined;
 type BarangayValue = { code?: string | null; name?: string | null } | string | null | undefined;
 
-const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL || '').replace(/\/$/, '');
-const apiUrl = (path: string) => `${API_BASE_URL}${path}`;
 const SUPABASE_URL = (import.meta.env.VITE_SUPABASE_URL || '').replace(/\/$/, '');
 const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY || '';
 
@@ -118,7 +116,7 @@ const fetchNoticesFromSupabase = async (): Promise<Notice[]> => {
   });
 
   if (!res.ok) {
-    throw new Error(`Supabase fallback failed: ${res.status}`);
+    throw new Error(`Supabase request failed: ${res.status}`);
   }
 
   const data = await res.json();
@@ -126,59 +124,24 @@ const fetchNoticesFromSupabase = async (): Promise<Notice[]> => {
 };
 
 export default function App() {
-  const [locations, setLocations] = useState<Location[]>(normalizeLocations(localLocations));
+  const [locations] = useState<Location[]>(normalizeLocations(localLocations));
   const [selectedCity, setSelectedCity] = useState('');
   const [selectedBarangay, setSelectedBarangay] = useState('');
   const [notices, setNotices] = useState<Notice[]>([]);
   const [loading, setLoading] = useState(false);
 
-  // Fetch cached PSGC locations from backend
-  useEffect(() => {
-    fetch(apiUrl('/api/locations'))
-      .then((res) => {
-        if (!res.ok) {
-          throw new Error(`Failed to fetch locations: ${res.status}`);
-        }
-        return res.json();
-      })
-      .then((data) => {
-        const normalized = normalizeLocations(data);
-        if (normalized.length > 0) {
-          setLocations(normalized);
-        }
-      })
-      .catch((err) => {
-        // Keep local bundled locations when backend API is unavailable.
-        console.error('Error fetching locations, using bundled fallback:', err);
-      });
-  }, []);
+  // Locations are bundled so dropdown works without backend runtime dependencies.
 
-  // Fetch notices
+  // Fetch notices directly from Supabase
   useEffect(() => {
     setLoading(true);
     const loadNotices = async () => {
       try {
-        const apiRes = await fetch(apiUrl('/api/notices/latest'));
-        if (!apiRes.ok) {
-          throw new Error(`Failed to fetch notices: ${apiRes.status}`);
-        }
-
-        const apiData = await apiRes.json();
-        if (Array.isArray(apiData)) {
-          setNotices(apiData);
-          return;
-        }
-
+        const supabaseNotices = await fetchNoticesFromSupabase();
+        setNotices(supabaseNotices);
+      } catch (err) {
+        console.error('Error fetching notices from Supabase:', err);
         setNotices([]);
-      } catch (apiErr) {
-        console.error('Error fetching notices from API, trying Supabase fallback:', apiErr);
-        try {
-          const fallbackNotices = await fetchNoticesFromSupabase();
-          setNotices(fallbackNotices);
-        } catch (fallbackErr) {
-          console.error('Error fetching notices from Supabase fallback:', fallbackErr);
-          setNotices([]);
-        }
       } finally {
         setLoading(false);
       }
