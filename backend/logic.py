@@ -96,6 +96,8 @@ def scrape_notice_image_urls(limit=None):
             print(f"No articles found on page {page}. Stopping pagination.")
             break
 
+        has_next_page = bool(soup.select_one("a.next.page-numbers"))
+
         page_has_recent_posts = False
 
         for a in articles:
@@ -163,6 +165,10 @@ def scrape_notice_image_urls(limit=None):
         else:
             old_page_streak += 1
             print(f"Page {page} appears old-only. Consecutive old-page streak: {old_page_streak}/{old_page_streak_limit}")
+
+        if not has_next_page:
+            print(f"No next page link found on page {page}. Stopping pagination.")
+            break
 
         page += 1
 
@@ -354,6 +360,23 @@ def is_filename_date_past(url: str) -> bool:
             return parsed_date < date.today()
         except Exception:
             pass
+
+    # Fallback for generic filenames like /uploads/2026/02/4-1024x724.jpg
+    # where the day is in the filename and month/year are from the upload path.
+    path_match = re.search(r"/wp-content/uploads/(\d{4})/(\d{2})/([^/?#]+)$", url.lower())
+    if path_match:
+        try:
+            year = int(path_match.group(1))
+            month = int(path_match.group(2))
+            filename = path_match.group(3)
+            day_match = re.match(r"^(\d{1,2})(?:[-_].*)?\.(?:png|jpe?g)$", filename)
+            if day_match:
+                day = int(day_match.group(1))
+                parsed_date = date(year, month, day)
+                return parsed_date < date.today()
+        except Exception:
+            pass
+
     return False
 
 # ==============================
