@@ -27,6 +27,38 @@ REQUEST_HEADERS = {"User-Agent": USER_AGENT}
 ZANECO_BASE = "https://zaneco.ph"
 CATEGORY_URL = f"{ZANECO_BASE}/category/power-interruption-update/"
 
+
+def extract_notice_date_from_text(text: str):
+    """
+    Extract schedule date from title/URL text such as:
+    - APRIL-10-2026
+    - April 10, 2026
+    - april_10_2026
+    Returns a date or None when no reliable date is found.
+    """
+    month_names = (
+        "january|february|march|april|may|june|july|august|"
+        "september|october|november|december"
+    )
+    normalized = text.lower().replace("_", "-")
+
+    # month-day-year pattern (supports spaces, commas, and dashes)
+    m = re.search(
+        rf"({month_names})[\s\-]+(\d{{1,2}})(?:st|nd|rd|th)?[\s,\-]+(\d{{4}})",
+        normalized,
+        flags=re.IGNORECASE,
+    )
+    if not m:
+        return None
+
+    month_name = m.group(1).title()
+    day = int(m.group(2))
+    year = int(m.group(3))
+    try:
+        return datetime.strptime(f"{month_name} {day} {year}", "%B %d %Y").date()
+    except Exception:
+        return None
+
 def parse_notice_date(soup):
     time_tag = soup.select_one("time.entry-date")
     if time_tag and time_tag.has_attr("datetime"):
@@ -49,7 +81,7 @@ def scrape_notice_image_urls(limit=None):
     old_page_streak = 0
     page = 1
     seen_post_urls = set()
-    old_cutoff = date.today() - timedelta(days=14)
+    today = date.today()
 
     while page <= max_pages and old_page_streak < old_page_streak_limit:
         page_url = CATEGORY_URL if page == 1 else f"{CATEGORY_URL}page/{page}/"
@@ -72,14 +104,22 @@ def scrape_notice_image_urls(limit=None):
             if not post_url:
                 continue
 
+            notice_schedule_date = extract_notice_date_from_text(f"{title} {post_url}")
+
             if post_url in seen_post_urls:
                 continue
             seen_post_urls.add(post_url)
 
             # Already processed URLs likely belong to currently visible pages.
-            # Mark page as still relevant so pagination doesn't stop too early.
+            # Mark page as relevant only if schedule date is today/future (or unknown).
             if post_url in processed_urls:
-                page_has_recent_posts = True
+                if notice_schedule_date is None or notice_schedule_date >= today:
+                    page_has_recent_posts = True
+                continue
+
+            # Skip old notices using the notice schedule date, not publish date.
+            if notice_schedule_date is not None and notice_schedule_date < today:
+                print(f"Skipping {post_url} as notice date is past ({notice_schedule_date})")
                 continue
 
             # Detect status
@@ -93,11 +133,6 @@ def scrape_notice_image_urls(limit=None):
             post_soup = BeautifulSoup(post_resp.text, "html.parser")
 
             notice_date = parse_notice_date(post_soup)
-
-            # If the notice was published more than 14 days ago, it's definitely past. Skip it.
-            if notice_date < old_cutoff:
-                print(f"Skipping {post_url} as it is too old ({notice_date})")
-                continue
 
             page_has_recent_posts = True
 
