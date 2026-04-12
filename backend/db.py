@@ -81,9 +81,9 @@ def delete_old_notices():
             notice_id = row.get("id")
             data = row.get("data", {})
             
-            # If there's no data or no processed images at all, we might want to keep it or delete it.
-            # Let's say if it has no processed images, we leave it alone (could be an error notice).
+            # Empty processed images are placeholder/incomplete rows; remove them.
             if not data.get("processed_images"):
+                ids_to_delete.append(notice_id)
                 continue
                 
             latest_date_in_notice = None
@@ -119,4 +119,4 @@ def delete_old_notices():
         return 0
     except Exception as e:
         print(f"Error deleting old notices: {e}")
-        return 0
+        return 0

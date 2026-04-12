@@ -38,60 +38,103 @@ def parse_notice_date(soup):
 
 def scrape_notice_image_urls(limit=None):
     notices = []
-    
+
     # Get previously processed URLs to save rate limits
     processed_urls = get_processed_urls()
     print(f"Skipping {len(processed_urls)} already processed URLs...")
 
-    resp = requests.get(CATEGORY_URL, headers=REQUEST_HEADERS)
-    resp.raise_for_status()
-    soup = BeautifulSoup(resp.text, "html.parser")
+    # Pagination controls
+    max_pages = int(os.getenv("SCRAPER_MAX_CATEGORY_PAGES", "8"))
+    old_page_streak_limit = 2
+    old_page_streak = 0
+    page = 1
+    seen_post_urls = set()
+    old_cutoff = date.today() - timedelta(days=14)
 
-    articles = soup.select("article h2 a")
-    for a in articles[:limit]:
-        title = a.get_text(strip=True)
-        post_url = a["href"]
+    while page <= max_pages and old_page_streak < old_page_streak_limit:
+        page_url = CATEGORY_URL if page == 1 else f"{CATEGORY_URL}page/{page}/"
+        print(f"Scanning category page {page}/{max_pages}: {page_url}")
 
-        if post_url in processed_urls:
-            # We already ran this through OCR and Gemini! Skip.
-            continue
+        resp = requests.get(page_url, headers=REQUEST_HEADERS)
+        resp.raise_for_status()
+        soup = BeautifulSoup(resp.text, "html.parser")
 
-        # Check if the title text indicates a very old notice date? (Optional but handled below)
+        articles = soup.select("article h2 a")
+        if not articles:
+            print(f"No articles found on page {page}. Stopping pagination.")
+            break
 
-        # Detect status
-        if "cancelled" in title.lower():
-            status = "cancelled"
+        page_has_recent_posts = False
+
+        for a in articles:
+            title = a.get_text(strip=True)
+            post_url = a.get("href")
+            if not post_url:
+                continue
+
+            if post_url in seen_post_urls:
+                continue
+            seen_post_urls.add(post_url)
+
+            # Already processed URLs likely belong to currently visible pages.
+            # Mark page as still relevant so pagination doesn't stop too early.
+            if post_url in processed_urls:
+                page_has_recent_posts = True
+                continue
+
+            # Detect status
+            if "cancelled" in title.lower():
+                status = "cancelled"
+            else:
+                status = "active"  # default for non-cancelled notices
+
+            post_resp = requests.get(post_url, headers=REQUEST_HEADERS)
+            post_resp.raise_for_status()
+            post_soup = BeautifulSoup(post_resp.text, "html.parser")
+
+            notice_date = parse_notice_date(post_soup)
+
+            # If the notice was published more than 14 days ago, it's definitely past. Skip it.
+            if notice_date < old_cutoff:
+                print(f"Skipping {post_url} as it is too old ({notice_date})")
+                continue
+
+            page_has_recent_posts = True
+
+            imgs = []
+            content_div = post_soup.select_one("div.entry-content")
+            if content_div:
+                seen = set()
+                for img in content_div.select("img"):
+                    real = pick_real_image_url(img)
+                    if real and real not in seen:
+                        seen.add(real)
+                        imgs.append(real)
+
+            notices.append({
+                "title": title,
+                "url": post_url,
+                "status": status,
+                "images": imgs,
+                "publish_date": notice_date.isoformat()
+            })
+
+            if limit and len(notices) >= limit:
+                print(f"Reached notice limit ({limit}).")
+                return notices
+
+        if page_has_recent_posts:
+            old_page_streak = 0
         else:
-            status = "active"   # default for non-cancelled notices
+            old_page_streak += 1
+            print(f"Page {page} appears old-only. Consecutive old-page streak: {old_page_streak}/{old_page_streak_limit}")
 
-        post_resp = requests.get(post_url, headers=REQUEST_HEADERS)
-        post_resp.raise_for_status()
-        post_soup = BeautifulSoup(post_resp.text, "html.parser")
+        page += 1
 
-        notice_date = parse_notice_date(post_soup)
-        
-        # If the notice was published more than 14 days ago, it's definitely past. Skip it.
-        if notice_date < date.today() - timedelta(days=14):
-            print(f"Skipping {post_url} as it is too old ({notice_date})")
-            continue
-
-        imgs = []
-        content_div = post_soup.select_one("div.entry-content")
-        if content_div:
-            seen = set()
-            for img in content_div.select("img"):
-                real = pick_real_image_url(img)
-                if real and real not in seen:
-                    seen.add(real)
-                    imgs.append(real)
-
-        notices.append({
-            "title": title,
-            "url": post_url,
-            "status": status,
-            "images": imgs,
-            "publish_date": notice_date.isoformat()
-        })
+    if old_page_streak >= old_page_streak_limit:
+        print(f"Stopping pagination after {old_page_streak_limit} consecutive old-only pages.")
+    elif page > max_pages:
+        print(f"Stopping pagination at max page limit ({max_pages}).")
 
     return notices
 
@@ -387,6 +430,8 @@ def get_notices():
                 "structured": valid_schedules
             })
 
-        final_results.append(notice_result)
+        # Skip placeholder notices that ended up with no valid future/today schedules.
+        if notice_result["processed_images"]:
+            final_results.append(notice_result)
 
     return final_results
