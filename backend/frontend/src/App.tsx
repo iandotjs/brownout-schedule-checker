@@ -145,7 +145,15 @@ export default function App() {
     setScraping(true);
     setScrapeStatus(null);
     try {
-      const res = await fetch(`${API_BASE_URL}/api/notices`, { method: 'POST' });
+      const runRequest = async () => fetch(`${API_BASE_URL}/api/notices`, { method: 'POST' });
+
+      // Render free instances may be asleep; first request can fail while waking up.
+      let res = await runRequest();
+      if (!res.ok && res.status >= 500) {
+        await new Promise((resolve) => setTimeout(resolve, 4000));
+        res = await runRequest();
+      }
+
       const json = await res.json();
       if (res.ok) {
         setScrapeStatus({ ok: true, msg: json.message || 'Done.' });
@@ -156,7 +164,10 @@ export default function App() {
         setScrapeStatus({ ok: false, msg: json.error || `Error ${res.status}` });
       }
     } catch (err) {
-      setScrapeStatus({ ok: false, msg: String(err) });
+      setScrapeStatus({
+        ok: false,
+        msg: 'Request failed. If backend is on Render free tier, wait 20-60s for wake-up then try again.',
+      });
     } finally {
       setScraping(false);
     }
