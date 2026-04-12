@@ -6,3 +6,5 @@ issues.txt
 .gitgnore
 backend/__pycache__/
 backend/test_gemini.py
+.vercel
+.env*.local

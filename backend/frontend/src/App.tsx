@@ -25,8 +25,13 @@ interface MatchedSchedule {
   timeStr: string;
 }
 
+type MunicipalityValue = { code?: string | null; name?: string | null } | string | null | undefined;
+type BarangayValue = { code?: string | null; name?: string | null } | string | null | undefined;
+
 const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL || '').replace(/\/$/, '');
 const apiUrl = (path: string) => `${API_BASE_URL}${path}`;
+const SUPABASE_URL = (import.meta.env.VITE_SUPABASE_URL || '').replace(/\/$/, '');
+const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY || '';
 
 const normalizeLocations = (data: unknown): Location[] => {
   if (Array.isArray(data)) {
@@ -45,6 +50,79 @@ const normalizeLocations = (data: unknown): Location[] => {
   }
 
   return [];
+};
+
+const normalizeText = (value: unknown): string =>
+  String(value ?? '')
+    .toUpperCase()
+    .replace(/[^A-Z0-9\s]/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+
+const matchesMunicipality = (
+  municipality: MunicipalityValue,
+  selectedCityCode: string,
+  selectedCityName: string
+): boolean => {
+  if (!municipality) return false;
+
+  const selectedCode = String(selectedCityCode || '').trim();
+  const selectedName = normalizeText(selectedCityName);
+
+  if (typeof municipality === 'string') {
+    const muniValue = municipality.trim();
+    return muniValue === selectedCode || normalizeText(muniValue) === selectedName;
+  }
+
+  const muniCode = String(municipality.code ?? '').trim();
+  const muniName = normalizeText(municipality.name ?? '');
+  return muniCode === selectedCode || muniName === selectedName;
+};
+
+const matchesBarangay = (
+  barangay: BarangayValue,
+  selectedBarangayCode: string,
+  selectedBarangayName: string
+): boolean => {
+  if (!barangay) return false;
+
+  const selectedCode = String(selectedBarangayCode || '').trim();
+  const selectedName = normalizeText(selectedBarangayName);
+
+  if (typeof barangay === 'string') {
+    const brgyValue = barangay.trim();
+    return brgyValue === selectedCode || normalizeText(brgyValue) === selectedName;
+  }
+
+  const brgyCode = String(barangay.code ?? '').trim();
+  const brgyName = normalizeText(barangay.name ?? '');
+  return brgyCode === selectedCode || brgyName === selectedName;
+};
+
+const fetchNoticesFromSupabase = async (): Promise<Notice[]> => {
+  if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
+    return [];
+  }
+
+  const url = new URL(`${SUPABASE_URL}/rest/v1/notices`);
+  url.searchParams.set('select', 'id,title,url,created_at,data,status');
+  url.searchParams.set('status', 'eq.active');
+  url.searchParams.set('order', 'created_at.desc');
+  url.searchParams.set('limit', '20');
+
+  const res = await fetch(url.toString(), {
+    headers: {
+      apikey: SUPABASE_ANON_KEY,
+      Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
+    },
+  });
+
+  if (!res.ok) {
+    throw new Error(`Supabase fallback failed: ${res.status}`);
+  }
+
+  const data = await res.json();
+  return Array.isArray(data) ? data : [];
 };
 
 export default function App() {
@@ -78,26 +156,35 @@ export default function App() {
   // Fetch notices
   useEffect(() => {
     setLoading(true);
-    fetch(apiUrl('/api/notices/latest'))
-      .then((res) => {
-        if (!res.ok) {
-          throw new Error(`Failed to fetch notices: ${res.status}`);
+    const loadNotices = async () => {
+      try {
+        const apiRes = await fetch(apiUrl('/api/notices/latest'));
+        if (!apiRes.ok) {
+          throw new Error(`Failed to fetch notices: ${apiRes.status}`);
         }
-        return res.json();
-      })
-      .then((data) => {
-        if (Array.isArray(data)) {
-          setNotices(data);
-        } else {
+
+        const apiData = await apiRes.json();
+        if (Array.isArray(apiData)) {
+          setNotices(apiData);
+          return;
+        }
+
+        setNotices([]);
+      } catch (apiErr) {
+        console.error('Error fetching notices from API, trying Supabase fallback:', apiErr);
+        try {
+          const fallbackNotices = await fetchNoticesFromSupabase();
+          setNotices(fallbackNotices);
+        } catch (fallbackErr) {
+          console.error('Error fetching notices from Supabase fallback:', fallbackErr);
           setNotices([]);
         }
+      } finally {
         setLoading(false);
-      })
-      .catch((err) => {
-        console.error("Error fetching notices:", err);
-        setNotices([]);
-        setLoading(false);
-      });
+      }
+    };
+
+    void loadNotices();
   }, []);
 
   const availableBarangays = useMemo(() => {
@@ -108,6 +195,11 @@ export default function App() {
   // Filter schedules and flatten them exactly to specific dates/times
   const matchedSchedules = useMemo(() => {
     if (!selectedCity || !selectedBarangay) return null;
+
+    const selectedCityObj = locations.find((l) => l.code === selectedCity);
+    const selectedCityName = selectedCityObj?.name || '';
+    const selectedBarangayName =
+      selectedCityObj?.barangays.find((b) => b.code === selectedBarangay)?.name || '';
     
     const matches: MatchedSchedule[] = [];
 
@@ -122,12 +214,16 @@ export default function App() {
           let matchedLocStr = "";
           
           s.locations?.forEach((loc: any) => {
-            if (loc.municipality?.code === selectedCity || loc.municipality === selectedCity) {
+            if (matchesMunicipality(loc.municipality, selectedCity, selectedCityName)) {
               loc.barangays?.forEach((b: any) => {
-                if (b.code === selectedBarangay || b === selectedBarangay) {
+                if (matchesBarangay(b, selectedBarangay, selectedBarangayName)) {
                   hasMatch = true;
-                  const cityName = locations.find(l => l.code === selectedCity)?.name || String(loc.municipality?.name || loc.municipality);
-                  const brgyName = locations.find(l => l.code === selectedCity)?.barangays.find(brp => brp.code === selectedBarangay)?.name || String(b.name || b);
+                  const cityName =
+                    selectedCityName ||
+                    String((typeof loc.municipality === 'object' && loc.municipality?.name) || loc.municipality || '');
+                  const brgyName =
+                    selectedBarangayName ||
+                    String((typeof b === 'object' && b?.name) || b || '');
                   matchedLocStr = `${brgyName}, ${cityName}`;
                 }
               });
