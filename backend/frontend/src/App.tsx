@@ -1,6 +1,7 @@
 import { useEffect, useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { MapPin, Building2, Zap, Calendar, Clock, CheckCircle2, AlertCircle, Info } from 'lucide-react';
+import localLocations from './locations.json';
 
 interface Location {
   code: string;
@@ -24,8 +25,30 @@ interface MatchedSchedule {
   timeStr: string;
 }
 
+const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL || '').replace(/\/$/, '');
+const apiUrl = (path: string) => `${API_BASE_URL}${path}`;
+
+const normalizeLocations = (data: unknown): Location[] => {
+  if (Array.isArray(data)) {
+    return data as Location[];
+  }
+
+  if (data && typeof data === 'object') {
+    return Object.entries(data as Record<string, string[]>).map(([city, barangays], idx) => ({
+      code: `CITY-${idx}`,
+      name: city,
+      barangays: barangays.map((b, i) => ({
+        code: `BRGY-${idx}-${i}`,
+        name: b,
+      })),
+    }));
+  }
+
+  return [];
+};
+
 export default function App() {
-  const [locations, setLocations] = useState<Location[]>([]);
+  const [locations, setLocations] = useState<Location[]>(normalizeLocations(localLocations));
   const [selectedCity, setSelectedCity] = useState('');
   const [selectedBarangay, setSelectedBarangay] = useState('');
   const [notices, setNotices] = useState<Notice[]>([]);
@@ -33,32 +56,35 @@ export default function App() {
 
   // Fetch cached PSGC locations from backend
   useEffect(() => {
-    fetch("http://127.0.0.1:5000/api/locations")
-      .then((res) => res.json())
-      .then((data) => {
-        let normalized: Location[] = [];
-        if (!Array.isArray(data)) {
-          normalized = Object.entries(data).map(([city, barangays], idx) => ({
-            code: `CITY-${idx}`,
-            name: city,
-            barangays: (barangays as string[]).map((b, i) => ({
-              code: `BRGY-${idx}-${i}`,
-              name: b,
-            })),
-          }));
-        } else {
-          normalized = data;
+    fetch(apiUrl('/api/locations'))
+      .then((res) => {
+        if (!res.ok) {
+          throw new Error(`Failed to fetch locations: ${res.status}`);
         }
-        setLocations(normalized);
+        return res.json();
       })
-      .catch((err) => console.error("Error fetching locations:", err));
+      .then((data) => {
+        const normalized = normalizeLocations(data);
+        if (normalized.length > 0) {
+          setLocations(normalized);
+        }
+      })
+      .catch((err) => {
+        // Keep local bundled locations when backend API is unavailable.
+        console.error('Error fetching locations, using bundled fallback:', err);
+      });
   }, []);
 
   // Fetch notices
   useEffect(() => {
     setLoading(true);
-    fetch("http://127.0.0.1:5000/api/notices/latest")
-      .then((res) => res.json())
+    fetch(apiUrl('/api/notices/latest'))
+      .then((res) => {
+        if (!res.ok) {
+          throw new Error(`Failed to fetch notices: ${res.status}`);
+        }
+        return res.json();
+      })
       .then((data) => {
         if (Array.isArray(data)) {
           setNotices(data);
