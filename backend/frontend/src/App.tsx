@@ -487,6 +487,27 @@ export default function App() {
             </div>
           </div>
         </motion.div>
+
+        {/* Attribution Footer */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.8 }}
+          className="mt-8 text-center text-white/50 text-sm space-y-2"
+        >
+          <p>Data sourced from official ZANECO announcements.</p>
+          <p>
+            Made by{' '}
+            <a
+              href="https://github.com/iandotjs"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-white/70 hover:text-white transition-colors underline"
+            >
+              @iandotjs
+            </a>
+          </p>
+        </motion.div>
       </div>
     </div>
   );
