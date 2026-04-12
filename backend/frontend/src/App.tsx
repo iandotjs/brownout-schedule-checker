@@ -418,7 +418,7 @@ export default function App() {
                 type="button"
               >
                 {isLightMode ? <Moon className="w-4 h-4" /> : <Sun className="w-4 h-4" />}
-                {isLightMode ? 'Dark Mode' : 'Light Mode'}
+                <span className="hidden sm:inline">{isLightMode ? 'Dark Mode' : 'Light Mode'}</span>
               </button>
               <motion.div
                 initial={{ opacity: 0, y: -20 }}
@@ -432,7 +432,7 @@ export default function App() {
                 >
                   <Zap className="w-8 h-8 text-white" fill="currentColor" />
                 </motion.div>
-                <h1 className="text-white text-center text-2xl font-bold tracking-tight m-0 p-0 border-0">Brownout Schedule Checker</h1>
+                <h1 className="text-white text-center text-2xl font-bold tracking-tight m-0 p-0 border-0">ZN Scheduled Brownout Checker</h1>
               </motion.div>
             </div>
 
