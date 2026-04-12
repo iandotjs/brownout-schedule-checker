@@ -134,6 +134,25 @@ export default function App() {
   const [loading, setLoading] = useState(false);
   const [scraping, setScraping] = useState(false);
   const [scrapeStatus, setScrapeStatus] = useState<{ ok: boolean; msg: string } | null>(null);
+  const [useLowPowerVisuals, setUseLowPowerVisuals] = useState(false);
+
+  useEffect(() => {
+    const mobileQuery = window.matchMedia('(max-width: 640px)');
+    const reducedMotionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+    const updateVisualMode = () => {
+      setUseLowPowerVisuals(mobileQuery.matches || reducedMotionQuery.matches);
+    };
+
+    updateVisualMode();
+    mobileQuery.addEventListener('change', updateVisualMode);
+    reducedMotionQuery.addEventListener('change', updateVisualMode);
+
+    return () => {
+      mobileQuery.removeEventListener('change', updateVisualMode);
+      reducedMotionQuery.removeEventListener('change', updateVisualMode);
+    };
+  }, []);
 
   const isAdmin = ADMIN_KEY && new URLSearchParams(window.location.search).get('admin') === ADMIN_KEY;
 
@@ -276,26 +295,32 @@ export default function App() {
 
       {/* Animated electric orbs */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
-        <motion.div
-          className="absolute -top-40 -left-40 w-96 h-96 bg-yellow-400/30 rounded-full blur-3xl"
-          animate={{ scale: [1, 1.3, 1], opacity: [0.3, 0.5, 0.3] }}
-          transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-        />
-        <motion.div
-          className="absolute top-20 right-20 w-72 h-72 bg-cyan-400/20 rounded-full blur-3xl"
-          animate={{ scale: [1.2, 1, 1.2], opacity: [0.2, 0.4, 0.2] }}
-          transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
-        />
-        <motion.div
-          className="absolute bottom-40 left-1/3 w-80 h-80 bg-blue-500/20 rounded-full blur-3xl"
-          animate={{ scale: [1, 1.4, 1], opacity: [0.2, 0.3, 0.2] }}
-          transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
-        />
+        {!useLowPowerVisuals ? (
+          <>
+            <motion.div
+              className="absolute -top-40 -left-40 w-96 h-96 bg-yellow-400/30 rounded-full blur-3xl"
+              animate={{ scale: [1, 1.3, 1], opacity: [0.3, 0.5, 0.3] }}
+              transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+            />
+            <motion.div
+              className="absolute top-20 right-20 w-72 h-72 bg-cyan-400/20 rounded-full blur-3xl"
+              animate={{ scale: [1.2, 1, 1.2], opacity: [0.2, 0.4, 0.2] }}
+              transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
+            />
+            <motion.div
+              className="absolute bottom-40 left-1/3 w-80 h-80 bg-blue-500/20 rounded-full blur-3xl"
+              animate={{ scale: [1, 1.4, 1], opacity: [0.2, 0.3, 0.2] }}
+              transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+            />
+          </>
+        ) : (
+          <div className="absolute -top-24 -left-24 w-64 h-64 bg-yellow-400/20 rounded-full blur-3xl" />
+        )}
       </div>
 
       {/* Electric sparks/particles */}
       <div className="pointer-events-none z-0">
-        {[...Array(30)].map((_, i) => (
+        {[...Array(useLowPowerVisuals ? 10 : 30)].map((_, i) => (
           <motion.div
             key={i}
             className="absolute bg-yellow-400 rounded-full"
@@ -305,13 +330,18 @@ export default function App() {
               left: `${Math.random() * 100}%`,
               top: `${Math.random() * 100}%`,
             }}
-            animate={{ opacity: [0, 1, 0], scale: [0, 1, 0] }}
-            transition={{ duration: Math.random() * 2 + 1, repeat: Infinity, delay: Math.random() * 3 }}
+            animate={useLowPowerVisuals ? { opacity: 0.25 } : { opacity: [0, 1, 0], scale: [0, 1, 0] }}
+            transition={
+              useLowPowerVisuals
+                ? { duration: 0 }
+                : { duration: Math.random() * 2 + 1, repeat: Infinity, delay: Math.random() * 3 }
+            }
           />
         ))}
       </div>
 
       {/* Lightning strikes */}
+      {!useLowPowerVisuals && (
       <div className="pointer-events-none z-0">
         {[...Array(3)].map((_, i) => (
           <motion.div
@@ -328,6 +358,7 @@ export default function App() {
           />
         ))}
       </div>
+      )}
 
       {/* Content */}
       <div className="relative z-10 w-full flex-grow flex flex-col items-center justify-center p-4 md:p-8">
@@ -498,12 +529,12 @@ export default function App() {
                                     </div>
                                   </div>
                                 </div>
-                                <div className="grid grid-cols-2 gap-4">
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                   <div className="flex items-start gap-3">
                                     <Calendar className="w-5 h-5 text-blue-400 flex-shrink-0 mt-0.5" />
                                     <div className="flex-1">
                                       <div className="text-xs text-white/60 mb-1">Date</div>
-                                      <div className="text-white text-sm font-medium">
+                                      <div className="text-white text-sm font-medium break-words">
                                         {schedule.dateStr}
                                       </div>
                                     </div>
@@ -512,7 +543,7 @@ export default function App() {
                                     <Clock className="w-5 h-5 text-purple-400 flex-shrink-0 mt-0.5" />
                                     <div className="flex-1">
                                       <div className="text-xs text-white/60 mb-1">Time</div>
-                                      <div className="text-white text-sm font-medium">
+                                      <div className="text-white text-sm font-medium break-words">
                                         {schedule.timeStr}
                                       </div>
                                     </div>

@@ -1,98 +1,148 @@
-# 📢 Zaneco Scheduled Power Interruption Checker
+# Brownout Schedule Checker
 
-This project provides a simple system to **scrape notices**, save them in **Supabase**, and display them on a **React + Vite frontend**.  
-It is divided into two parts:
+Brownout Schedule Checker is a web app for residents of Zamboanga del Norte to quickly check if their city/municipality and barangay has a scheduled power interruption.
 
-1. **Backend** – Flask API for scraping and storing notices.
-2. **Frontend** – React app to fetch and display notices.
+The system:
+- Scrapes official ZANECO notice images
+- Uses Gemini OCR + extraction to structure schedule data
+- Saves normalized notices to Supabase
+- Lets users search schedules from a mobile-friendly frontend
+- Supports both scheduled daily scraping and admin-triggered manual scraping
 
----
+## What This Project Does
 
-## 🚀 Setup Instructions
+- Reads official power interruption posts from ZANECO
+- Extracts dates, times, municipality, and barangay coverage from notice images
+- Stores structured notice data in Supabase
+- Displays matched schedules for user-selected city and barangay
+- Provides admin access to trigger immediate fetch of new notices
 
-### 1️⃣ Clone the Repository
+## Tech Stack
+
+- Frontend: React, TypeScript, Vite, Tailwind CSS, Framer Motion
+- Backend: Python, Flask, Gunicorn
+- Data: Supabase (PostgreSQL + REST)
+- AI/OCR: Google Gemini API
+- Scraping/Parsing: Requests, BeautifulSoup, Pillow, RapidFuzz
+- Hosting:
+	- Frontend: Vercel
+	- Backend API: Render (free tier)
+- Automation: GitHub Actions (daily 12:00 AM Philippine Time)
+- Analytics: Vercel Analytics
+
+## Project Structure
+
+```text
+backend/
+	app.py                 # Flask API (/api/notices)
+	logic.py               # Scraper + OCR + extraction pipeline
+	db.py                  # Supabase read/write utilities
+	run_scraper.py         # Scheduled/manual scraper entry point
+	requirements.txt
+	frontend/              # React + Vite frontend app
+```
+
+## Local Setup
+
+### 1. Clone Repository
 
 ```bash
 git clone https://github.com/iandotjs/brownout-schedule-checker.git
-cd notice-scraper
+cd brownout-schedule-checker
 ```
 
----
-
-### 2️⃣ Backend (Flask API)
-
-#### 📌 Requirements
-
-- Python 3.10+
-- pip (Python package manager)
-- Supabase project + API keys
-
-```bash
-git clone https://github.com/your-username/notice-scraper.git
-cd notice-scraper
-```
-
-#### 📌 Environment Variables
-
-- Create a **.env** file inside the backend/ folder:
-
-```bash
-SUPABASE_URL=https://your-project.supabase.co
-SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
-```
-
-#### 📌 Install Dependencies
+### 2. Backend Setup (Python/Flask)
 
 ```bash
 cd backend
 python -m venv venv
-# Activate venv
-# macOS/Linux:
-source venv/bin/activate
-# Windows (PowerShell):
-venv\Scripts\Activate.ps1
+```
 
+Activate virtual environment:
+
+- Windows PowerShell:
+
+```powershell
+venv\Scripts\Activate.ps1
+```
+
+- macOS/Linux:
+
+```bash
+source venv/bin/activate
+```
+
+Install dependencies:
+
+```bash
 pip install -r requirements.txt
 ```
 
-#### 📌 Run Flask Server
+Create backend `.env` file in `backend/`:
+
+```dotenv
+GEMINI_API_KEY=your-gemini-api-key
+SUPABASE_URL=https://your-project.supabase.co
+SUPABASE_SERVICE_ROLE_KEY=your-supabase-service-role-key
+```
+
+Run backend API:
 
 ```bash
 python app.py
 ```
 
-#### 👉 Flask will run at:
+Backend runs at:
 
-```bash
+```text
 http://127.0.0.1:5000
 ```
 
----
-
-### 3️⃣ Frontend (React + Vite)
-
-#### 📌 Requirements
-
-- Node.js (>=18)
-- npm
-
-#### 📌 Install Dependencies
+### 3. Frontend Setup (React/Vite)
 
 ```bash
-cd frontend
+cd backend/frontend
 npm install
 ```
 
-#### 📌 Run Dev Server
+Create frontend `.env` file in `backend/frontend/`:
+
+```dotenv
+VITE_SUPABASE_URL=https://your-project.supabase.co
+VITE_SUPABASE_ANON_KEY=your-supabase-anon-key
+VITE_API_BASE_URL=http://127.0.0.1:5000
+VITE_ADMIN_KEY=your-secret-admin-key
+```
+
+Run frontend dev server:
 
 ```bash
 npm run dev
 ```
 
-#### 👉 Vite will run at:
+Frontend runs at:
 
-```bash
+```text
 http://localhost:5173
 ```
 
----
+## Running the Scraper
+
+- Manual run (local or CI):
+
+```bash
+cd backend
+python run_scraper.py
+```
+
+- Admin web trigger:
+	- Open your app with `?admin=your-secret-admin-key`
+	- Click Fetch New Notices
+
+## Deployment Summary
+
+- Frontend deploys to Vercel
+- Backend deploys to Render
+- Nightly scraper runs via GitHub Actions at 12:00 AM Philippine Time
+
+For full deployment steps and environment variables, see `DEPLOYMENT.md`.
