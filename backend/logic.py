@@ -470,22 +470,30 @@ def get_notices():
             4. ROUTE-BASED DESCRIPTIONS:
                When the image describes a route like "From X to Y", with puroks, landmarks, or establishments
                listed along the way:
-               - Do NOT just assign everything to the start and end barangays.
-               - Each purok (Prk.), sitio, landmark, and establishment along the route must be individually
-                 mapped to its correct barangay based on actual geographic location.
-               - A route through ANY city or municipality typically passes through MULTIPLE barangays. List ALL of them.
-               - This applies to ALL municipalities and cities, not just Dipolog. Whether it's Dipolog, Dapitan,
-                 Polanco, Pinan, Katipunan, or any other municipality — always distribute puroks, landmarks,
-                 and establishments across the correct barangays they belong to.
-               - For example, in Dipolog City: puroks like Prk. Greenleaves, Prk. Malayan, Prk. Bayanihan,
-                 Prk. Bougainvilla, One Heart, etc. are scattered across barangays like GALAS, MIPUTAK (POB.),
-                 CENTRAL (POB.), BIASONG (POB.), SANTA ISABEL, and others. The same principle applies to every
-                 municipality — puroks and landmarks within that municipality must be mapped to their specific barangays.
-               - When in doubt about which barangay a purok belongs to, use surrounding context clues
-                 (the landmarks listed before and after it in the route) to determine the most likely barangay.
-               - It is BETTER to list more barangays (even if uncertain) than to omit them.
+               - Identify the START barangay and END barangay from the description.
+               - Then identify ALL barangays that the route geographically passes through between start and end.
+                 Include adjacent/neighboring barangays along the route even if not explicitly named.
+               - Assign the FULL route description text as "affected_area" for EVERY identified barangay.
+                 Do NOT split the route description — each barangay gets the complete route text so users
+                 can see the full context.
+               - This applies to ALL municipalities and cities.
+               - Example: "From Anahaw Galas near ZANECO Motorpool to Aleson Vanyard, Prk. Greenleaves,
+                 One Heart, Prk. Malayan, Prk. Bayanihan, Prk. Bougainvilla & Portion of Prk. Kalambuan
+                 and Prk. Uno, Sta. Isabel" in Dipolog City should map to ALL barangays the route passes
+                 through (e.g., GALAS, MIPUTAK (POB.), CENTRAL (POB.), BIASONG (POB.), SANTA ISABEL, etc.)
+                 and EACH one gets the full route text as its "affected_area".
+               - It is BETTER to include more barangays (even if uncertain) than to miss them. A resident
+                 in any barangay along the route needs to see this alert.
 
-            5. BARANGAY "affected_area" FIELD:
+            5. MIXED LANDMARKS & ESTABLISHMENTS (non-route):
+               When the affected area lists landmarks, establishments, or places that are NOT part of a
+               continuous route description (just a comma-separated list of places):
+               - Map each place to its correct barangay individually.
+               - Group places under their correct barangay and put them in "affected_area".
+               - If you cannot confidently determine which barangay a place belongs to, assign it to the
+                 nearest/most likely barangay and include neighboring barangays with the same affected_area.
+
+            6. BARANGAY "affected_area" FIELD:
                - When a barangay is listed by name only (no extra details), set "affected_area" to null.
                - When there are specific puroks, sitios, streets, landmarks, or establishments mentioned
                  for that barangay, put them in "affected_area" as a descriptive string.
