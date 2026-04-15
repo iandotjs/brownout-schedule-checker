@@ -468,13 +468,31 @@ def get_notices():
                Example: "Sta. Isabel" → "SANTA ISABEL"
 
             4. ROUTE-BASED DESCRIPTIONS:
-               When the image describes a route like "From X to Y", identify all barangays the route passes
-               through and list each barangay with the relevant portion of the route as its "affected_area".
+               When the image describes a route like "From X to Y", with puroks, landmarks, or establishments
+               listed along the way:
+               - Do NOT just assign everything to the start and end barangays.
+               - Each purok (Prk.), sitio, landmark, and establishment along the route must be individually
+                 mapped to its correct barangay based on actual geographic location.
+               - A route through ANY city or municipality typically passes through MULTIPLE barangays. List ALL of them.
+               - This applies to ALL municipalities and cities, not just Dipolog. Whether it's Dipolog, Dapitan,
+                 Polanco, Pinan, Katipunan, or any other municipality — always distribute puroks, landmarks,
+                 and establishments across the correct barangays they belong to.
+               - For example, in Dipolog City: puroks like Prk. Greenleaves, Prk. Malayan, Prk. Bayanihan,
+                 Prk. Bougainvilla, One Heart, etc. are scattered across barangays like GALAS, MIPUTAK (POB.),
+                 CENTRAL (POB.), BIASONG (POB.), SANTA ISABEL, and others. The same principle applies to every
+                 municipality — puroks and landmarks within that municipality must be mapped to their specific barangays.
+               - When in doubt about which barangay a purok belongs to, use surrounding context clues
+                 (the landmarks listed before and after it in the route) to determine the most likely barangay.
+               - It is BETTER to list more barangays (even if uncertain) than to omit them.
 
             5. BARANGAY "affected_area" FIELD:
                - When a barangay is listed by name only (no extra details), set "affected_area" to null.
                - When there are specific puroks, sitios, streets, landmarks, or establishments mentioned
                  for that barangay, put them in "affected_area" as a descriptive string.
+               - Do NOT set "affected_area" to just the barangay name itself (e.g., don't put "Sta. Isabel"
+                 as affected_area for SANTA ISABEL). That is redundant — use null instead.
+               - The "affected_area" should only contain SUB-LOCATIONS within that barangay (puroks,
+                 streets, landmarks, establishments), not the barangay name.
 
             Other rules:
             - There may be multiple schedules inside this ONE image. Extract ALL of them.
@@ -549,6 +567,14 @@ def get_notices():
                                     matched_bname = snap_to_reference(bname, ref_bgy_names) if ref_bgy_names else bname.upper()
 
                                     b = next((b for b in muni["barangays"] if b["name"] == matched_bname), None)
+
+                                    # Clean up redundant affected_area that just repeats the barangay name
+                                    if affected_area and b:
+                                        clean = re.sub(r'[^A-Za-z0-9\s]', '', affected_area).strip().upper()
+                                        ref_clean = re.sub(r'[^A-Za-z0-9\s]', '', b["name"]).strip().upper()
+                                        if clean == ref_clean:
+                                            affected_area = None
+
                                     if b:
                                         barangays.append({"code": b["code"], "name": b["name"], "affected_area": affected_area})
                                     else:
