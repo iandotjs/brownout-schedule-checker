@@ -693,7 +693,7 @@ export default function App() {
             className={`mt-2 inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold transition-colors ${isLightMode ? 'bg-white/80 text-cyan-700 border border-cyan-300 hover:bg-white' : 'bg-white/10 text-yellow-400 border border-yellow-400/30 hover:bg-white/15'}`}
           >
             <MessageSquarePlus className="w-4 h-4" />
-            Improve or report an issue
+            Report & Feedback
           </a>
         </motion.div>
 

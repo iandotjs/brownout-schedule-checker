@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react';
 import { motion } from 'motion/react';
-import { MapPin, Building2, Home, Phone, MessageSquare, Send, CheckCircle2, AlertTriangle } from 'lucide-react';
+import { MapPin, Building2, Home, Phone, MessageSquare, Send, CheckCircle2, AlertTriangle, Mail, Clock, MapPinned } from 'lucide-react';
 import localLocations from './locations.json';
 
 type ThemeMode = 'light' | 'dark';
@@ -306,29 +306,51 @@ export default function ReportPage() {
 
                   <div className="space-y-3">
                     <a
-                      href="tel:09171234567"
+                      href="tel:09206290163"
                       className={`flex items-center gap-3 p-3 rounded-lg transition-colors ${isLightMode ? 'hover:bg-amber-100' : 'hover:bg-white/10'}`}
                     >
                       <Phone className={`w-5 h-5 flex-shrink-0 ${isLightMode ? 'text-cyan-600' : 'text-yellow-400'}`} />
                       <div>
-                        <div className={`text-sm font-medium ${sectionTextClass}`}>Hotline</div>
-                        <div className={`text-xs ${mutedTextClass}`}>(065) 212-3841 / 212-4552</div>
+                        <div className={`text-sm font-medium ${sectionTextClass}`}>0920-629-0163</div>
+                        <div className={`text-xs ${mutedTextClass}`}>via zaneco.ph</div>
                       </div>
                     </a>
 
                     <a
-                      href="sms:09171234567"
+                      href="tel:09558848240"
                       className={`flex items-center gap-3 p-3 rounded-lg transition-colors ${isLightMode ? 'hover:bg-amber-100' : 'hover:bg-white/10'}`}
                     >
-                      <MessageSquare className={`w-5 h-5 flex-shrink-0 ${isLightMode ? 'text-cyan-600' : 'text-yellow-400'}`} />
+                      <Phone className={`w-5 h-5 flex-shrink-0 ${isLightMode ? 'text-cyan-600' : 'text-yellow-400'}`} />
                       <div>
-                        <div className={`text-sm font-medium ${sectionTextClass}`}>Text Line / SMS</div>
-                        <div className={`text-xs ${mutedTextClass}`}>0917-712-9585</div>
+                        <div className={`text-sm font-medium ${sectionTextClass}`}>0955-884-8240</div>
+                        <div className={`text-xs ${mutedTextClass}`}>via zaneco.ph</div>
                       </div>
                     </a>
 
                     <a
-                      href="https://www.facebook.com/ABORLAN.PALAWAN.ELECTRIC.COOPERATIVE/"
+                      href="tel:09998838636"
+                      className={`flex items-center gap-3 p-3 rounded-lg transition-colors ${isLightMode ? 'hover:bg-amber-100' : 'hover:bg-white/10'}`}
+                    >
+                      <Phone className={`w-5 h-5 flex-shrink-0 ${isLightMode ? 'text-cyan-600' : 'text-yellow-400'}`} />
+                      <div>
+                        <div className={`text-sm font-medium ${sectionTextClass}`}>0999-883-8636</div>
+                        <div className={`text-xs ${mutedTextClass}`}>via ZANECO Facebook</div>
+                      </div>
+                    </a>
+
+                    <a
+                      href="mailto:zanecolamdag@gmail.com"
+                      className={`flex items-center gap-3 p-3 rounded-lg transition-colors ${isLightMode ? 'hover:bg-amber-100' : 'hover:bg-white/10'}`}
+                    >
+                      <Mail className={`w-5 h-5 flex-shrink-0 ${isLightMode ? 'text-cyan-600' : 'text-yellow-400'}`} />
+                      <div>
+                        <div className={`text-sm font-medium ${sectionTextClass}`}>Email</div>
+                        <div className={`text-xs ${mutedTextClass}`}>zanecolamdag@gmail.com</div>
+                      </div>
+                    </a>
+
+                    <a
+                      href="https://www.facebook.com/profile.php?id=61551218819204"
                       target="_blank"
                       rel="noopener noreferrer"
                       className={`flex items-center gap-3 p-3 rounded-lg transition-colors ${isLightMode ? 'hover:bg-amber-100' : 'hover:bg-white/10'}`}
@@ -339,11 +361,41 @@ export default function ReportPage() {
                         <div className={`text-xs ${mutedTextClass}`}>ZANECO Official</div>
                       </div>
                     </a>
+
+                    <a
+                      href="https://zaneco.ph"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={`flex items-center gap-3 p-3 rounded-lg transition-colors ${isLightMode ? 'hover:bg-amber-100' : 'hover:bg-white/10'}`}
+                    >
+                      <Home className={`w-5 h-5 flex-shrink-0 ${isLightMode ? 'text-cyan-600' : 'text-yellow-400'}`} />
+                      <div>
+                        <div className={`text-sm font-medium ${sectionTextClass}`}>Website</div>
+                        <div className={`text-xs ${mutedTextClass}`}>zaneco.ph</div>
+                      </div>
+                    </a>
+                  </div>
+
+                  <div className={`mt-4 pt-4 space-y-2 ${isLightMode ? 'border-t border-amber-200' : 'border-t border-white/10'}`}>
+                    <div className="flex items-start gap-3">
+                      <MapPinned className={`w-4 h-4 flex-shrink-0 mt-0.5 ${mutedTextClass}`} />
+                      <p className={`text-xs ${mutedTextClass}`}>Gen. Luna St., Dipolog City, Philippines</p>
+                    </div>
+                    <div className="flex items-start gap-3">
+                      <Clock className={`w-4 h-4 flex-shrink-0 mt-0.5 ${mutedTextClass}`} />
+                      <p className={`text-xs ${mutedTextClass}`}>Mon–Fri: 8:00 AM – 5:00 PM · Sat &amp; Holidays: 8:00 AM – 5:00 PM</p>
+                    </div>
                   </div>
                 </div>
 
                 <p className={`text-xs text-center ${mutedTextClass}`}>
                   For safety, always report power lines down or electrical emergencies directly to ZANECO.
+                </p>
+                <p className={`text-xs text-center italic ${mutedTextClass}`}>
+                  Contact details sourced from the official{' '}
+                  <a href="https://zaneco.ph" target="_blank" rel="noopener noreferrer" className="underline">zaneco.ph</a>
+                  {' '}website and{' '}
+                  <a href="https://www.facebook.com/profile.php?id=61551218819204" target="_blank" rel="noopener noreferrer" className="underline">ZANECO Facebook page</a>.
                 </p>
               </div>
             )}
