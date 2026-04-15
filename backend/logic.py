@@ -404,7 +404,7 @@ def get_notices():
             img = load_image_from_url(img_url)
 
             image_prompt = f"""
-            The attached image is a power interruption schedule/notice.
+            The attached image is a power interruption schedule/notice from ZANECO (Zamboanga del Norte Electric Cooperative) in Zamboanga del Norte, Philippines.
             Carefully read the text and details natively from the image.
             For context, the image was extracted from this URL filename: {img_url.split('/')[-1]}
             Use the date/year in the filename to infer the exact date if it's missing from the visual text.
@@ -421,7 +421,17 @@ def get_notices():
                   "locations": [
                     {{
                       "municipality": "POLANCO",
-                      "barangays": ["Labrador", "Poblacion North", "Poblacion South", "Guinles"]
+                      "all_barangays": false,
+                      "barangays": [
+                        {{
+                          "name": "POBLACION NORTH",
+                          "affected_area": "Prk. Greenleaves, One Heart, Prk. Malayan"
+                        }},
+                        {{
+                          "name": "GUINLES",
+                          "affected_area": null
+                        }}
+                      ]
                     }}
                   ],
                   "reason": "Cleaned reason text here"
@@ -429,12 +439,49 @@ def get_notices():
               ]
             }}
 
-            Rules:
+            CRITICAL RULES for location identification:
+
+            1. "ALL BARANGAYS" HANDLING:
+               When the image says "All barangays" (or similar like "all brgys", "lahat ng barangay") for a municipality,
+               set "all_barangays": true and leave "barangays" as an empty array [].
+               The backend will expand it to every barangay in that municipality.
+               Example: "PINAN: All barangays" → {{"municipality": "PINAN", "all_barangays": true, "barangays": []}}
+
+            2. LANDMARKS, STREETS, SITIOS, PUROKS & ESTABLISHMENTS:
+               When the affected area lists landmarks, streets, sitios, puroks (Prk.), establishments, resorts,
+               pharmacies, eateries, hotels, function halls, covered courts, or any named places instead of
+               (or mixed with) barangay names:
+               - Determine which barangay each landmark/place/purok/sitio/street belongs to based on your
+                 knowledge of the municipality geography. For example, "Dawo Covered Court" in Dapitan
+                 belongs to barangay "DAWO (POB.)".
+               - Group landmarks under their correct barangay.
+               - Put the raw landmark/establishment/purok/street details in the "affected_area" field.
+               - If a place has multiple branches in a city and only one is in the affected zone, use context
+                 clues (nearby landmarks, the route described) to determine the correct barangay.
+               Example: "DAPITAN: Dawo Covered Court, Dapitan City Fire Station" →
+               {{"name": "DAWO (POB.)", "affected_area": "Dawo Covered Court, Dapitan City Fire Station"}}
+
+            3. TYPO CORRECTION:
+               If a location name in the image has a typo or misspelling, match it to the closest valid name
+               from the reference JSON for that municipality.
+               Example: "Pobalcion Noth" under PINAN → "POBLACION NORTH" (if it exists in reference)
+               Example: "Sta. Isabel" → "SANTA ISABEL"
+
+            4. ROUTE-BASED DESCRIPTIONS:
+               When the image describes a route like "From X to Y", identify all barangays the route passes
+               through and list each barangay with the relevant portion of the route as its "affected_area".
+
+            5. BARANGAY "affected_area" FIELD:
+               - When a barangay is listed by name only (no extra details), set "affected_area" to null.
+               - When there are specific puroks, sitios, streets, landmarks, or establishments mentioned
+                 for that barangay, put them in "affected_area" as a descriptive string.
+
+            Other rules:
             - There may be multiple schedules inside this ONE image. Extract ALL of them.
             - Each schedule must be a separate object inside the "notices" array.
-            - Always use the provided reference JSON for municipalities and barangays.
-            - If OCR has a close but invalid name, replace it with the nearest valid one from the reference.
-            - Return valid JSON only.
+            - Always use the provided reference JSON for municipalities and barangays. Use EXACT names from the reference.
+            - Each barangay in the output must be an object with "name" and "affected_area" keys.
+            - Return valid JSON only. No markdown, no explanation.
 
             Location reference:
             {json.dumps(reference_json, ensure_ascii=False)}
@@ -471,25 +518,62 @@ def get_notices():
                     new_locs = []
                     for loc in sched.get("locations", []):
                         muni_name = loc.get("municipality", "").upper()
-                        muni = next((m for m in reference_json if m["name"] == muni_name), None)
+                        # Fuzzy-match municipality name against reference
+                        muni_names = [m["name"] for m in reference_json]
+                        matched_muni_name = snap_to_reference(muni_name, muni_names)
+                        muni = next((m for m in reference_json if m["name"] == matched_muni_name), None)
+
                         if muni:
                             muni_code = muni["code"]
-                            barangays = []
-                            for bname in loc.get("barangays", []):
-                                b = next((b for b in muni["barangays"] if b["name"] == bname.upper()), None)
-                                if b:
-                                    barangays.append({"code": b["code"], "name": b["name"]})
-                                else:
-                                    barangays.append({"code": None, "name": bname})
+
+                            # Handle "all_barangays" flag — expand to every barangay in the municipality
+                            if loc.get("all_barangays", False):
+                                barangays = [
+                                    {"code": b["code"], "name": b["name"], "affected_area": None}
+                                    for b in muni["barangays"]
+                                ]
+                            else:
+                                barangays = []
+                                raw_barangays = loc.get("barangays", [])
+                                for bentry in raw_barangays:
+                                    # Support both old format (string) and new format (object with name + affected_area)
+                                    if isinstance(bentry, dict):
+                                        bname = bentry.get("name", "")
+                                        affected_area = bentry.get("affected_area", None)
+                                    else:
+                                        bname = str(bentry)
+                                        affected_area = None
+
+                                    # Fuzzy-match barangay name against this municipality's barangays
+                                    ref_bgy_names = [b["name"] for b in muni["barangays"]]
+                                    matched_bname = snap_to_reference(bname, ref_bgy_names) if ref_bgy_names else bname.upper()
+
+                                    b = next((b for b in muni["barangays"] if b["name"] == matched_bname), None)
+                                    if b:
+                                        barangays.append({"code": b["code"], "name": b["name"], "affected_area": affected_area})
+                                    else:
+                                        barangays.append({"code": None, "name": bname, "affected_area": affected_area})
+
                             new_locs.append({
                                 "municipality": {"code": muni_code, "name": muni["name"]},
                                 "barangays": barangays
                             })
                         else:
-                            # fallback if no match found
+                            # fallback if no municipality match found
+                            raw_barangays = loc.get("barangays", [])
+                            fallback_bgys = []
+                            for bentry in raw_barangays:
+                                if isinstance(bentry, dict):
+                                    fallback_bgys.append({
+                                        "code": None,
+                                        "name": bentry.get("name", ""),
+                                        "affected_area": bentry.get("affected_area", None)
+                                    })
+                                else:
+                                    fallback_bgys.append({"code": None, "name": str(bentry), "affected_area": None})
                             new_locs.append({
                                 "municipality": {"code": None, "name": muni_name},
-                                "barangays": [{"code": None, "name": b} for b in loc.get("barangays", [])]
+                                "barangays": fallback_bgys
                             })
                     sched["locations"] = new_locs
                     valid_schedules.append(sched)

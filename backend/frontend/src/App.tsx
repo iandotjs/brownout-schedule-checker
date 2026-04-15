@@ -24,6 +24,7 @@ interface MatchedSchedule {
   locationStr: string;
   dateStr: string;
   timeStr: string;
+  affectedArea: string | null;
 }
 
 type MunicipalityValue = { code?: string | null; name?: string | null } | string | null | undefined;
@@ -256,6 +257,8 @@ export default function App() {
           let hasMatch = false;
           let matchedLocStr = "";
           
+          let matchedAffectedArea: string | null = null;
+
           s.locations?.forEach((loc: any) => {
             if (matchesMunicipality(loc.municipality, selectedCity, selectedCityName)) {
               loc.barangays?.forEach((b: any) => {
@@ -268,6 +271,9 @@ export default function App() {
                     selectedBarangayName ||
                     String((typeof b === 'object' && b?.name) || b || '');
                   matchedLocStr = `${brgyName}, ${cityName}`;
+                  if (typeof b === 'object' && b?.affected_area) {
+                    matchedAffectedArea = b.affected_area;
+                  }
                 }
               });
             }
@@ -279,7 +285,8 @@ export default function App() {
                url: n.url,
                dateStr: Array.isArray(s.dates) && s.dates.length > 0 ? s.dates.join(", ") : new Date(n.created_at).toLocaleDateString(),
                timeStr: Array.isArray(s.times) && s.times.length > 0 ? s.times.join(", ") : "See official notice",
-               locationStr: matchedLocStr
+               locationStr: matchedLocStr,
+               affectedArea: matchedAffectedArea
             });
           }
         });
@@ -618,6 +625,17 @@ export default function App() {
                                     </div>
                                   </div>
                                 </div>
+                                {schedule.affectedArea && (
+                                  <div className="flex items-start gap-3">
+                                    <AlertCircle className="w-5 h-5 text-orange-400 flex-shrink-0 mt-0.5" />
+                                    <div className="flex-1">
+                                      <div className={`text-xs mb-1 ${mutedTextClass}`}>Affected Area</div>
+                                      <div className={`text-sm font-medium break-words ${sectionTextClass}`}>
+                                        {schedule.affectedArea}
+                                      </div>
+                                    </div>
+                                  </div>
+                                )}
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                   <div className="flex items-start gap-3">
                                     <Calendar className="w-5 h-5 text-blue-400 flex-shrink-0 mt-0.5" />
