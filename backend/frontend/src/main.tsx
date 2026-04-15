@@ -4,15 +4,21 @@ import './index.css'
 import App from './App.tsx'
 import ErrorBoundary from './ErrorBoundary.tsx'
 import NotFoundPage from './NotFoundPage.tsx'
+import ReportPage from './ReportPage.tsx'
 
 const path = window.location.pathname
-const isKnownRoute = path === '/'
+const isHome = path === '/'
+const isReport = path === '/report'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    {isKnownRoute ? (
+    {isHome ? (
       <ErrorBoundary>
         <App />
+      </ErrorBoundary>
+    ) : isReport ? (
+      <ErrorBoundary>
+        <ReportPage />
       </ErrorBoundary>
     ) : (
       <NotFoundPage />

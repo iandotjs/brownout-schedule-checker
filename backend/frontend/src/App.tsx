@@ -1,6 +1,6 @@
 import { useEffect, useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { MapPin, Building2, Zap, Calendar, Clock, CheckCircle2, AlertCircle, Info, Sun, Moon } from 'lucide-react';
+import { MapPin, Building2, Zap, Calendar, Clock, CheckCircle2, AlertCircle, Info, Sun, Moon, MessageSquarePlus } from 'lucide-react';
 import localLocations from './locations.json';
 import { Analytics } from '@vercel/analytics/react';
 
@@ -688,6 +688,13 @@ export default function App() {
               @iandotjs
             </a>
           </p>
+          <a
+            href="/report"
+            className={`mt-2 inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold transition-colors ${isLightMode ? 'bg-white/80 text-cyan-700 border border-cyan-300 hover:bg-white' : 'bg-white/10 text-yellow-400 border border-yellow-400/30 hover:bg-white/15'}`}
+          >
+            <MessageSquarePlus className="w-4 h-4" />
+            Help Improve Results
+          </a>
         </motion.div>
 
         {/* Admin Panel — only visible when ?admin=<key> matches VITE_ADMIN_KEY */}

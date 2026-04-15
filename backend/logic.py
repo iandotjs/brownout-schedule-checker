@@ -13,7 +13,7 @@ from google.genai import errors as genai_errors
 from datetime import datetime, date, timedelta
 import os
 from dotenv import load_dotenv
-from db import get_processed_urls
+from db import get_processed_urls, save_learned_locations
 
 load_dotenv()  # load .env file here too (for GEMINI_API_KEY)
 
@@ -256,6 +256,92 @@ reference_json = fetch_and_cache_locations()
 
 if not reference_json or not isinstance(reference_json[0], dict):
     raise RuntimeError("❌ Reference JSON corrupted, expected list of dicts but got something else.")
+
+# ==============================
+# Barangay Details & Adjacency
+# ==============================
+
+BARANGAY_DETAILS_FILE = Path("barangay_details.json")
+BARANGAY_ADJACENCY_FILE = Path("barangay_adjacency.json")
+
+def _load_json_file(filepath: Path) -> dict:
+    if filepath.exists():
+        with open(filepath, "r", encoding="utf-8") as f:
+            return json.load(f)
+    return {}
+
+barangay_details = _load_json_file(BARANGAY_DETAILS_FILE)
+barangay_adjacency = _load_json_file(BARANGAY_ADJACENCY_FILE)
+
+def expand_route_barangays(muni_name: str, barangays_list: list, muni_ref: dict) -> list:
+    """
+    Post-processing: if a location has route-style affected_area (detected by
+    keywords like 'from', 'to', 'near', 'portion of', or multiple Prk./puroks),
+    expand to include neighboring barangays between start and end using the
+    adjacency map. Each added barangay gets the full route text as affected_area.
+    """
+    adjacency = barangay_adjacency.get(muni_name, {})
+    if not adjacency:
+        return barangays_list
+
+    # Detect if any entry has a route-style affected_area
+    route_entries = []
+    for b in barangays_list:
+        aa = b.get("affected_area") or ""
+        # Heuristic: route if it mentions "from" or has 3+ puroks/landmarks
+        prk_count = len(re.findall(r'prk\.|purok|sitio', aa, re.IGNORECASE))
+        has_route_keywords = bool(re.search(r'\bfrom\b|\bto\b|\bnear\b|\bportion of\b', aa, re.IGNORECASE))
+        if has_route_keywords or prk_count >= 3:
+            route_entries.append(b)
+
+    if not route_entries:
+        return barangays_list
+
+    # Get all barangay names currently in the list
+    existing_names = {b["name"].upper() for b in barangays_list}
+
+    # BFS to find path between the first and last route barangay
+    named_route = [b["name"].upper() for b in route_entries]
+    if len(named_route) < 2:
+        # Single route barangay — expand to direct neighbors
+        start = named_route[0]
+        neighbors = adjacency.get(start, [])
+        route_text = route_entries[0].get("affected_area", "")
+    else:
+        start = named_route[0]
+        end = named_route[-1]
+        # BFS shortest path
+        visited = {start}
+        queue = [[start]]
+        found_path = None
+        while queue:
+            path = queue.pop(0)
+            current = path[-1]
+            if current == end:
+                found_path = path
+                break
+            for neighbor in adjacency.get(current, []):
+                if neighbor not in visited:
+                    visited.add(neighbor)
+                    queue.append(path + [neighbor])
+        neighbors = found_path[1:-1] if found_path else []
+        route_text = route_entries[0].get("affected_area", "")
+
+    # Add missing intermediate barangays
+    ref_bgys = {b["name"]: b for b in muni_ref.get("barangays", [])}
+    added = []
+    for neighbor_name in neighbors:
+        if neighbor_name.upper() not in existing_names:
+            ref_b = ref_bgys.get(neighbor_name)
+            if ref_b:
+                added.append({
+                    "code": ref_b["code"],
+                    "name": ref_b["name"],
+                    "affected_area": route_text
+                })
+
+    return barangays_list + added
+
 
 def snap_to_reference(name, choices):
     match, score, _ = process.extractOne(name.upper(), [c.upper() for c in choices])
@@ -509,8 +595,13 @@ def get_notices():
             - Each barangay in the output must be an object with "name" and "affected_area" keys.
             - Return valid JSON only. No markdown, no explanation.
 
-            Location reference:
+            Location reference (municipalities + barangays):
             {json.dumps(reference_json, ensure_ascii=False)}
+
+            IMPORTANT — Detailed barangay-level reference (puroks, landmarks, streets, establishments, aliases).
+            Use this to determine which barangay a purok, landmark, street, or establishment belongs to.
+            If a place from the image matches an entry below, map it to that barangay:
+            {json.dumps({k: v for k, v in barangay_details.items() if k != '_README'}, ensure_ascii=False)}
             """
 
             # Pass both the text prompt and the raw PIL image natively to Gemini!
@@ -588,6 +679,9 @@ def get_notices():
                                     else:
                                         barangays.append({"code": None, "name": bname, "affected_area": affected_area})
 
+                            # Route expansion: add intermediate barangays from adjacency map
+                            barangays = expand_route_barangays(muni["name"], barangays, muni)
+
                             new_locs.append({
                                 "municipality": {"code": muni_code, "name": muni["name"]},
                                 "barangays": barangays
@@ -617,6 +711,40 @@ def get_notices():
                 "ocr_text": "Processed directly via Gemini Multimodal Vision",
                 "structured": valid_schedules
             })
+
+            # Auto-learn: extract affected_area → barangay mappings for enrichment
+            learned = []
+            for sched in valid_schedules:
+                for loc in sched.get("locations", []):
+                    muni_obj = loc.get("municipality", {})
+                    muni_display = muni_obj.get("name", "") if isinstance(muni_obj, dict) else str(muni_obj)
+                    for b in loc.get("barangays", []):
+                        aa = b.get("affected_area")
+                        if aa and b.get("name"):
+                            # Split comma-separated items into individual entries
+                            for item in re.split(r',\s*(?:and|&)?\s*', aa):
+                                item = item.strip()
+                                if not item or len(item) < 3:
+                                    continue
+                                # Classify the location type
+                                item_lower = item.lower()
+                                if any(k in item_lower for k in ['prk.', 'prk ', 'purok']):
+                                    loc_type = 'purok'
+                                elif any(k in item_lower for k in ['street', 'st.', 'avenue', 'ave.', 'road', 'rd.']):
+                                    loc_type = 'street'
+                                elif any(k in item_lower for k in ['pharmacy', 'hotel', 'resort', 'mall', 'restaurant', 'eatery', 'inn', 'clinic', 'hospital', 'jollibee', 'mcdonalds', 'gaisano']):
+                                    loc_type = 'establishment'
+                                else:
+                                    loc_type = 'landmark'
+                                learned.append({
+                                    "municipality": muni_display,
+                                    "barangay": b["name"],
+                                    "location_type": loc_type,
+                                    "location_name": item,
+                                    "source_url": notice["url"]
+                                })
+            if learned:
+                save_learned_locations(learned)
 
         # Skip placeholder notices that ended up with no valid future/today schedules.
         if notice_result["processed_images"]:
