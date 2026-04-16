@@ -1,6 +1,6 @@
 import { useEffect, useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { MapPin, Building2, Zap, Calendar, Clock, CheckCircle2, AlertCircle, Info, Sun, Moon, MessageSquarePlus } from 'lucide-react';
+import { MapPin, Building2, Zap, Calendar, Clock, CheckCircle2, AlertCircle, Info, Sun, Moon, MessageSquarePlus, Shield } from 'lucide-react';
 import localLocations from './locations.json';
 import { Analytics } from '@vercel/analytics/react';
 
@@ -495,15 +495,27 @@ export default function App() {
           <div className={`backdrop-blur-xl rounded-3xl overflow-hidden pointer-events-auto transition-colors duration-500 ${cardClass}`}>
             {/* Header with gradient */}
             <div className={`relative p-8 md:p-10 ${isLightMode ? 'bg-gradient-to-r from-emerald-400 via-cyan-400 to-sky-500' : 'bg-gradient-to-r from-yellow-400 via-orange-400 to-pink-500'}`}>
-              <button
-                onClick={() => setThemeMode((prev) => (prev === 'dark' ? 'light' : 'dark'))}
-                className={`absolute right-4 top-4 inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-semibold transition-colors ${isLightMode ? 'bg-white/80 text-slate-700 hover:bg-white' : 'bg-black/30 text-white hover:bg-black/40'}`}
-                title={isLightMode ? 'Switch to dark mode' : 'Switch to light mode'}
-                type="button"
-              >
-                {isLightMode ? <Moon className="w-4 h-4" /> : <Sun className="w-4 h-4" />}
-                <span className="hidden sm:inline">{isLightMode ? 'Dark Mode' : 'Light Mode'}</span>
-              </button>
+              <div className="absolute right-4 top-4 flex items-center gap-1.5">
+                {isAdmin && (
+                  <a
+                    href={`/admin?admin=${ADMIN_KEY}`}
+                    className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold transition-colors ${isLightMode ? 'bg-white/80 text-slate-700 hover:bg-white' : 'bg-black/30 text-white hover:bg-black/40'}`}
+                    title="Admin Panel"
+                  >
+                    <Shield className="w-4 h-4" />
+                    <span className="hidden sm:inline">Admin</span>
+                  </a>
+                )}
+                <button
+                  onClick={() => setThemeMode((prev) => (prev === 'dark' ? 'light' : 'dark'))}
+                  className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-semibold transition-colors ${isLightMode ? 'bg-white/80 text-slate-700 hover:bg-white' : 'bg-black/30 text-white hover:bg-black/40'}`}
+                  title={isLightMode ? 'Switch to dark mode' : 'Switch to light mode'}
+                  type="button"
+                >
+                  {isLightMode ? <Moon className="w-4 h-4" /> : <Sun className="w-4 h-4" />}
+                  <span className="hidden sm:inline">{isLightMode ? 'Dark Mode' : 'Light Mode'}</span>
+                </button>
+              </div>
               <motion.div
                 initial={{ opacity: 0, y: -20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -747,25 +759,7 @@ export default function App() {
           </p>
         </motion.footer>
 
-        {/* Admin Panel — only visible when ?admin=<key> matches VITE_ADMIN_KEY */}
-        {isAdmin && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 1 }}
-            className={`mt-6 w-full max-w-2xl rounded-2xl p-5 space-y-3 ${isLightMode ? 'bg-white/80 border border-amber-200/70' : 'bg-white/5 border border-white/10'}`}
-          >
-            <p className={`text-xs uppercase tracking-widest font-semibold ${isLightMode ? 'text-slate-500' : 'text-white/40'}`}>Admin</p>
-            <div className="flex items-center gap-3 flex-wrap">
-              <a
-                href={`/admin?admin=${ADMIN_KEY}`}
-                className="px-5 py-2.5 bg-yellow-400 hover:bg-yellow-300 text-black font-semibold rounded-xl text-sm transition-colors inline-block"
-              >
-                Open Admin Panel
-              </a>
-            </div>
-          </motion.div>
-        )}
+
       </div>
     <Analytics />
     </div>
