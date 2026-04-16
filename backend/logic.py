@@ -681,101 +681,130 @@ def get_notices():
             for sched in result_json.get("notices", []):
                 dates = sched.get("dates", [])
                 
-                # Default keep to True. We only discard if we CONFIDENTLY parse a date and it's in the past.
-                # Do NOT discard just because the date parsing fails or is weird.
-                keep = True 
-                
+                # Filter dates: keep only today or future dates.
+                # Handle cases where Gemini returns combined date strings like "April 15 & 16, 2026"
+                # by splitting on common separators before parsing.
+                valid_dates = []
                 for d in dates:
-                    try:
-                        # Try parsing various formats Gemini might return
-                        from dateutil import parser
-                        parsed = parser.parse(d).date()
-                        if parsed < today:
-                            keep = False
-                        else:
-                            keep = True 
-                            break # Found at least one valid future/today date, keep it!
-                    except Exception:
-                        pass # Ignore parsing errors, default to keep=True
-                        
-                if keep:
-                    # ✅ Normalize municipality + barangay with PSGC reference
-                    new_locs = []
-                    for loc in sched.get("locations", []):
-                        muni_name = loc.get("municipality", "").upper()
-                        # Fuzzy-match municipality name against reference
-                        muni_names = [m["name"] for m in reference_json]
-                        matched_muni_name = snap_to_reference(muni_name, muni_names)
-                        muni = next((m for m in reference_json if m["name"] == matched_muni_name), None)
-
-                        if muni:
-                            muni_code = muni["code"]
-
-                            # Handle "all_barangays" flag — expand to every barangay in the municipality
-                            if loc.get("all_barangays", False):
-                                barangays = [
-                                    {"code": b["code"], "name": b["name"], "affected_area": None}
-                                    for b in muni["barangays"]
-                                ]
+                    # Split combined date strings (e.g. "April 15 & 16, 2026") into individual dates
+                    sub_dates = re.split(r'\s*[&,]\s*', d)
+                    # Reconstruct full dates: if a sub-part is just a number (day), inherit month/year from context
+                    parsed_any = False
+                    for sd in sub_dates:
+                        sd = sd.strip()
+                        if not sd:
+                            continue
+                        try:
+                            from dateutil import parser as dateutil_parser
+                            parsed = dateutil_parser.parse(sd, fuzzy=True).date()
+                            if parsed >= today:
+                                if not parsed_any:
+                                    valid_dates.append(d)  # Keep the original combined string
+                                    parsed_any = True
+                        except Exception:
+                            # If a sub-part like "16" can't parse alone, try combining with the original string context
+                            if re.match(r'^\d{1,2}$', sd):
+                                try:
+                                    # Extract month and year from the full string for context
+                                    ref_parsed = dateutil_parser.parse(d.replace('&', ','), fuzzy=True)
+                                    reconstructed = f"{ref_parsed.strftime('%B')} {sd}, {ref_parsed.year}"
+                                    parsed = dateutil_parser.parse(reconstructed).date()
+                                    if parsed >= today:
+                                        if not parsed_any:
+                                            valid_dates.append(d)
+                                            parsed_any = True
+                                except Exception:
+                                    pass
                             else:
-                                barangays = []
-                                raw_barangays = loc.get("barangays", [])
-                                for bentry in raw_barangays:
-                                    # Support both old format (string) and new format (object with name + affected_area)
-                                    if isinstance(bentry, dict):
-                                        bname = bentry.get("name", "")
-                                        affected_area = bentry.get("affected_area", None)
-                                    else:
-                                        bname = str(bentry)
+                                # Can't parse at all — keep the date to avoid over-filtering
+                                if not parsed_any:
+                                    valid_dates.append(d)
+                                    parsed_any = True
+
+                if not valid_dates and dates:
+                    # ALL dates were confidently parsed as past — skip this schedule
+                    continue
+
+                # Replace dates with only valid ones (or keep originals if none could be parsed)
+                sched["dates"] = valid_dates if valid_dates else dates
+
+                # ✅ Normalize municipality + barangay with PSGC reference
+                new_locs = []
+                for loc in sched.get("locations", []):
+                    muni_name = loc.get("municipality", "").upper()
+                    # Fuzzy-match municipality name against reference
+                    muni_names = [m["name"] for m in reference_json]
+                    matched_muni_name = snap_to_reference(muni_name, muni_names)
+                    muni = next((m for m in reference_json if m["name"] == matched_muni_name), None)
+
+                    if muni:
+                        muni_code = muni["code"]
+
+                        # Handle "all_barangays" flag — expand to every barangay in the municipality
+                        if loc.get("all_barangays", False):
+                            barangays = [
+                                {"code": b["code"], "name": b["name"], "affected_area": None}
+                                for b in muni["barangays"]
+                            ]
+                        else:
+                            barangays = []
+                            raw_barangays = loc.get("barangays", [])
+                            for bentry in raw_barangays:
+                                # Support both old format (string) and new format (object with name + affected_area)
+                                if isinstance(bentry, dict):
+                                    bname = bentry.get("name", "")
+                                    affected_area = bentry.get("affected_area", None)
+                                else:
+                                    bname = str(bentry)
+                                    affected_area = None
+
+                                # Fuzzy-match barangay name against this municipality's barangays
+                                ref_bgy_names = [b["name"] for b in muni["barangays"]]
+                                matched_bname = snap_to_reference(bname, ref_bgy_names) if ref_bgy_names else bname.upper()
+
+                                b = next((b for b in muni["barangays"] if b["name"] == matched_bname), None)
+
+                                # Clean up redundant affected_area that just repeats the barangay name
+                                if affected_area and b:
+                                    clean = re.sub(r'[^A-Za-z0-9\s]', '', affected_area).strip().upper()
+                                    ref_clean = re.sub(r'[^A-Za-z0-9\s]', '', b["name"]).strip().upper()
+                                    if clean == ref_clean:
                                         affected_area = None
 
-                                    # Fuzzy-match barangay name against this municipality's barangays
-                                    ref_bgy_names = [b["name"] for b in muni["barangays"]]
-                                    matched_bname = snap_to_reference(bname, ref_bgy_names) if ref_bgy_names else bname.upper()
-
-                                    b = next((b for b in muni["barangays"] if b["name"] == matched_bname), None)
-
-                                    # Clean up redundant affected_area that just repeats the barangay name
-                                    if affected_area and b:
-                                        clean = re.sub(r'[^A-Za-z0-9\s]', '', affected_area).strip().upper()
-                                        ref_clean = re.sub(r'[^A-Za-z0-9\s]', '', b["name"]).strip().upper()
-                                        if clean == ref_clean:
-                                            affected_area = None
-
-                                    if b:
-                                        barangays.append({"code": b["code"], "name": b["name"], "affected_area": affected_area})
-                                    else:
-                                        barangays.append({"code": None, "name": bname, "affected_area": affected_area})
-
-                            # Route expansion: add intermediate barangays from adjacency map
-                            barangays = expand_route_barangays(muni["name"], barangays, muni)
-
-                            # Safety net: filter affected_area per barangay using barangay_details reference
-                            barangays = filter_affected_area_by_barangay(muni["name"], barangays)
-
-                            new_locs.append({
-                                "municipality": {"code": muni_code, "name": muni["name"]},
-                                "barangays": barangays
-                            })
-                        else:
-                            # fallback if no municipality match found
-                            raw_barangays = loc.get("barangays", [])
-                            fallback_bgys = []
-                            for bentry in raw_barangays:
-                                if isinstance(bentry, dict):
-                                    fallback_bgys.append({
-                                        "code": None,
-                                        "name": bentry.get("name", ""),
-                                        "affected_area": bentry.get("affected_area", None)
-                                    })
+                                if b:
+                                    barangays.append({"code": b["code"], "name": b["name"], "affected_area": affected_area})
                                 else:
-                                    fallback_bgys.append({"code": None, "name": str(bentry), "affected_area": None})
-                            new_locs.append({
-                                "municipality": {"code": None, "name": muni_name},
-                                "barangays": fallback_bgys
-                            })
-                    sched["locations"] = new_locs
-                    valid_schedules.append(sched)
+                                    barangays.append({"code": None, "name": bname, "affected_area": affected_area})
+
+                        # Route expansion: add intermediate barangays from adjacency map
+                        barangays = expand_route_barangays(muni["name"], barangays, muni)
+
+                        # Safety net: filter affected_area per barangay using barangay_details reference
+                        barangays = filter_affected_area_by_barangay(muni["name"], barangays)
+
+                        new_locs.append({
+                            "municipality": {"code": muni_code, "name": muni["name"]},
+                            "barangays": barangays
+                        })
+                    else:
+                        # fallback if no municipality match found
+                        raw_barangays = loc.get("barangays", [])
+                        fallback_bgys = []
+                        for bentry in raw_barangays:
+                            if isinstance(bentry, dict):
+                                fallback_bgys.append({
+                                    "code": None,
+                                    "name": bentry.get("name", ""),
+                                    "affected_area": bentry.get("affected_area", None)
+                                })
+                            else:
+                                fallback_bgys.append({"code": None, "name": str(bentry), "affected_area": None})
+                        new_locs.append({
+                            "municipality": {"code": None, "name": muni_name},
+                            "barangays": fallback_bgys
+                        })
+                sched["locations"] = new_locs
+                valid_schedules.append(sched)
 
             notice_result["processed_images"].append({
                 "image_url": img_url,
