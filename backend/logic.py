@@ -13,7 +13,7 @@ from google.genai import errors as genai_errors
 from datetime import datetime, date, timedelta
 import os
 from dotenv import load_dotenv
-from db import get_processed_urls
+from db import get_processed_urls, save_learned_locations
 
 load_dotenv()  # load .env file here too (for GEMINI_API_KEY)
 
@@ -30,9 +30,11 @@ CATEGORY_URL = f"{ZANECO_BASE}/category/power-interruption-update/"
 
 def extract_notice_date_from_text(text: str):
     """
-    Extract schedule date from title/URL text such as:
+    Extract the LATEST schedule date from title/URL text such as:
     - APRIL-10-2026
     - April 10, 2026
+    - April 15 & 16, 2026
+    - april-15-16-2026
     - april_10_2026
     Returns a date or None when no reliable date is found.
     """
@@ -42,22 +44,28 @@ def extract_notice_date_from_text(text: str):
     )
     normalized = text.lower().replace("_", "-")
 
-    # month-day-year pattern (supports spaces, commas, and dashes)
-    m = re.search(
-        rf"({month_names})[\s\-]+(\d{{1,2}})(?:st|nd|rd|th)?[\s,\-]+(\d{{4}})",
+    latest = None
+
+    # Match: month + one or more days (separated by &, commas, dashes) + 4-digit year
+    # Handles "April 15 & 16, 2026", "april-15-16-2026", "April 10, 2026", etc.
+    for m in re.finditer(
+        rf"({month_names})[\s\-]+(\d{{1,2}}(?:\s*[&,\-]\s*\d{{1,2}})*)[\s,\-]+(\d{{4}})",
         normalized,
         flags=re.IGNORECASE,
-    )
-    if not m:
-        return None
+    ):
+        month_name = m.group(1).title()
+        year = int(m.group(3))
+        days = re.findall(r'\d{1,2}', m.group(2))
+        for day_str in days:
+            day = int(day_str)
+            try:
+                d = datetime.strptime(f"{month_name} {day} {year}", "%B %d %Y").date()
+                if latest is None or d > latest:
+                    latest = d
+            except Exception:
+                continue
 
-    month_name = m.group(1).title()
-    day = int(m.group(2))
-    year = int(m.group(3))
-    try:
-        return datetime.strptime(f"{month_name} {day} {year}", "%B %d %Y").date()
-    except Exception:
-        return None
+    return latest
 
 def parse_notice_date(soup):
     time_tag = soup.select_one("time.entry-date")
@@ -257,6 +265,147 @@ reference_json = fetch_and_cache_locations()
 if not reference_json or not isinstance(reference_json[0], dict):
     raise RuntimeError("❌ Reference JSON corrupted, expected list of dicts but got something else.")
 
+# ==============================
+# Barangay Details & Adjacency
+# ==============================
+
+BARANGAY_DETAILS_FILE = Path("barangay_details.json")
+BARANGAY_ADJACENCY_FILE = Path("barangay_adjacency.json")
+
+def _load_json_file(filepath: Path) -> dict:
+    if filepath.exists():
+        with open(filepath, "r", encoding="utf-8") as f:
+            return json.load(f)
+    return {}
+
+barangay_details = _load_json_file(BARANGAY_DETAILS_FILE)
+barangay_adjacency = _load_json_file(BARANGAY_ADJACENCY_FILE)
+
+def expand_route_barangays(muni_name: str, barangays_list: list, muni_ref: dict) -> list:
+    """
+    Post-processing: if a location has route-style affected_area (detected by
+    keywords like 'from', 'to', 'near', 'portion of', or multiple Prk./puroks),
+    expand to include neighboring barangays between start and end using the
+    adjacency map. Added barangays get affected_area=null since no specific
+    sub-locations were mentioned for them.
+    """
+    adjacency = barangay_adjacency.get(muni_name, {})
+    if not adjacency:
+        return barangays_list
+
+    # Detect if any entry has a route-style affected_area
+    route_entries = []
+    for b in barangays_list:
+        aa = b.get("affected_area") or ""
+        # Heuristic: route if it mentions "from" or has 3+ puroks/landmarks
+        prk_count = len(re.findall(r'prk\.|purok|sitio', aa, re.IGNORECASE))
+        has_route_keywords = bool(re.search(r'\bfrom\b|\bto\b|\bnear\b|\bportion of\b', aa, re.IGNORECASE))
+        if has_route_keywords or prk_count >= 3:
+            route_entries.append(b)
+
+    if not route_entries:
+        return barangays_list
+
+    # Get all barangay names currently in the list
+    existing_names = {b["name"].upper() for b in barangays_list}
+
+    # BFS to find path between the first and last route barangay
+    named_route = [b["name"].upper() for b in route_entries]
+    if len(named_route) < 2:
+        # Single route barangay — expand to direct neighbors
+        start = named_route[0]
+        neighbors = adjacency.get(start, [])
+        route_text = route_entries[0].get("affected_area", "")
+    else:
+        start = named_route[0]
+        end = named_route[-1]
+        # BFS shortest path
+        visited = {start}
+        queue = [[start]]
+        found_path = None
+        while queue:
+            path = queue.pop(0)
+            current = path[-1]
+            if current == end:
+                found_path = path
+                break
+            for neighbor in adjacency.get(current, []):
+                if neighbor not in visited:
+                    visited.add(neighbor)
+                    queue.append(path + [neighbor])
+        neighbors = found_path[1:-1] if found_path else []
+        route_text = route_entries[0].get("affected_area", "")
+
+    # Add missing intermediate barangays (no specific sub-locations, so affected_area=null)
+    ref_bgys = {b["name"]: b for b in muni_ref.get("barangays", [])}
+    added = []
+    for neighbor_name in neighbors:
+        if neighbor_name.upper() not in existing_names:
+            ref_b = ref_bgys.get(neighbor_name)
+            if ref_b:
+                added.append({
+                    "code": ref_b["code"],
+                    "name": ref_b["name"],
+                    "affected_area": None
+                })
+
+    return barangays_list + added
+
+
+def filter_affected_area_by_barangay(muni_name: str, barangays_list: list) -> list:
+    """
+    Post-processing safety net: cross-reference each barangay's affected_area
+    against barangay_details.json. If affected_area contains items that belong
+    to a DIFFERENT barangay in the same municipality, remove them. Items not
+    found in any barangay's reference data are kept (could be new/unmapped places).
+    """
+    muni_details = barangay_details.get(muni_name, {})
+    if not muni_details:
+        return barangays_list
+
+    # Build a lookup: normalized sub-location -> set of barangay names that own it
+    location_to_bgys = {}
+    for bgy_name, details in muni_details.items():
+        for category in ("puroks", "landmarks", "streets", "establishments", "aliases"):
+            for loc in details.get(category, []):
+                key = re.sub(r'[^A-Za-z0-9\s]', '', loc).strip().upper()
+                if key:
+                    location_to_bgys.setdefault(key, set()).add(bgy_name.upper())
+
+    result = []
+    for b in barangays_list:
+        aa = b.get("affected_area")
+        if not aa:
+            result.append(b)
+            continue
+
+        bgy_name_upper = b["name"].upper()
+
+        # Split affected_area into segments by comma, &, and "and"
+        segments = re.split(r'\s*[,&]\s*|\s+and\s+', aa)
+        kept = []
+        for seg in segments:
+            seg = seg.strip()
+            if not seg:
+                continue
+            # Normalize for lookup
+            seg_key = re.sub(r'[^A-Za-z0-9\s]', '', seg).strip().upper()
+            # Check if this segment is a known sub-location
+            owners = location_to_bgys.get(seg_key)
+            if owners is None:
+                # Not in reference data — keep it (unmapped/new place)
+                kept.append(seg)
+            elif bgy_name_upper in owners:
+                # Belongs to this barangay — keep
+                kept.append(seg)
+            # else: belongs to a different barangay — drop
+
+        new_aa = ", ".join(kept) if kept else None
+        result.append({**b, "affected_area": new_aa})
+
+    return result
+
+
 def snap_to_reference(name, choices):
     match, score, _ = process.extractOne(name.upper(), [c.upper() for c in choices])
     return match if score > 80 else name
@@ -394,9 +543,19 @@ def get_notices():
             "processed_images": []
         }
 
+        # Check if notice covers today/future based on title/URL
+        # to avoid skipping images whose filenames only mention an earlier date
+        notice_latest_date = extract_notice_date_from_text(
+            f"{notice['title']} {notice['url']}"
+        )
+        notice_covers_future = (
+            notice_latest_date is not None and notice_latest_date >= date.today()
+        )
+
         for img_url in notice["images"]:
-            # Rapid-skip if URL specifies a fully past date
-            if is_filename_date_past(img_url):
+            # Rapid-skip if URL specifies a fully past date,
+            # but only when the notice itself doesn't cover today/future dates
+            if not notice_covers_future and is_filename_date_past(img_url):
                 print(f"Skipping past schedule image based on filename: {img_url}")
                 continue
                 
@@ -404,7 +563,7 @@ def get_notices():
             img = load_image_from_url(img_url)
 
             image_prompt = f"""
-            The attached image is a power interruption schedule/notice.
+            The attached image is a power interruption schedule/notice from ZANECO (Zamboanga del Norte Electric Cooperative) in Zamboanga del Norte, Philippines.
             Carefully read the text and details natively from the image.
             For context, the image was extracted from this URL filename: {img_url.split('/')[-1]}
             Use the date/year in the filename to infer the exact date if it's missing from the visual text.
@@ -421,7 +580,17 @@ def get_notices():
                   "locations": [
                     {{
                       "municipality": "POLANCO",
-                      "barangays": ["Labrador", "Poblacion North", "Poblacion South", "Guinles"]
+                      "all_barangays": false,
+                      "barangays": [
+                        {{
+                          "name": "POBLACION NORTH",
+                          "affected_area": "Prk. Greenleaves, One Heart, Prk. Malayan"
+                        }},
+                        {{
+                          "name": "GUINLES",
+                          "affected_area": null
+                        }}
+                      ]
                     }}
                   ],
                   "reason": "Cleaned reason text here"
@@ -429,15 +598,96 @@ def get_notices():
               ]
             }}
 
-            Rules:
+            CRITICAL RULES for location identification:
+
+            1. "ALL BARANGAYS" HANDLING:
+               When the image says "All barangays" (or similar like "all brgys", "lahat ng barangay") for a municipality,
+               set "all_barangays": true and leave "barangays" as an empty array [].
+               The backend will expand it to every barangay in that municipality.
+               Example: "PINAN: All barangays" → {{"municipality": "PINAN", "all_barangays": true, "barangays": []}}
+
+            2. LANDMARKS, STREETS, SITIOS, PUROKS & ESTABLISHMENTS:
+               When the affected area lists landmarks, streets, sitios, puroks (Prk.), establishments, resorts,
+               pharmacies, eateries, hotels, function halls, covered courts, or any named places instead of
+               (or mixed with) barangay names:
+               - Determine which barangay each landmark/place/purok/sitio/street belongs to based on your
+                 knowledge of the municipality geography. For example, "Dawo Covered Court" in Dapitan
+                 belongs to barangay "DAWO (POB.)".
+               - Group landmarks under their correct barangay.
+               - Put the raw landmark/establishment/purok/street details in the "affected_area" field.
+               - If a place has multiple branches in a city and only one is in the affected zone, use context
+                 clues (nearby landmarks, the route described) to determine the correct barangay.
+               Example: "DAPITAN: Dawo Covered Court, Dapitan City Fire Station" →
+               {{"name": "DAWO (POB.)", "affected_area": "Dawo Covered Court, Dapitan City Fire Station"}}
+
+            3. TYPO CORRECTION:
+               If a location name in the image has a typo or misspelling, match it to the closest valid name
+               from the reference JSON for that municipality.
+               Example: "Pobalcion Noth" under PINAN → "POBLACION NORTH" (if it exists in reference)
+               Example: "Sta. Isabel" → "SANTA ISABEL"
+
+            4. ROUTE-BASED DESCRIPTIONS:
+               When the image describes a route like "From X to Y", with puroks, landmarks, or establishments
+               listed along the way:
+               - Identify the START barangay and END barangay from the description.
+               - Then identify ALL barangays that the route geographically passes through between start and end.
+                 Include adjacent/neighboring barangays along the route even if not explicitly named.
+               - IMPORTANT: Do NOT paste the full route description into every barangay. Instead, SPLIT the
+                 route description and assign ONLY the specific puroks, landmarks, streets, and establishments
+                 that belong to each barangay. Use the detailed barangay-level reference below to determine
+                 which sub-locations belong to which barangay.
+               - If a barangay is along the route but NO specific sub-locations from the description belong
+                 to it, set its "affected_area" to null.
+               - This applies to ALL municipalities and cities.
+               - It is BETTER to include more barangays (even if uncertain) than to miss them. A resident
+                 in any barangay along the route needs to see this alert.
+               - WORKED EXAMPLE: "From Anahaw Galas near ZANECO Motorpool to Aleson Vanyard, Prk. Greenleaves,
+                 One Heart, Prk. Malayan, Prk. Bayanihan, Prk. Bougainvilla & Portion of Prk. Kalambuan
+                 and Prk. Uno, Sta. Isabel" in Dipolog City should produce:
+                 * {{"name": "GALAS", "affected_area": "Anahaw Galas, near ZANECO Motorpool, Aleson Vanyard"}}
+                   (Anahaw, ZANECO Motorpool, Aleson Vanyard are landmarks/puroks in GALAS)
+                 * {{"name": "MIPUTAK (POB.)", "affected_area": "Prk. Greenleaves, Prk. Malayan, Prk. Bayanihan"}}
+                   (these puroks belong to MIPUTAK per the reference)
+                 * {{"name": "CENTRAL (POB.)", "affected_area": "One Heart"}}
+                   (One Heart is a purok in CENTRAL per the reference)
+                 * {{"name": "BIASONG (POB.)", "affected_area": "Prk. Bougainvilla"}}
+                   (Prk. Bougainvilla belongs to BIASONG per the reference)
+                 * {{"name": "SANTA ISABEL", "affected_area": "Portion of Prk. Kalambuan and Prk. Uno"}}
+                   (Prk. Kalambuan and Prk. Uno belong to SANTA ISABEL per the reference)
+                 * {{"name": "ESTACA (POB.)", "affected_area": null}}
+                   (on the route but no specific sub-locations from the description belong to it)
+
+            5. MIXED LANDMARKS & ESTABLISHMENTS (non-route):
+               When the affected area lists landmarks, establishments, or places that are NOT part of a
+               continuous route description (just a comma-separated list of places):
+               - Map each place to its correct barangay individually.
+               - Group places under their correct barangay and put them in "affected_area".
+               - If you cannot confidently determine which barangay a place belongs to, assign it to the
+                 nearest/most likely barangay and include neighboring barangays with the same affected_area.
+
+            6. BARANGAY "affected_area" FIELD:
+               - When a barangay is listed by name only (no extra details), set "affected_area" to null.
+               - When there are specific puroks, sitios, streets, landmarks, or establishments mentioned
+                 for that barangay, put them in "affected_area" as a descriptive string.
+               - Do NOT set "affected_area" to just the barangay name itself (e.g., don't put "Sta. Isabel"
+                 as affected_area for SANTA ISABEL). That is redundant — use null instead.
+               - The "affected_area" should only contain SUB-LOCATIONS within that barangay (puroks,
+                 streets, landmarks, establishments), not the barangay name.
+
+            Other rules:
             - There may be multiple schedules inside this ONE image. Extract ALL of them.
             - Each schedule must be a separate object inside the "notices" array.
-            - Always use the provided reference JSON for municipalities and barangays.
-            - If OCR has a close but invalid name, replace it with the nearest valid one from the reference.
-            - Return valid JSON only.
+            - Always use the provided reference JSON for municipalities and barangays. Use EXACT names from the reference.
+            - Each barangay in the output must be an object with "name" and "affected_area" keys.
+            - Return valid JSON only. No markdown, no explanation.
 
-            Location reference:
+            Location reference (municipalities + barangays):
             {json.dumps(reference_json, ensure_ascii=False)}
+
+            IMPORTANT — Detailed barangay-level reference (puroks, landmarks, streets, establishments, aliases).
+            Use this to determine which barangay a purok, landmark, street, or establishment belongs to.
+            If a place from the image matches an entry below, map it to that barangay:
+            {json.dumps({k: v for k, v in barangay_details.items() if k != '_README'}, ensure_ascii=False)}
             """
 
             # Pass both the text prompt and the raw PIL image natively to Gemini!
@@ -449,56 +699,170 @@ def get_notices():
             for sched in result_json.get("notices", []):
                 dates = sched.get("dates", [])
                 
-                # Default keep to True. We only discard if we CONFIDENTLY parse a date and it's in the past.
-                # Do NOT discard just because the date parsing fails or is weird.
-                keep = True 
-                
+                # Filter dates: keep only today or future dates.
+                # Handle cases where Gemini returns combined date strings like "April 15 & 16, 2026"
+                # by splitting on common separators before parsing.
+                valid_dates = []
                 for d in dates:
-                    try:
-                        # Try parsing various formats Gemini might return
-                        from dateutil import parser
-                        parsed = parser.parse(d).date()
-                        if parsed < today:
-                            keep = False
+                    # Split combined date strings (e.g. "April 15 & 16, 2026") into individual dates
+                    sub_dates = re.split(r'\s*[&,]\s*', d)
+                    # Reconstruct full dates: if a sub-part is just a number (day), inherit month/year from context
+                    parsed_any = False
+                    for sd in sub_dates:
+                        sd = sd.strip()
+                        if not sd:
+                            continue
+                        try:
+                            from dateutil import parser as dateutil_parser
+                            parsed = dateutil_parser.parse(sd, fuzzy=True).date()
+                            if parsed >= today:
+                                if not parsed_any:
+                                    valid_dates.append(d)  # Keep the original combined string
+                                    parsed_any = True
+                        except Exception:
+                            # If a sub-part like "16" can't parse alone, try combining with the original string context
+                            if re.match(r'^\d{1,2}$', sd):
+                                try:
+                                    # Extract month and year from the full string for context
+                                    ref_parsed = dateutil_parser.parse(d.replace('&', ','), fuzzy=True)
+                                    reconstructed = f"{ref_parsed.strftime('%B')} {sd}, {ref_parsed.year}"
+                                    parsed = dateutil_parser.parse(reconstructed).date()
+                                    if parsed >= today:
+                                        if not parsed_any:
+                                            valid_dates.append(d)
+                                            parsed_any = True
+                                except Exception:
+                                    pass
+                            else:
+                                # Can't parse at all — keep the date to avoid over-filtering
+                                if not parsed_any:
+                                    valid_dates.append(d)
+                                    parsed_any = True
+
+                if not valid_dates and dates:
+                    # ALL dates were confidently parsed as past — skip this schedule
+                    continue
+
+                # Replace dates with only valid ones (or keep originals if none could be parsed)
+                sched["dates"] = valid_dates if valid_dates else dates
+
+                # ✅ Normalize municipality + barangay with PSGC reference
+                new_locs = []
+                for loc in sched.get("locations", []):
+                    muni_name = loc.get("municipality", "").upper()
+                    # Fuzzy-match municipality name against reference
+                    muni_names = [m["name"] for m in reference_json]
+                    matched_muni_name = snap_to_reference(muni_name, muni_names)
+                    muni = next((m for m in reference_json if m["name"] == matched_muni_name), None)
+
+                    if muni:
+                        muni_code = muni["code"]
+
+                        # Handle "all_barangays" flag — expand to every barangay in the municipality
+                        if loc.get("all_barangays", False):
+                            barangays = [
+                                {"code": b["code"], "name": b["name"], "affected_area": None}
+                                for b in muni["barangays"]
+                            ]
                         else:
-                            keep = True 
-                            break # Found at least one valid future/today date, keep it!
-                    except Exception:
-                        pass # Ignore parsing errors, default to keep=True
-                        
-                if keep:
-                    # ✅ Normalize municipality + barangay with PSGC reference
-                    new_locs = []
-                    for loc in sched.get("locations", []):
-                        muni_name = loc.get("municipality", "").upper()
-                        muni = next((m for m in reference_json if m["name"] == muni_name), None)
-                        if muni:
-                            muni_code = muni["code"]
                             barangays = []
-                            for bname in loc.get("barangays", []):
-                                b = next((b for b in muni["barangays"] if b["name"] == bname.upper()), None)
-                                if b:
-                                    barangays.append({"code": b["code"], "name": b["name"]})
+                            raw_barangays = loc.get("barangays", [])
+                            for bentry in raw_barangays:
+                                # Support both old format (string) and new format (object with name + affected_area)
+                                if isinstance(bentry, dict):
+                                    bname = bentry.get("name", "")
+                                    affected_area = bentry.get("affected_area", None)
                                 else:
-                                    barangays.append({"code": None, "name": bname})
-                            new_locs.append({
-                                "municipality": {"code": muni_code, "name": muni["name"]},
-                                "barangays": barangays
-                            })
-                        else:
-                            # fallback if no match found
-                            new_locs.append({
-                                "municipality": {"code": None, "name": muni_name},
-                                "barangays": [{"code": None, "name": b} for b in loc.get("barangays", [])]
-                            })
-                    sched["locations"] = new_locs
-                    valid_schedules.append(sched)
+                                    bname = str(bentry)
+                                    affected_area = None
+
+                                # Fuzzy-match barangay name against this municipality's barangays
+                                ref_bgy_names = [b["name"] for b in muni["barangays"]]
+                                matched_bname = snap_to_reference(bname, ref_bgy_names) if ref_bgy_names else bname.upper()
+
+                                b = next((b for b in muni["barangays"] if b["name"] == matched_bname), None)
+
+                                # Clean up redundant affected_area that just repeats the barangay name
+                                if affected_area and b:
+                                    clean = re.sub(r'[^A-Za-z0-9\s]', '', affected_area).strip().upper()
+                                    ref_clean = re.sub(r'[^A-Za-z0-9\s]', '', b["name"]).strip().upper()
+                                    if clean == ref_clean:
+                                        affected_area = None
+
+                                if b:
+                                    barangays.append({"code": b["code"], "name": b["name"], "affected_area": affected_area})
+                                else:
+                                    barangays.append({"code": None, "name": bname, "affected_area": affected_area})
+
+                        # Route expansion: add intermediate barangays from adjacency map
+                        barangays = expand_route_barangays(muni["name"], barangays, muni)
+
+                        # Safety net: filter affected_area per barangay using barangay_details reference
+                        barangays = filter_affected_area_by_barangay(muni["name"], barangays)
+
+                        new_locs.append({
+                            "municipality": {"code": muni_code, "name": muni["name"]},
+                            "barangays": barangays
+                        })
+                    else:
+                        # fallback if no municipality match found
+                        raw_barangays = loc.get("barangays", [])
+                        fallback_bgys = []
+                        for bentry in raw_barangays:
+                            if isinstance(bentry, dict):
+                                fallback_bgys.append({
+                                    "code": None,
+                                    "name": bentry.get("name", ""),
+                                    "affected_area": bentry.get("affected_area", None)
+                                })
+                            else:
+                                fallback_bgys.append({"code": None, "name": str(bentry), "affected_area": None})
+                        new_locs.append({
+                            "municipality": {"code": None, "name": muni_name},
+                            "barangays": fallback_bgys
+                        })
+                sched["locations"] = new_locs
+                valid_schedules.append(sched)
 
             notice_result["processed_images"].append({
                 "image_url": img_url,
                 "ocr_text": "Processed directly via Gemini Multimodal Vision",
                 "structured": valid_schedules
             })
+
+            # Auto-learn: extract affected_area → barangay mappings for enrichment
+            learned = []
+            for sched in valid_schedules:
+                for loc in sched.get("locations", []):
+                    muni_obj = loc.get("municipality", {})
+                    muni_display = muni_obj.get("name", "") if isinstance(muni_obj, dict) else str(muni_obj)
+                    for b in loc.get("barangays", []):
+                        aa = b.get("affected_area")
+                        if aa and b.get("name"):
+                            # Split comma-separated items into individual entries
+                            for item in re.split(r',\s*(?:and|&)?\s*', aa):
+                                item = item.strip()
+                                if not item or len(item) < 3:
+                                    continue
+                                # Classify the location type
+                                item_lower = item.lower()
+                                if any(k in item_lower for k in ['prk.', 'prk ', 'purok']):
+                                    loc_type = 'purok'
+                                elif any(k in item_lower for k in ['street', 'st.', 'avenue', 'ave.', 'road', 'rd.']):
+                                    loc_type = 'street'
+                                elif any(k in item_lower for k in ['pharmacy', 'hotel', 'resort', 'mall', 'restaurant', 'eatery', 'inn', 'clinic', 'hospital', 'jollibee', 'mcdonalds', 'gaisano']):
+                                    loc_type = 'establishment'
+                                else:
+                                    loc_type = 'landmark'
+                                learned.append({
+                                    "municipality": muni_display,
+                                    "barangay": b["name"],
+                                    "location_type": loc_type,
+                                    "location_name": item,
+                                    "source_url": notice["url"]
+                                })
+            if learned:
+                save_learned_locations(learned)
 
         # Skip placeholder notices that ended up with no valid future/today schedules.
         if notice_result["processed_images"]:

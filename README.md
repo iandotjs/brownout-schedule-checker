@@ -15,11 +15,12 @@ The system:
 - Extracts dates, times, municipality, and barangay coverage from notice images
 - Stores structured notice data in Supabase
 - Displays matched schedules for user-selected city and barangay
+- Shows a "Data last updated" timestamp so users know how fresh the schedule data is
 - Provides admin access to trigger immediate fetch of new notices
 
 ## Tech Stack
 
-- Frontend: React, TypeScript, Vite, Tailwind CSS, Framer Motion
+- Frontend: React, TypeScript, Vite, Tailwind CSS, Framer Motion, Lucide Icons
 - Backend: Python, Flask, Gunicorn
 - Data: Supabase (PostgreSQL + REST)
 - AI/OCR: Google Gemini API
@@ -27,7 +28,7 @@ The system:
 - Hosting:
 	- Frontend: Vercel
 	- Backend API: Render (free tier)
-- Automation: GitHub Actions (daily 12:00 AM Philippine Time)
+- Automation: GitHub Actions (daily 12:43 AM Philippine Time)
 - Analytics: Vercel Analytics
 
 ## Project Structure
@@ -40,6 +41,10 @@ backend/
 	run_scraper.py         # Scheduled/manual scraper entry point
 	requirements.txt
 	frontend/              # React + Vite frontend app
+		src/
+			App.tsx            # Main app UI (search, results, footer)
+			ReportPage.tsx     # Report & Feedback page
+			ErrorBoundary.tsx  # Graceful error handling
 ```
 
 ## Environment Strategy (Dev and Prod)

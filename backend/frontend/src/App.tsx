@@ -1,6 +1,6 @@
 import { useEffect, useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { MapPin, Building2, Zap, Calendar, Clock, CheckCircle2, AlertCircle, Info, Sun, Moon } from 'lucide-react';
+import { MapPin, Building2, Zap, Calendar, Clock, CheckCircle2, AlertCircle, Info, Sun, Moon, MessageSquarePlus } from 'lucide-react';
 import localLocations from './locations.json';
 import { Analytics } from '@vercel/analytics/react';
 
@@ -24,6 +24,7 @@ interface MatchedSchedule {
   locationStr: string;
   dateStr: string;
   timeStr: string;
+  affectedArea: string | null;
 }
 
 type MunicipalityValue = { code?: string | null; name?: string | null } | string | null | undefined;
@@ -139,6 +140,7 @@ export default function App() {
   const [notices, setNotices] = useState<Notice[]>([]);
   const [loading, setLoading] = useState(false);
   const [loadError, setLoadError] = useState<string | null>(null);
+  const [lastUpdated, setLastUpdated] = useState<string | null>(null);
   const [scraping, setScraping] = useState(false);
   const [scrapeStatus, setScrapeStatus] = useState<{ ok: boolean; msg: string } | null>(null);
   const [useLowPowerVisuals, setUseLowPowerVisuals] = useState(false);
@@ -217,6 +219,20 @@ export default function App() {
     try {
       const supabaseNotices = await fetchNoticesFromSupabase();
       setNotices(supabaseNotices);
+      // Derive last-updated timestamp from the most recent notice
+      if (supabaseNotices.length > 0) {
+        const latest = supabaseNotices.reduce((a, b) =>
+          (a.created_at ?? '') > (b.created_at ?? '') ? a : b
+        );
+        if (latest.created_at) {
+          setLastUpdated(
+            new Date(latest.created_at).toLocaleString('en-PH', {
+              month: 'short', day: 'numeric', year: 'numeric',
+              hour: 'numeric', minute: '2-digit', hour12: true,
+            })
+          );
+        }
+      }
     } catch (err) {
       console.error('Error fetching notices from Supabase:', err);
       setNotices([]);
@@ -256,6 +272,8 @@ export default function App() {
           let hasMatch = false;
           let matchedLocStr = "";
           
+          let matchedAffectedArea: string | null = null;
+
           s.locations?.forEach((loc: any) => {
             if (matchesMunicipality(loc.municipality, selectedCity, selectedCityName)) {
               loc.barangays?.forEach((b: any) => {
@@ -268,6 +286,9 @@ export default function App() {
                     selectedBarangayName ||
                     String((typeof b === 'object' && b?.name) || b || '');
                   matchedLocStr = `${brgyName}, ${cityName}`;
+                  if (typeof b === 'object' && b?.affected_area) {
+                    matchedAffectedArea = b.affected_area;
+                  }
                 }
               });
             }
@@ -279,7 +300,8 @@ export default function App() {
                url: n.url,
                dateStr: Array.isArray(s.dates) && s.dates.length > 0 ? s.dates.join(", ") : new Date(n.created_at).toLocaleDateString(),
                timeStr: Array.isArray(s.times) && s.times.length > 0 ? s.times.join(", ") : "See official notice",
-               locationStr: matchedLocStr
+               locationStr: matchedLocStr,
+               affectedArea: matchedAffectedArea
             });
           }
         });
@@ -618,6 +640,17 @@ export default function App() {
                                     </div>
                                   </div>
                                 </div>
+                                {schedule.affectedArea && (
+                                  <div className="flex items-start gap-3">
+                                    <AlertCircle className="w-5 h-5 text-orange-400 flex-shrink-0 mt-0.5" />
+                                    <div className="flex-1">
+                                      <div className={`text-xs mb-1 ${mutedTextClass}`}>Affected Area</div>
+                                      <div className={`text-sm font-medium break-words ${sectionTextClass}`}>
+                                        {schedule.affectedArea}
+                                      </div>
+                                    </div>
+                                  </div>
+                                )}
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                   <div className="flex items-start gap-3">
                                     <Calendar className="w-5 h-5 text-blue-400 flex-shrink-0 mt-0.5" />
@@ -651,26 +684,47 @@ export default function App() {
           </div>
         </motion.div>
 
-        {/* Attribution Footer */}
+        {/* Report & Feedback */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.8 }}
-          className={`mt-8 text-center text-sm space-y-2 ${isLightMode ? 'text-slate-600' : 'text-white/50'}`}
+          transition={{ delay: 0.7 }}
+          className="mt-6 mb-4 text-center"
         >
-          <p>Data sourced from official ZANECO announcements.</p>
-          <p>
+          <a
+            href="/report"
+            className={`inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold transition-colors ${isLightMode ? 'bg-white/80 text-cyan-700 border border-cyan-300 hover:bg-white' : 'bg-white/10 text-yellow-400 border border-yellow-400/30 hover:bg-white/15'}`}
+          >
+            <MessageSquarePlus className="w-4 h-4" />
+            Report & Feedback
+          </a>
+        </motion.div>
+
+        {/* Attribution Footer */}
+        <motion.footer
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.8 }}
+          className={`mt-2 flex flex-col items-center gap-1.5 text-center text-sm ${isLightMode ? 'text-slate-500' : 'text-white/40'}`}
+        >
+          <p className={isLightMode ? 'text-slate-600' : 'text-white/50'}>
+            Data sourced from official ZANECO announcements.
+          </p>
+          {lastUpdated && (
+            <p className="text-xs opacity-60">Data last updated: {lastUpdated}</p>
+          )}
+          <p className="mt-3 text-sm opacity-30 transition-opacity hover:opacity-60" style={{ fontFamily: "'Dancing Script', cursive" }}>
             Made by{' '}
             <a
               href="https://github.com/iandotjs"
               target="_blank"
               rel="noopener noreferrer"
-              className={`${isLightMode ? 'text-slate-800 hover:text-slate-950' : 'text-white/70 hover:text-white'} transition-colors underline`}
+              className={`${isLightMode ? 'text-slate-500 hover:text-slate-700' : 'text-white/40 hover:text-white/70'} transition-colors`}
             >
               @iandotjs
             </a>
           </p>
-        </motion.div>
+        </motion.footer>
 
         {/* Admin Panel — only visible when ?admin=<key> matches VITE_ADMIN_KEY */}
         {isAdmin && (

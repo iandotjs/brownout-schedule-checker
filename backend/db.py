@@ -60,6 +60,33 @@ def get_processed_urls() -> set:
         return set()
 
 
+def save_learned_locations(mappings: list):
+    """
+    Save purok/landmark → barangay mappings learned from ZANECO notices.
+    Each mapping: { municipality, barangay, location_type, location_name, source_url }
+    Stores to 'learned_locations' table for admin review and periodic merge into barangay_details.json.
+    """
+    if not mappings:
+        return
+    try:
+        rows = [{
+            "municipality": m.get("municipality", ""),
+            "barangay": m.get("barangay", ""),
+            "location_type": m.get("location_type", "unknown"),
+            "location_name": m.get("location_name", ""),
+            "source_url": m.get("source_url", ""),
+            "created_at": datetime.utcnow().isoformat(),
+        } for m in mappings]
+        supabase.table("learned_locations").upsert(
+            rows,
+            on_conflict="municipality,barangay,location_name"
+        ).execute()
+        print(f"  Saved {len(rows)} learned location mappings")
+    except Exception as e:
+        # Non-critical — don't break the scraper if table doesn't exist yet
+        print(f"  Note: Could not save learned locations ({e})")
+
+
 def _parse_latest_date_from_title_or_url(title: str, url: str):
     """
     Best-effort fallback date extraction from title/url text.

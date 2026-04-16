@@ -1,0 +1,5032 @@
+{
+  "_README": "Purok/landmark/street/establishments mapping per barangay. Used by Gemini to resolve non-barangay locations. Add entries as you learn new mappings. Keys: puroks, landmarks, streets, establishments, aliases.",
+  "CITY OF DAPITAN": {
+    "ALIGUAY": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "ANTIPOLO": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "ASENIERO": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "BA-AO": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "BANBANAN": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "BARCELONA": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "BAYLIMANGO": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "BURGOS": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "CANLUCANI": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "CARANG": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "DAMPALAN": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "DARO": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "DIWA-AN": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "GUIMPUTLAN": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "HILLTOP": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "ILAYA": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "LARAYAN": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "LIYANG": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "MARIA CRISTINA": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "MARIA URAY": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "MASIDLAKON": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "NAPO": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "OPAO": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "ORO": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "OWAON": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "OYAN": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "POLO": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "POTUNGAN": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "SAN FRANCISCO": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "SAN NICOLAS": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "SAN PEDRO": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "SAN VICENTE": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "SICAYAB-BUCANA": {
+      "puroks": [],
+      "landmarks": [
+        "Sunset Boulevard Dapitan"
+      ],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "SIGAYAN": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "SELINOG": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "SINONOC": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "SANTO NI\u00d1O": {
+      "puroks": [],
+      "landmarks": [
+        "Gloria's Fantasyland"
+      ],
+      "streets": [],
+      "establishments": [],
+      "aliases": [
+        "Sto. Ni\u00f1o"
+      ]
+    },
+    "SULANGON": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "TAG-ULO": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "TAGUILON": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "KAUSWAGAN": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "TAMION": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "BAGTING (POB.)": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [
+        "Madzvie & Function Hall",
+        "JRD Eatery"
+      ],
+      "aliases": [
+        "Bagting"
+      ]
+    },
+    "BANONONG (POB.)": {
+      "puroks": [],
+      "landmarks": [
+        "Dapitan City Hall",
+        "Rizal Shrine"
+      ],
+      "streets": [],
+      "establishments": [
+        "Rose Pharmacy Dapitan",
+        "Dapitan Traveller's Inn"
+      ],
+      "aliases": [
+        "Banonong"
+      ]
+    },
+    "CAWA-CAWA (POB.)": {
+      "puroks": [],
+      "landmarks": [
+        "Harohoy sa Baybayon"
+      ],
+      "streets": [],
+      "establishments": [
+        "Dapitan Resort Hotel",
+        "Bayview Resort Hotel",
+        "SKY Asia Travel & Tour"
+      ],
+      "aliases": [
+        "Cawa-Cawa"
+      ]
+    },
+    "DAWO (POB.)": {
+      "puroks": [],
+      "landmarks": [
+        "Dawo Covered Court",
+        "Dapitan City Fire Station"
+      ],
+      "streets": [],
+      "establishments": [],
+      "aliases": [
+        "Dawo"
+      ]
+    },
+    "MATAGOBTOB POB.": {
+      "puroks": [],
+      "landmarks": [
+        "Nats Rudas Biglang Liko"
+      ],
+      "streets": [],
+      "establishments": [],
+      "aliases": [
+        "Matagobtob"
+      ]
+    },
+    "LINABO (POB.)": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": [
+        "Linabo"
+      ]
+    },
+    "POTOL (POB.)": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": [
+        "Potol"
+      ]
+    },
+    "SANTA CRUZ (POB.)": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": [
+        "Sta. Cruz"
+      ]
+    }
+  },
+  "CITY OF DIPOLOG": {
+    "COGON": {
+      "puroks": [],
+      "landmarks": [
+        "Cogon Park"
+      ],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "DICAYAS": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "DIWAN": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "GALAS": {
+      "puroks": [
+        "Anahaw"
+      ],
+      "landmarks": [
+        "ZANECO Motorpool",
+        "Aleson Vanyard"
+      ],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "GULAYON": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "LUGDUNGAN": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "MINAOG": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "OLINGAN": {
+      "puroks": [],
+      "landmarks": [
+        "Olingan Wharf"
+      ],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "ESTACA (POB.)": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [
+        "Dipolog Medical Center"
+      ],
+      "aliases": [
+        "Estaca"
+      ]
+    },
+    "BIASONG (POB.)": {
+      "puroks": [
+        "Prk. Bougainvilla"
+      ],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": [
+        "Biasong"
+      ]
+    },
+    "BARRA (POB.)": {
+      "puroks": [],
+      "landmarks": [
+        "Dipolog Boulevard",
+        "Foreshore"
+      ],
+      "streets": [],
+      "establishments": [],
+      "aliases": [
+        "Barra"
+      ]
+    },
+    "CENTRAL (POB.)": {
+      "puroks": [
+        "One Heart"
+      ],
+      "landmarks": [
+        "Dipolog City Hall",
+        "Dipolog City Plaza",
+        "Dipolog Cathedral",
+        "Sining Theater"
+      ],
+      "streets": [
+        "Rizal Avenue"
+      ],
+      "establishments": [],
+      "aliases": [
+        "Central"
+      ]
+    },
+    "MIPUTAK (POB.)": {
+      "puroks": [
+        "Prk. Greenleaves",
+        "Prk. Malayan",
+        "Prk. Bayanihan"
+      ],
+      "landmarks": [
+        "Miputak Public Market",
+        "Dipolog Public Market"
+      ],
+      "streets": [],
+      "establishments": [
+        "Jollibee Dipolog",
+        "Gaisano Dipolog"
+      ],
+      "aliases": [
+        "Miputak"
+      ]
+    },
+    "PUNTA": {
+      "puroks": [],
+      "landmarks": [
+        "Linabo Peak trailhead"
+      ],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "SAN JOSE": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "SANGKOL": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "SANTA FILOMENA": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": [
+        "Sta. Filomena"
+      ]
+    },
+    "SICAYAB": {
+      "puroks": [],
+      "landmarks": [
+        "Jose Rizal Memorial State University"
+      ],
+      "streets": [],
+      "establishments": [],
+      "aliases": [
+        "JRMSU"
+      ]
+    },
+    "SINAMAN": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "TURNO": {
+      "puroks": [],
+      "landmarks": [
+        "Dipolog Airport",
+        "Zamboanga del Norte Medical Center"
+      ],
+      "streets": [
+        "National Highway Turno"
+      ],
+      "establishments": [],
+      "aliases": []
+    },
+    "SANTA ISABEL": {
+      "puroks": [
+        "Prk. Kalambuan",
+        "Prk. Uno"
+      ],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": [
+        "Sta. Isabel"
+      ]
+    }
+  },
+  "KATIPUNAN": {
+    "BALOK": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "BASAGAN": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "BINIRAY": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "BULAWAN": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "DAANGLUNGSOD": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "DABIAK": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "DR. JOSE RIZAL": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "FIMAGAS": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "MALUGAS": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "MALASAY": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "MATAM": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "MIAS": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "MIATAN": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "NANGINAN": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "BARANGAY UNO (POB.)": {
+      "puroks": [],
+      "landmarks": [
+        "Katipunan Municipal Hall"
+      ],
+      "streets": [],
+      "establishments": [],
+      "aliases": [
+        "Brgy. Uno",
+        "Poblacion Uno"
+      ]
+    },
+    "BARANGAY DOS (POB.)": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": [
+        "Brgy. Dos",
+        "Poblacion Dos"
+      ]
+    },
+    "SAN ANTONIO": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "SERES": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "SEROAN": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "SINGATONG": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "SINUYAK": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "SITOG": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "TUBURAN": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "CARUPAY": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "LOYURAN": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "NEW TAMBO": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "PATIK": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "SANAO": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "SAN VICENTE": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "SANTO NI\u00d1O": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    }
+  },
+  "LA LIBERTAD": {
+    "EL PARAISO": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "LA UNION": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "LA VICTORIA": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "MAUSWAGON": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "MERCEDES": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "NEW ARGAO": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "NEW BATAAN": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "NEW CARCAR": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "POBLACION": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "SAN JOSE": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "SANTA CATALINA": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "SANTA CRUZ": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "SINGARAN": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    }
+  },
+  "LABASON": {
+    "ANTONINO (POB.)": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "BALAS": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "BOBONGAN": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "DANSALAN": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "GABU": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "IMMACULADA": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "KIPIT": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "LA UNION": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "LAPATAN": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "LAWAGAN": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "LAWIGAN": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "LOPOC (POB.)": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "MALINTUBOAN": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "NEW SALVACION": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "OSUKAN": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "PATAWAG": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "SAN ISIDRO": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "UBAY": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "GIL SANCHEZ": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "IMELDA": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    }
+  },
+  "LILOY": {
+    "BANIGAN": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "BAYBAY (POB.)": {
+      "puroks": [],
+      "landmarks": [
+        "Liloy Municipal Hall"
+      ],
+      "streets": [],
+      "establishments": [],
+      "aliases": [
+        "Baybay"
+      ]
+    },
+    "CABANGCALAN": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "CANDELARIA": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "CAUSWAGAN": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "COMMUNAL": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "COMPRA": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "FATIMA": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "GOAW": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "GOIN": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "KAYOK": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "LAMAO": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "LA LIBERTAD": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "PANABANG": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "PATAWAG": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "PUNTA": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "SAN ISIDRO": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "SAN FRANCISCO": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "SAN MIGUEL": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "SANTA CRUZ": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "SANTO NI\u00d1O": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "SILUCAP": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "TAPICAN": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "TIMAN": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "VILLA M. TEJERO": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "DELA PAZ": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "EL PARAISO": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "GANASE": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "MABUHAY": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "MAIGANG": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "MALILA": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "MAUSWAGON": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "NEW BETHLEHEM": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "OVERVIEW": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "SAN ROQUE": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "VILLA CALIXTO SUDIACAL": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "CANAAN": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    }
+  },
+  "MANUKAN": {
+    "DIPANE": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "DISAKAN": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "GUPOT": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "LIBUTON": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "LINAY": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "LUPASANG": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "MATE": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "POBLACION": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "SALUYONG": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "SERONGAN": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "VILLARAMOS": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "DON JOSE AGUIRRE": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "LINGATONGAN": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "MESES": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "PALARANAN": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "PANGANDAO": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "PATAGAN": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "SAN ANTONIO": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "UPPER DISAKAN": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "EAST POBLACION": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "PUNTA BLANCA": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "SUISAYAN": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    }
+  },
+  "MUTIA": {
+    "ALVENDA": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "BUENASUERTE": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "DILAND": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "DIOLEN": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "HEAD TIPAN": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "NEW CASUL": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "NEWLAND": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "NEW SIQUIJOR": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "PASO RIO": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "POBLACION": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "SAN MIGUEL": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "TINGLAN": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "TOTONGON": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "TUBAC": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "UNIDOS": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "SANTO TOMAS": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    }
+  },
+  "PI\u00d1AN": {
+    "ADANTE": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "BACUYONG": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "BAGONG SILANG": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "CALICAN": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "UBAY": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "DEL PILAR": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "DILAWA": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "DESIN": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "DIONUM": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "LAPU-LAPU": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "LOWER GUMAY": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "LUZVILLA": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "POBLACION NORTH": {
+      "puroks": [],
+      "landmarks": [
+        "Pi\u00f1an Municipal Hall"
+      ],
+      "streets": [],
+      "establishments": [],
+      "aliases": [
+        "Pob. North",
+        "Poblacion Norte",
+        "Pobalcion Noth"
+      ]
+    },
+    "SANTA FE": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "SEGABE": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "SIKITAN": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "SILANO": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "TERESITA": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "TINAYTAYAN": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "UPPER GUMAY": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "VILLARICO": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "POBLACION SOUTH": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": [
+        "Pob. South",
+        "Poblacion Sur"
+      ]
+    }
+  },
+  "POLANCO": {
+    "ANASTACIO": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "BANDERA": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "BETHLEHEM": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "DANGI": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "DANSULLAN": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "DE VENTA PERLA": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "GUINLES": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "ISIS": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "LABRADOR": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "LAPAYANBAJA": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "LETAPAN": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "LINABO": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "LINGASAD": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "MACLEODES": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "MAGANGON": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "MALIGAYA": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "MILAD": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "NEW LEBANGON": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "NEW SICAYAB": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "OBAY": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "PIAN": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "POBLACION SOUTH": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": [
+        "Pob. South",
+        "Poblacion Sur"
+      ]
+    },
+    "SAN ANTONIO": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "SAN MIGUEL": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "SAN PEDRO": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "SANTO NI\u00d1O": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "SILAWE": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "SIANIB": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "VILLAHERMOSA": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "POBLACION NORTH": {
+      "puroks": [],
+      "landmarks": [
+        "Polanco Municipal Hall",
+        "Polanco Public Market"
+      ],
+      "streets": [],
+      "establishments": [],
+      "aliases": [
+        "Pob. North",
+        "Poblacion Norte"
+      ]
+    }
+  },
+  "PRES. MANUEL A. ROXAS": {
+    "BALUBO": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "CANIBONGAN": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "CAPASE": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "DENOMAN": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "DOHINOB": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "LANGATIAN": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "LIPAKAN": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "MARUPAY": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "MOLITON": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "NABILID": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "PANGOLOGON": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "PI\u00d1ALAN": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "PI\u00d1AMAR": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "SEBOD": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "TANAYAN": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "VILLAHERMOSO": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "BANBANAN": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "CAPE": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "GALOKSO": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "GUBAT": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "IRASAN": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "LABAKID": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "PANAMPALAY": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "PIAO": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "PONGOLAN": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "SALISIG": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "SIBATOG": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "SITUBO": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "TANTINGON": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "UPPER IRASAN": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "UPPER MINANG": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    }
+  },
+  "RIZAL": {
+    "BIRAYAN": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "DAMASING": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "LA ESPERANZA": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "MABUHAY": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "MABUNAO": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "NORTH MAPANG": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "MITIMOS": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "NANGCA": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "NANGCAAN": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "NAPILAN": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "NASIPANG": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "NEW DAPITAN": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "NILABO": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "EAST POBLACION": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "RIZALINA": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "SAN ROQUE": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "SEBACA": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "SIPAON": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "TOLON": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "BALUBOHAN": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "SOUTH MAPANG": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "WEST POBLACION": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    }
+  },
+  "SALUG": {
+    "BACONG": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "BALAKAN": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "BINONI": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "CALUCAP": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "CANAWAN": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "CARACOL": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "DANAO": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "DINOAN": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "DIPOLOD": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "FATIMA": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "LIGUAC": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "LIPAKAN": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "MUCAS": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "POBLACION": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "RAMON MAGSAYSAY": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "TAMBALANG": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "TAPALAN": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "IPILAN": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "LANAWAN": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "PUKAY": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "SANTO NI\u00d1O": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "PACUHAN": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "POBLACION EAST": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    }
+  },
+  "SERGIO OSME\u00d1A SR.": {
+    "ANTONINO": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "BAGONG BAGUIO": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "BAGUMBAYAN": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "BIAYON": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "BUENAVISTA": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "DAMPALAN": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "DANAO": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "DON ELENO": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "KAUSWAGAN": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "LABIRAY": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "LIWANAG": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "MABUHAY": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "MACALIBRE": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "MAHAYAHAY": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "MARAPONG": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "NAZARETH": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "NEBO": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "NEW RIZAL": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "NEW TANGUB": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "NUEVAVISTA": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "PEDAGAN": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "PENACIO": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "POBLACION ALTO": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "POBLACION BAJO": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "PRINCESA LAMAYA": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "PRINCESA FRESHIA": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "SAN ANTONIO": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "SAN FRANCISCO": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "SAN ISIDRO": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "SAN JOSE": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "SAN JUAN": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "SINAAD": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "SINAI": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "SITUBO": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "TINAGO": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "TININDUGAN": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "TUBURAN": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "VENUS": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "WILBEN": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    }
+  },
+  "SIAYAN": {
+    "BALOK": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "DATAGAN": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "DENOYAN": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "DIONGAN": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "DOMOGOK": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "DUMPILAS": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "GONAYEN": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "GUIBO": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "GUNYAN": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "LITOLET": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "MACASING": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "MANGILAY": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "MOYO": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "PANGE": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "PARANGLUMBA (POB.)": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "POLAYO": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "SAYAW": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "SERIAC": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "SIAYAN PROPER (POB.)": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "BALUNOKAN": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "MU\u00d1OZ": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "SUGUILON": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    }
+  },
+  "SIBUCO": {
+    "ANONGAN": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "BASAK": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "CAWIT-CAWIT": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "DINULAN": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "JATIAN": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "LAKIKI": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "LAMBAGOAN": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "LIMPAPA": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "LINGAYON": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "LINTANGAN": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "LITAWAN": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "LUNDAY": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "MALAYAL": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "MANTIVO": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "PANGANURAN": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "PANGIAN": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "PANIRAN": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "POBLACION": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "PULIRAN": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "SANTO NI\u00d1O": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "BONGALAO": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "CABBUNAN": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "CULAGUAN": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "CUSIPAN": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "KAMARANGAN": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "NALA (POB.)": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "PASILNAHUT": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "TANGARAK": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    }
+  },
+  "SIBUTAD": {
+    "BAGACAY": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "CALILIC": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "CALUBE": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "KANIM": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "DELAPA": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "LIBAY": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "MAGSAYSAY": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "MARAPONG": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "MINLASAG": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "OYAN": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "PANGANURAN": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "POBLACION": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "SAWANG": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "SIBULOC": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "SINIPAY": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "SIPALOC": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    }
+  },
+  "SINDANGAN": {
+    "BAGO": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "BINUANGAN": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "BITOON": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "DICOYONG": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "DON RICARDO MACIAS": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "DUMALOGDOG": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "INUMAN": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "LA CONCEPCION": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "LAGAG": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "LAPERO": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "MANDIH": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "MARAS": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "MAWAL": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "MISOK": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "MOTIBOT": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "NATO": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "PANGALALAN": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "PIAO": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "POBLACION": {
+      "puroks": [],
+      "landmarks": [
+        "Sindangan Municipal Hall",
+        "Sindangan Public Market"
+      ],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "SIARE": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "TALINGA": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "TINAPLAN": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "TIGBAO": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "TITIK": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "BATO": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "BUCANA": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "CALUAN": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "CALUBIAN": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "CALATUNAN": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "DAGOHOY": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "DATAGAN": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "DISUD": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "DO\u00d1A JOSEFA": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "GAMPIS": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "GOLEO": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "IMELDA": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "JOAQUIN MACIAS": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "LABAKID": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "SANTO NI\u00d1O": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "SANTO ROSARIO": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "UPPER NIPAAN": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "BENIGNO AQUINO JR.": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "FATIMA": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "BALOK": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "BANTAYAN": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "DAPAON": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "DATU TANGKILAN": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "LA ROCHE SAN MIGUEL": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "LAWIS": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "MAGSAYSAY": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "NIPAAN": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "UPPER INUMAN": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    }
+  },
+  "SIOCON": {
+    "BALAGUNAN": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "ANDRES MICUBO JR.": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "BUCANA": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "BULACAN": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "DIONISIO RICONALLA": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "CANDIZ": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "JOSE P. BRILLANTES, SR.": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "LATABON": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "MATEO FRANCISCO": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "MALIPOT": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "NEW LITUBAN": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "PISAWAK": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "POBLACION": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "SANTA MARIA": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "SUHAILE ARABI": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "TIBANGAO": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "S. CABRAL": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "DATU SAILILA": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "MAKIANG": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "MALAMBUHANGIN": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "MANAOL": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "MATIAG": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "PANGIAN": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "SIAY": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "TABAYO": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "TAGAYTAY": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    }
+  },
+  "SIRAWAI": {
+    "BALATAKAN": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "BALONKAN": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "BALUBUAN": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "BITUGAN": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "BONGON": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "CATUYAN": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "CULASIAN": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "DANGANON": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "DO\u00d1A CECILIA": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "GUBAN": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "LAGUNDI": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "LIBUCON": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "LUBOK": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "MACUYON": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "MINANGA": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "MOTONG": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "NAPULAN": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "PANABUTAN": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "PIACAN": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "PI\u00d1A": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "PISA PUTI": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "PISA ITOM": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "SAINT MARY (POB.)": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "SAN NICOLAS (POB.)": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "SAN VICENTE (POB.)": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "PUGOS": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "PULA BATO": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "PULANG LUPA": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "SAN ROQUE (POB.)": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "SIPAKIT": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "SIPAWA": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "SIRAWAI PROPER (POB.)": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "TALABIGA": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "TAPANAYAN": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    }
+  },
+  "TAMPILISAN": {
+    "CABONG": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "GALINGON": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "LAWAAN": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "MOLOS": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "NEW DAPITAN": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "SITUBO": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "POBLACION": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "BALACBAAN": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "BANBANAN": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "BARILI": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "CAMUL": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "FARMINGTON": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "LUMBAYAO": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "MALILA-T": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "SANDAYONG": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "SANTO NI\u00d1O": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "TILUBOG": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "TININGGAAN": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "TUBOD": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "ZNAC": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    }
+  },
+  "JOSE DALMAN": {
+    "DINASAN": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "MADALAG": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "MANAWAN": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "POBLACION": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "SIPAROK": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "TABON": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "TAMIL": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "BALATAKAN": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "BITOON": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "ILIHAN": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "LABAKID": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "LIPAY": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "LITALIP": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "LOPERO": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "LUMANPING": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "MARUPAY": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "SIGAMOK": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "TAMAROK": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    }
+  },
+  "GUTALAC": {
+    "BANGANON": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "COCOB": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "POBLACION": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "LA LIBERTAD": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "LUX": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "PANGANURAN": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "PITAWE": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "CANUPONG": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "MAMAWAN": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "SIBALIC": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "TIPAN": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "BACONG": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "BAGONG SILANG": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "BAYANIHAN": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "BUENAVISTA": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "DATAGAN": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "IMELDA": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "LOAY": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "MALIAN": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "MAP": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "MATUNOY": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "NEW DAPITAN": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "PITOGO": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "SALVADOR": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "SAN ISIDRO": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "SAN JUAN": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "SAN ROQUE": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "SAN VICENTE": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "SANTO NI\u00d1O": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "SAS": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "UPPER GUTALAC": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "IMMACULADA CONCEPCION": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "LOWER LUX": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    }
+  },
+  "BALIGUIAN": {
+    "ALEGRIA": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "DIANGAS": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "DICULOM": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "GUIMOTAN": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "KAUSWAGAN": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "KILALABAN": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "LINAY": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "LUMAY": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "MALINAO": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "MAMAD": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "MAMAWAN": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "MILIDAN": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "NONOYAN": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "POBLACION": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "SAN JOSE": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "TAMAO": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "TAN-AWAN": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    }
+  },
+  "GODOD": {
+    "BALUNO": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "BANUANGAN": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "BUNAWAN": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "DILUCOT": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "DIPOPOR": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "GUISAPONG": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "LIMBONGA": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "LOMOGOM": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "MAUSWAGON": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "MIAMPIC": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "POBLACION": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "RABA": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "RAMBON": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "SAN PEDRO": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "SARAWAGAN": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "SIANAN": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "SIORAN": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    }
+  },
+  "BACUNGAN": {
+    "BACUNGAN (POB.)": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "BOGABONGAN": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "DELUSOM": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "MANGOP": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "MANIL": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "MAWAL": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "MIDATAG": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "NASIBAC": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "RIZON": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "SIPACONG": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "SANTA MARIA": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "TALINGA": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "TINAPLAN": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "TINIGUIBAN": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "TINUYOP": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "TIOGAN": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "TITIK": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "MOROB": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    }
+  },
+  "KALAWIT": {
+    "BATAYAN": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "BOTONG": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "CONCEPCION": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "DANIEL MAING": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "FATIMA": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "GATAS": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "KALAWIT (POB.)": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "MARCELO": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "NEW CALAMBA": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "PALALIAN": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "PARAISO": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "PIANON": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "SAN JOSE": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    },
+    "TUGOP*": {
+      "puroks": [],
+      "landmarks": [],
+      "streets": [],
+      "establishments": [],
+      "aliases": []
+    }
+  }
+}
