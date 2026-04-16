@@ -87,6 +87,22 @@ def save_learned_locations(mappings: list):
         print(f"  Note: Could not save learned locations ({e})")
 
 
+def get_verified_learned_locations() -> list:
+    """
+    Fetch verified learned_locations from Supabase for use during scrape processing.
+    Returns list of dicts: { municipality, barangay, location_type, location_name }
+    """
+    try:
+        res = supabase.table("learned_locations") \
+            .select("municipality,barangay,location_type,location_name") \
+            .eq("verified", True) \
+            .execute()
+        return res.data or []
+    except Exception as e:
+        print(f"  Note: Could not fetch learned locations ({e})")
+        return []
+
+
 def _parse_latest_date_from_title_or_url(title: str, url: str):
     """
     Best-effort fallback date extraction from title/url text.

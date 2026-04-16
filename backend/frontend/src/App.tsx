@@ -33,7 +33,6 @@ type ThemeMode = 'light' | 'dark';
 
 const SUPABASE_URL = (import.meta.env.VITE_SUPABASE_URL || '').replace(/\/$/, '');
 const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY || '';
-const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL || '').replace(/\/$/, '');
 const ADMIN_KEY = import.meta.env.VITE_ADMIN_KEY || '';
 
 const normalizeLocations = (data: unknown): Location[] => {
@@ -141,8 +140,6 @@ export default function App() {
   const [loading, setLoading] = useState(false);
   const [loadError, setLoadError] = useState<string | null>(null);
   const [lastUpdated, setLastUpdated] = useState<string | null>(null);
-  const [scraping, setScraping] = useState(false);
-  const [scrapeStatus, setScrapeStatus] = useState<{ ok: boolean; msg: string } | null>(null);
   const [useLowPowerVisuals, setUseLowPowerVisuals] = useState(false);
   const [themeMode, setThemeMode] = useState<ThemeMode>(() => {
     const saved = localStorage.getItem('themeMode');
@@ -174,41 +171,8 @@ export default function App() {
 
   const isAdmin = ADMIN_KEY && new URLSearchParams(window.location.search).get('admin') === ADMIN_KEY;
 
-  const triggerScrape = async () => {
-    if (!API_BASE_URL) {
-      setScrapeStatus({ ok: false, msg: 'VITE_API_BASE_URL is not configured.' });
-      return;
-    }
-    setScraping(true);
-    setScrapeStatus(null);
-    try {
-      const runRequest = async () => fetch(`${API_BASE_URL}/api/notices`, { method: 'POST' });
-
-      // Render free instances may be asleep; first request can fail while waking up.
-      let res = await runRequest();
-      if (!res.ok && res.status >= 500) {
-        await new Promise((resolve) => setTimeout(resolve, 4000));
-        res = await runRequest();
-      }
-
-      const json = await res.json();
-      if (res.ok) {
-        setScrapeStatus({ ok: true, msg: json.message || 'Done.' });
-        // Reload notices after scrape
-        const updated = await fetchNoticesFromSupabase();
-        setNotices(updated);
-      } else {
-        setScrapeStatus({ ok: false, msg: json.error || `Error ${res.status}` });
-      }
-    } catch (err) {
-      setScrapeStatus({
-        ok: false,
-        msg: 'Request failed. If backend is on Render free tier, wait 20-60s for wake-up then try again.',
-      });
-    } finally {
-      setScraping(false);
-    }
-  };
+  // Maintenance mode state
+  const [maintenanceMode, setMaintenanceMode] = useState(false);
 
   // Locations are bundled so dropdown works without backend runtime dependencies.
 
@@ -217,6 +181,30 @@ export default function App() {
     setLoading(true);
     setLoadError(null);
     try {
+      // Check maintenance mode
+      if (SUPABASE_URL && SUPABASE_ANON_KEY) {
+        try {
+          const maintUrl = new URL(`${SUPABASE_URL}/rest/v1/app_settings`);
+          maintUrl.searchParams.set('select', 'value');
+          maintUrl.searchParams.set('key', 'eq.maintenance_mode');
+          const maintRes = await fetch(maintUrl.toString(), {
+            headers: { apikey: SUPABASE_ANON_KEY, Authorization: `Bearer ${SUPABASE_ANON_KEY}` },
+          });
+          if (maintRes.ok) {
+            const maintData = await maintRes.json();
+            if (Array.isArray(maintData) && maintData.length > 0 && maintData[0].value === 'true') {
+              if (!isAdmin) {
+                setMaintenanceMode(true);
+                setLoading(false);
+                return;
+              }
+            }
+          }
+        } catch {
+          // non-critical
+        }
+      }
+
       const supabaseNotices = await fetchNoticesFromSupabase();
       setNotices(supabaseNotices);
       // Derive last-updated timestamp from the most recent notice
@@ -347,6 +335,39 @@ export default function App() {
             <button
               type="button"
               onClick={() => void loadNotices()}
+              className="rounded-xl bg-yellow-400 px-4 py-2 text-sm font-semibold text-slate-900 hover:bg-yellow-300 transition-colors"
+            >
+              Try Again
+            </button>
+            <a
+              href="https://zaneco.ph"
+              target="_blank"
+              rel="noopener noreferrer"
+              className={`rounded-xl border px-4 py-2 text-sm font-semibold transition-colors ${isLightMode ? 'border-slate-300 text-slate-700 hover:bg-white/70' : 'border-white/20 text-white hover:bg-white/10'}`}
+            >
+              Official Site
+            </a>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (maintenanceMode) {
+    return (
+      <div className={`min-h-screen w-full flex items-center justify-center p-6 transition-colors duration-500 ${containerBgClass}`}>
+        <div className={`w-full max-w-xl rounded-3xl p-8 text-center backdrop-blur-xl ${cardClass}`}>
+          <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-yellow-500/20">
+            <AlertCircle className="h-7 w-7 text-yellow-400" />
+          </div>
+          <h1 className={`text-2xl font-bold ${sectionTextClass}`}>Maintenance in progress</h1>
+          <p className={`mt-3 text-sm ${mutedTextClass}`}>
+            We're performing scheduled maintenance. Please check back shortly.
+          </p>
+          <div className="mt-6 flex flex-wrap justify-center gap-3">
+            <button
+              type="button"
+              onClick={() => { setMaintenanceMode(false); void loadNotices(); }}
               className="rounded-xl bg-yellow-400 px-4 py-2 text-sm font-semibold text-slate-900 hover:bg-yellow-300 transition-colors"
             >
               Try Again
@@ -736,18 +757,12 @@ export default function App() {
           >
             <p className={`text-xs uppercase tracking-widest font-semibold ${isLightMode ? 'text-slate-500' : 'text-white/40'}`}>Admin</p>
             <div className="flex items-center gap-3 flex-wrap">
-              <button
-                onClick={triggerScrape}
-                disabled={scraping}
-                className="px-5 py-2.5 bg-yellow-400 hover:bg-yellow-300 disabled:opacity-50 disabled:cursor-not-allowed text-black font-semibold rounded-xl text-sm transition-colors"
+              <a
+                href={`/admin?admin=${ADMIN_KEY}`}
+                className="px-5 py-2.5 bg-yellow-400 hover:bg-yellow-300 text-black font-semibold rounded-xl text-sm transition-colors inline-block"
               >
-                {scraping ? 'Fetching...' : 'Fetch New Notices'}
-              </button>
-              {scrapeStatus && (
-                <p className={`text-sm ${scrapeStatus.ok ? (isLightMode ? 'text-emerald-700' : 'text-emerald-400') : (isLightMode ? 'text-red-700' : 'text-red-400')}`}>
-                  {scrapeStatus.msg}
-                </p>
-              )}
+                Open Admin Panel
+              </a>
             </div>
           </motion.div>
         )}
