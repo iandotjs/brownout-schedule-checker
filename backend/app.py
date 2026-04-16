@@ -32,7 +32,7 @@ ALLOWED_ORIGINS = [
 CORS(
     app,
     resources={r"/api/.*": {"origins": ALLOWED_ORIGINS}},
-    methods=["GET", "POST", "PATCH", "DELETE", "OPTIONS"],
+    methods=["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
     allow_headers=["Content-Type", "Authorization", "X-Admin-Key"],
 )
 
@@ -43,7 +43,7 @@ def add_cors_headers(response):
     if origin in ALLOWED_ORIGINS:
         response.headers["Access-Control-Allow-Origin"] = origin
         response.headers["Vary"] = "Origin"
-        response.headers["Access-Control-Allow-Methods"] = "GET,POST,PATCH,DELETE,OPTIONS"
+        response.headers["Access-Control-Allow-Methods"] = "GET,POST,PUT,PATCH,DELETE,OPTIONS"
         response.headers["Access-Control-Allow-Headers"] = "Content-Type,Authorization,X-Admin-Key"
     return response
 
