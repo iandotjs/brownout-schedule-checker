@@ -689,11 +689,11 @@ export default function App() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.7 }}
-          className="mt-6 text-center"
+          className="mt-6 mb-4 text-center"
         >
           <a
             href="/report"
-            className={`inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold transition-colors ${isLightMode ? 'bg-white/80 text-cyan-700 border border-cyan-300 hover:bg-white' : 'bg-white/10 text-yellow-400 border border-yellow-400/30 hover:bg-white/15'}`}
+            className={`inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold transition-colors ${isLightMode ? 'bg-white/80 text-cyan-700 border border-cyan-300 hover:bg-white' : 'bg-white/10 text-yellow-400 border border-yellow-400/30 hover:bg-white/15'}`}
           >
             <MessageSquarePlus className="w-4 h-4" />
             Report & Feedback
@@ -701,30 +701,30 @@ export default function App() {
         </motion.div>
 
         {/* Attribution Footer */}
-        <motion.div
+        <motion.footer
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.8 }}
-          className={`mt-4 text-center text-sm space-y-2 ${isLightMode ? 'text-slate-600' : 'text-white/50'}`}
+          className={`mt-2 flex flex-col items-center gap-1.5 text-center text-sm ${isLightMode ? 'text-slate-500' : 'text-white/40'}`}
         >
-          <p>
+          <p className={isLightMode ? 'text-slate-600' : 'text-white/50'}>
             Data sourced from official ZANECO announcements.
-            {lastUpdated && (
-              <span className="block mt-1 text-xs opacity-70">Data last updated: {lastUpdated}</span>
-            )}
           </p>
+          {lastUpdated && (
+            <p className="text-xs opacity-60">Data last updated: {lastUpdated}</p>
+          )}
           <p>
             Made by{' '}
             <a
               href="https://github.com/iandotjs"
               target="_blank"
               rel="noopener noreferrer"
-              className={`${isLightMode ? 'text-slate-800 hover:text-slate-950' : 'text-white/70 hover:text-white'} transition-colors underline`}
+              className={`${isLightMode ? 'text-slate-700 hover:text-slate-950' : 'text-white/60 hover:text-white'} underline underline-offset-2 transition-colors`}
             >
               @iandotjs
             </a>
           </p>
-        </motion.div>
+        </motion.footer>
 
         {/* Admin Panel — only visible when ?admin=<key> matches VITE_ADMIN_KEY */}
         {isAdmin && (
