@@ -140,6 +140,7 @@ export default function App() {
   const [notices, setNotices] = useState<Notice[]>([]);
   const [loading, setLoading] = useState(false);
   const [loadError, setLoadError] = useState<string | null>(null);
+  const [lastUpdated, setLastUpdated] = useState<string | null>(null);
   const [scraping, setScraping] = useState(false);
   const [scrapeStatus, setScrapeStatus] = useState<{ ok: boolean; msg: string } | null>(null);
   const [useLowPowerVisuals, setUseLowPowerVisuals] = useState(false);
@@ -218,6 +219,20 @@ export default function App() {
     try {
       const supabaseNotices = await fetchNoticesFromSupabase();
       setNotices(supabaseNotices);
+      // Derive last-updated timestamp from the most recent notice
+      if (supabaseNotices.length > 0) {
+        const latest = supabaseNotices.reduce((a, b) =>
+          (a.created_at ?? '') > (b.created_at ?? '') ? a : b
+        );
+        if (latest.created_at) {
+          setLastUpdated(
+            new Date(latest.created_at).toLocaleString('en-PH', {
+              month: 'short', day: 'numeric', year: 'numeric',
+              hour: 'numeric', minute: '2-digit', hour12: true,
+            })
+          );
+        }
+      }
     } catch (err) {
       console.error('Error fetching notices from Supabase:', err);
       setNotices([]);
@@ -669,14 +684,35 @@ export default function App() {
           </div>
         </motion.div>
 
+        {/* Report & Feedback */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.7 }}
+          className="mt-6 text-center"
+        >
+          <a
+            href="/report"
+            className={`inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold transition-colors ${isLightMode ? 'bg-white/80 text-cyan-700 border border-cyan-300 hover:bg-white' : 'bg-white/10 text-yellow-400 border border-yellow-400/30 hover:bg-white/15'}`}
+          >
+            <MessageSquarePlus className="w-4 h-4" />
+            Report & Feedback
+          </a>
+        </motion.div>
+
         {/* Attribution Footer */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.8 }}
-          className={`mt-8 text-center text-sm space-y-2 ${isLightMode ? 'text-slate-600' : 'text-white/50'}`}
+          className={`mt-4 text-center text-sm space-y-2 ${isLightMode ? 'text-slate-600' : 'text-white/50'}`}
         >
-          <p>Data sourced from official ZANECO announcements.</p>
+          <p>
+            Data sourced from official ZANECO announcements.
+            {lastUpdated && (
+              <span className="block mt-1 text-xs opacity-70">Data last updated: {lastUpdated}</span>
+            )}
+          </p>
           <p>
             Made by{' '}
             <a
@@ -688,13 +724,6 @@ export default function App() {
               @iandotjs
             </a>
           </p>
-          <a
-            href="/report"
-            className={`mt-2 inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold transition-colors ${isLightMode ? 'bg-white/80 text-cyan-700 border border-cyan-300 hover:bg-white' : 'bg-white/10 text-yellow-400 border border-yellow-400/30 hover:bg-white/15'}`}
-          >
-            <MessageSquarePlus className="w-4 h-4" />
-            Report & Feedback
-          </a>
         </motion.div>
 
         {/* Admin Panel — only visible when ?admin=<key> matches VITE_ADMIN_KEY */}
