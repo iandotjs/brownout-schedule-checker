@@ -171,29 +171,19 @@ def admin_update_report(report_id):
 # Admin: Maintenance Mode
 # ==============================
 
-@app.route("/api/admin/maintenance", methods=["GET", "OPTIONS"])
-def admin_get_maintenance():
+@app.route("/api/admin/maintenance", methods=["GET", "PUT", "OPTIONS"])
+def admin_maintenance():
     if request.method == "OPTIONS":
         return ("", 204)
     auth_err = require_admin()
     if auth_err:
         return auth_err
     try:
-        res = supabase.table("app_settings").select("value").eq("key", "maintenance_mode").execute()
-        enabled = res.data[0]["value"] == "true" if res.data else False
-        return jsonify({"enabled": enabled})
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
-
-
-@app.route("/api/admin/maintenance", methods=["PUT", "OPTIONS"])
-def admin_set_maintenance():
-    if request.method == "OPTIONS":
-        return ("", 204)
-    auth_err = require_admin()
-    if auth_err:
-        return auth_err
-    try:
+        if request.method == "GET":
+            res = supabase.table("app_settings").select("value").eq("key", "maintenance_mode").execute()
+            enabled = res.data[0]["value"] == "true" if res.data else False
+            return jsonify({"enabled": enabled})
+        # PUT
         body = request.get_json(force=True)
         enabled = "true" if body.get("enabled") else "false"
         supabase.table("app_settings").upsert(
