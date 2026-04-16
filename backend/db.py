@@ -65,18 +65,39 @@ def save_learned_locations(mappings: list):
     Save purok/landmark → barangay mappings learned from ZANECO notices.
     Each mapping: { municipality, barangay, location_type, location_name, source_url }
     Stores to 'learned_locations' table for admin review and periodic merge into barangay_details.json.
+    Skips entries where municipality + location_name already exist (regardless of barangay)
+    to avoid overriding admin corrections.
     """
     if not mappings:
         return
     try:
-        rows = [{
-            "municipality": m.get("municipality", ""),
-            "barangay": m.get("barangay", ""),
-            "location_type": m.get("location_type", "unknown"),
-            "location_name": m.get("location_name", ""),
-            "source_url": m.get("source_url", ""),
-            "created_at": datetime.utcnow().isoformat(),
-        } for m in mappings]
+        # Fetch existing (municipality, location_name) pairs to avoid overriding corrections
+        existing_res = supabase.table("learned_locations") \
+            .select("municipality,location_name") \
+            .execute()
+        existing_keys = set()
+        for row in (existing_res.data or []):
+            key = (row.get("municipality", "").upper(), row.get("location_name", "").upper())
+            existing_keys.add(key)
+
+        rows = []
+        for m in mappings:
+            muni = m.get("municipality", "")
+            loc_name = m.get("location_name", "")
+            if (muni.upper(), loc_name.upper()) in existing_keys:
+                continue  # already exists — don't override potential admin correction
+            rows.append({
+                "municipality": muni,
+                "barangay": m.get("barangay", ""),
+                "location_type": m.get("location_type", "unknown"),
+                "location_name": loc_name,
+                "source_url": m.get("source_url", ""),
+                "created_at": datetime.utcnow().isoformat(),
+            })
+
+        if not rows:
+            print("  No new learned locations to save (all already exist)")
+            return
         supabase.table("learned_locations").upsert(
             rows,
             on_conflict="municipality,barangay,location_name"
