@@ -31,7 +31,7 @@ ALLOWED_ORIGINS = [
 
 CORS(
     app,
-    resources={r"/api/*": {"origins": ALLOWED_ORIGINS}},
+    resources={r"/api/.*": {"origins": ALLOWED_ORIGINS}},
     methods=["GET", "POST", "PATCH", "DELETE", "OPTIONS"],
     allow_headers=["Content-Type", "Authorization", "X-Admin-Key"],
 )
