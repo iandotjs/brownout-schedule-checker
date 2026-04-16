@@ -278,7 +278,8 @@ def expand_route_barangays(muni_name: str, barangays_list: list, muni_ref: dict)
     Post-processing: if a location has route-style affected_area (detected by
     keywords like 'from', 'to', 'near', 'portion of', or multiple Prk./puroks),
     expand to include neighboring barangays between start and end using the
-    adjacency map. Each added barangay gets the full route text as affected_area.
+    adjacency map. Added barangays get affected_area=null since no specific
+    sub-locations were mentioned for them.
     """
     adjacency = barangay_adjacency.get(muni_name, {})
     if not adjacency:
@@ -327,7 +328,7 @@ def expand_route_barangays(muni_name: str, barangays_list: list, muni_ref: dict)
         neighbors = found_path[1:-1] if found_path else []
         route_text = route_entries[0].get("affected_area", "")
 
-    # Add missing intermediate barangays
+    # Add missing intermediate barangays (no specific sub-locations, so affected_area=null)
     ref_bgys = {b["name"]: b for b in muni_ref.get("barangays", [])}
     added = []
     for neighbor_name in neighbors:
@@ -337,10 +338,64 @@ def expand_route_barangays(muni_name: str, barangays_list: list, muni_ref: dict)
                 added.append({
                     "code": ref_b["code"],
                     "name": ref_b["name"],
-                    "affected_area": route_text
+                    "affected_area": None
                 })
 
     return barangays_list + added
+
+
+def filter_affected_area_by_barangay(muni_name: str, barangays_list: list) -> list:
+    """
+    Post-processing safety net: cross-reference each barangay's affected_area
+    against barangay_details.json. If affected_area contains items that belong
+    to a DIFFERENT barangay in the same municipality, remove them. Items not
+    found in any barangay's reference data are kept (could be new/unmapped places).
+    """
+    muni_details = barangay_details.get(muni_name, {})
+    if not muni_details:
+        return barangays_list
+
+    # Build a lookup: normalized sub-location -> set of barangay names that own it
+    location_to_bgys = {}
+    for bgy_name, details in muni_details.items():
+        for category in ("puroks", "landmarks", "streets", "establishments", "aliases"):
+            for loc in details.get(category, []):
+                key = re.sub(r'[^A-Za-z0-9\s]', '', loc).strip().upper()
+                if key:
+                    location_to_bgys.setdefault(key, set()).add(bgy_name.upper())
+
+    result = []
+    for b in barangays_list:
+        aa = b.get("affected_area")
+        if not aa:
+            result.append(b)
+            continue
+
+        bgy_name_upper = b["name"].upper()
+
+        # Split affected_area into segments by comma, &, and "and"
+        segments = re.split(r'\s*[,&]\s*|\s+and\s+', aa)
+        kept = []
+        for seg in segments:
+            seg = seg.strip()
+            if not seg:
+                continue
+            # Normalize for lookup
+            seg_key = re.sub(r'[^A-Za-z0-9\s]', '', seg).strip().upper()
+            # Check if this segment is a known sub-location
+            owners = location_to_bgys.get(seg_key)
+            if owners is None:
+                # Not in reference data — keep it (unmapped/new place)
+                kept.append(seg)
+            elif bgy_name_upper in owners:
+                # Belongs to this barangay — keep
+                kept.append(seg)
+            # else: belongs to a different barangay — drop
+
+        new_aa = ", ".join(kept) if kept else None
+        result.append({**b, "affected_area": new_aa})
+
+    return result
 
 
 def snap_to_reference(name, choices):
@@ -559,17 +614,30 @@ def get_notices():
                - Identify the START barangay and END barangay from the description.
                - Then identify ALL barangays that the route geographically passes through between start and end.
                  Include adjacent/neighboring barangays along the route even if not explicitly named.
-               - Assign the FULL route description text as "affected_area" for EVERY identified barangay.
-                 Do NOT split the route description — each barangay gets the complete route text so users
-                 can see the full context.
+               - IMPORTANT: Do NOT paste the full route description into every barangay. Instead, SPLIT the
+                 route description and assign ONLY the specific puroks, landmarks, streets, and establishments
+                 that belong to each barangay. Use the detailed barangay-level reference below to determine
+                 which sub-locations belong to which barangay.
+               - If a barangay is along the route but NO specific sub-locations from the description belong
+                 to it, set its "affected_area" to null.
                - This applies to ALL municipalities and cities.
-               - Example: "From Anahaw Galas near ZANECO Motorpool to Aleson Vanyard, Prk. Greenleaves,
-                 One Heart, Prk. Malayan, Prk. Bayanihan, Prk. Bougainvilla & Portion of Prk. Kalambuan
-                 and Prk. Uno, Sta. Isabel" in Dipolog City should map to ALL barangays the route passes
-                 through (e.g., GALAS, MIPUTAK (POB.), CENTRAL (POB.), BIASONG (POB.), SANTA ISABEL, etc.)
-                 and EACH one gets the full route text as its "affected_area".
                - It is BETTER to include more barangays (even if uncertain) than to miss them. A resident
                  in any barangay along the route needs to see this alert.
+               - WORKED EXAMPLE: "From Anahaw Galas near ZANECO Motorpool to Aleson Vanyard, Prk. Greenleaves,
+                 One Heart, Prk. Malayan, Prk. Bayanihan, Prk. Bougainvilla & Portion of Prk. Kalambuan
+                 and Prk. Uno, Sta. Isabel" in Dipolog City should produce:
+                 * {{"name": "GALAS", "affected_area": "Anahaw Galas, near ZANECO Motorpool, Aleson Vanyard"}}
+                   (Anahaw, ZANECO Motorpool, Aleson Vanyard are landmarks/puroks in GALAS)
+                 * {{"name": "MIPUTAK (POB.)", "affected_area": "Prk. Greenleaves, Prk. Malayan, Prk. Bayanihan"}}
+                   (these puroks belong to MIPUTAK per the reference)
+                 * {{"name": "CENTRAL (POB.)", "affected_area": "One Heart"}}
+                   (One Heart is a purok in CENTRAL per the reference)
+                 * {{"name": "BIASONG (POB.)", "affected_area": "Prk. Bougainvilla"}}
+                   (Prk. Bougainvilla belongs to BIASONG per the reference)
+                 * {{"name": "SANTA ISABEL", "affected_area": "Portion of Prk. Kalambuan and Prk. Uno"}}
+                   (Prk. Kalambuan and Prk. Uno belong to SANTA ISABEL per the reference)
+                 * {{"name": "ESTACA (POB.)", "affected_area": null}}
+                   (on the route but no specific sub-locations from the description belong to it)
 
             5. MIXED LANDMARKS & ESTABLISHMENTS (non-route):
                When the affected area lists landmarks, establishments, or places that are NOT part of a
@@ -681,6 +749,9 @@ def get_notices():
 
                             # Route expansion: add intermediate barangays from adjacency map
                             barangays = expand_route_barangays(muni["name"], barangays, muni)
+
+                            # Safety net: filter affected_area per barangay using barangay_details reference
+                            barangays = filter_affected_area_by_barangay(muni["name"], barangays)
 
                             new_locs.append({
                                 "municipality": {"code": muni_code, "name": muni["name"]},
