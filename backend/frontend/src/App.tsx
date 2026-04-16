@@ -713,13 +713,13 @@ export default function App() {
           {lastUpdated && (
             <p className="text-xs opacity-60">Data last updated: {lastUpdated}</p>
           )}
-          <p>
+          <p className="mt-3 text-sm opacity-30 transition-opacity hover:opacity-60" style={{ fontFamily: "'Dancing Script', cursive" }}>
             Made by{' '}
             <a
               href="https://github.com/iandotjs"
               target="_blank"
               rel="noopener noreferrer"
-              className={`${isLightMode ? 'text-slate-700 hover:text-slate-950' : 'text-white/60 hover:text-white'} underline underline-offset-2 transition-colors`}
+              className={`${isLightMode ? 'text-slate-500 hover:text-slate-700' : 'text-white/40 hover:text-white/70'} transition-colors`}
             >
               @iandotjs
             </a>
