@@ -2180,7 +2180,9 @@
     },
     "OBAY": {
       "puroks": [],
-      "landmarks": [],
+      "landmarks": [
+        "Victoria Country Homes"
+      ],
       "streets": [],
       "establishments": [],
       "aliases": []

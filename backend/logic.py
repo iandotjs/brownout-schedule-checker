@@ -13,7 +13,7 @@ from google.genai import errors as genai_errors
 from datetime import datetime, date, timedelta
 import os
 from dotenv import load_dotenv
-from db import get_processed_urls, save_learned_locations
+from db import get_processed_urls, save_learned_locations, get_verified_learned_locations
 
 load_dotenv()  # load .env file here too (for GEMINI_API_KEY)
 
@@ -284,10 +284,11 @@ barangay_adjacency = _load_json_file(BARANGAY_ADJACENCY_FILE)
 def expand_route_barangays(muni_name: str, barangays_list: list, muni_ref: dict) -> list:
     """
     Post-processing: if a location has route-style affected_area (detected by
-    keywords like 'from', 'to', 'near', 'portion of', or multiple Prk./puroks),
+    keywords like 'from', 'to', 'near', or multiple Prk./puroks),
     expand to include neighboring barangays between start and end using the
     adjacency map. Added barangays get affected_area=null since no specific
     sub-locations were mentioned for them.
+    Note: 'portion of' is NOT a route keyword — it means "part of a place".
     """
     adjacency = barangay_adjacency.get(muni_name, {})
     if not adjacency:
@@ -299,7 +300,7 @@ def expand_route_barangays(muni_name: str, barangays_list: list, muni_ref: dict)
         aa = b.get("affected_area") or ""
         # Heuristic: route if it mentions "from" or has 3+ puroks/landmarks
         prk_count = len(re.findall(r'prk\.|purok|sitio', aa, re.IGNORECASE))
-        has_route_keywords = bool(re.search(r'\bfrom\b|\bto\b|\bnear\b|\bportion of\b', aa, re.IGNORECASE))
+        has_route_keywords = bool(re.search(r'\bfrom\b|\bto\b|\bnear\b', aa, re.IGNORECASE))
         if has_route_keywords or prk_count >= 3:
             route_entries.append(b)
 
@@ -352,12 +353,13 @@ def expand_route_barangays(muni_name: str, barangays_list: list, muni_ref: dict)
     return barangays_list + added
 
 
-def filter_affected_area_by_barangay(muni_name: str, barangays_list: list) -> list:
+def filter_affected_area_by_barangay(muni_name: str, barangays_list: list, muni_ref: dict = None, verified_locations: list = None) -> list:
     """
     Post-processing safety net: cross-reference each barangay's affected_area
-    against barangay_details.json. If affected_area contains items that belong
-    to a DIFFERENT barangay in the same municipality, remove them. Items not
-    found in any barangay's reference data are kept (could be new/unmapped places).
+    against barangay_details.json AND verified learned_locations. If affected_area
+    contains items that belong to a DIFFERENT barangay in the same municipality,
+    relocate them to the correct barangay. Items not found in any reference data
+    are kept (could be new/unmapped places).
     """
     muni_details = barangay_details.get(muni_name, {})
     if not muni_details:
@@ -371,6 +373,25 @@ def filter_affected_area_by_barangay(muni_name: str, barangays_list: list) -> li
                 key = re.sub(r'[^A-Za-z0-9\s]', '', loc).strip().upper()
                 if key:
                     location_to_bgys.setdefault(key, set()).add(bgy_name.upper())
+
+    # Merge verified learned_locations into the lookup
+    if verified_locations:
+        for vl in verified_locations:
+            if (vl.get("municipality") or "").upper() == muni_name.upper():
+                loc_name = vl.get("location_name", "")
+                bgy = vl.get("barangay", "")
+                key = re.sub(r'[^A-Za-z0-9\s]', '', loc_name).strip().upper()
+                if key and bgy:
+                    location_to_bgys.setdefault(key, set()).add(bgy.upper())
+
+    # Common prefixes to strip when looking up affected_area segments
+    PREFIX_RE = re.compile(
+        r'^(portion\s+of|part\s+of|near|along|behind|beside|across|inside)\s+',
+        re.IGNORECASE,
+    )
+
+    # Track items to relocate: { correct_barangay_name_upper: [original_seg, ...] }
+    relocations = {}
 
     result = []
     for b in barangays_list:
@@ -390,18 +411,50 @@ def filter_affected_area_by_barangay(muni_name: str, barangays_list: list) -> li
                 continue
             # Normalize for lookup
             seg_key = re.sub(r'[^A-Za-z0-9\s]', '', seg).strip().upper()
-            # Check if this segment is a known sub-location
-            owners = location_to_bgys.get(seg_key)
+            # Also try with common prefixes stripped
+            seg_key_stripped = PREFIX_RE.sub('', seg)
+            seg_key_stripped = re.sub(r'[^A-Za-z0-9\s]', '', seg_key_stripped).strip().upper()
+
+            # Check if this segment is a known sub-location (with or without prefix)
+            owners = location_to_bgys.get(seg_key) or location_to_bgys.get(seg_key_stripped)
             if owners is None:
                 # Not in reference data — keep it (unmapped/new place)
                 kept.append(seg)
             elif bgy_name_upper in owners:
                 # Belongs to this barangay — keep
                 kept.append(seg)
-            # else: belongs to a different barangay — drop
+            else:
+                # Belongs to a different barangay — queue for relocation
+                for correct_bgy in owners:
+                    relocations.setdefault(correct_bgy, []).append(seg)
 
         new_aa = ", ".join(kept) if kept else None
         result.append({**b, "affected_area": new_aa})
+
+    # Relocate misplaced items to their correct barangays
+    if relocations and muni_ref:
+        existing_names = {b["name"].upper(): i for i, b in enumerate(result)}
+        ref_bgys = {b["name"].upper(): b for b in muni_ref.get("barangays", [])}
+
+        for correct_bgy_upper, segments in relocations.items():
+            relocated_aa = ", ".join(segments)
+            if correct_bgy_upper in existing_names:
+                # Barangay already in the list — append relocated items
+                idx = existing_names[correct_bgy_upper]
+                existing_aa = result[idx].get("affected_area")
+                if existing_aa:
+                    result[idx] = {**result[idx], "affected_area": f"{existing_aa}, {relocated_aa}"}
+                else:
+                    result[idx] = {**result[idx], "affected_area": relocated_aa}
+            else:
+                # Barangay not in the list — add it with the relocated affected_area
+                ref_b = ref_bgys.get(correct_bgy_upper)
+                if ref_b:
+                    result.append({
+                        "code": ref_b["code"],
+                        "name": ref_b["name"],
+                        "affected_area": relocated_aa
+                    })
 
     return result
 
@@ -535,6 +588,9 @@ def is_filename_date_past(url: str) -> bool:
 def get_notices():
     notices = scrape_notice_image_urls()  
     final_results = []
+
+    # Fetch verified learned_locations once for the entire scrape run
+    verified_locations = get_verified_learned_locations()
 
     for notice in notices:
         notice_result = {
@@ -798,7 +854,7 @@ def get_notices():
                         barangays = expand_route_barangays(muni["name"], barangays, muni)
 
                         # Safety net: filter affected_area per barangay using barangay_details reference
-                        barangays = filter_affected_area_by_barangay(muni["name"], barangays)
+                        barangays = filter_affected_area_by_barangay(muni["name"], barangays, muni, verified_locations)
 
                         new_locs.append({
                             "municipality": {"code": muni_code, "name": muni["name"]},
