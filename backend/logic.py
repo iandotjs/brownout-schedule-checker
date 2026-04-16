@@ -30,9 +30,11 @@ CATEGORY_URL = f"{ZANECO_BASE}/category/power-interruption-update/"
 
 def extract_notice_date_from_text(text: str):
     """
-    Extract schedule date from title/URL text such as:
+    Extract the LATEST schedule date from title/URL text such as:
     - APRIL-10-2026
     - April 10, 2026
+    - April 15 & 16, 2026
+    - april-15-16-2026
     - april_10_2026
     Returns a date or None when no reliable date is found.
     """
@@ -42,22 +44,28 @@ def extract_notice_date_from_text(text: str):
     )
     normalized = text.lower().replace("_", "-")
 
-    # month-day-year pattern (supports spaces, commas, and dashes)
-    m = re.search(
-        rf"({month_names})[\s\-]+(\d{{1,2}})(?:st|nd|rd|th)?[\s,\-]+(\d{{4}})",
+    latest = None
+
+    # Match: month + one or more days (separated by &, commas, dashes) + 4-digit year
+    # Handles "April 15 & 16, 2026", "april-15-16-2026", "April 10, 2026", etc.
+    for m in re.finditer(
+        rf"({month_names})[\s\-]+(\d{{1,2}}(?:\s*[&,\-]\s*\d{{1,2}})*)[\s,\-]+(\d{{4}})",
         normalized,
         flags=re.IGNORECASE,
-    )
-    if not m:
-        return None
+    ):
+        month_name = m.group(1).title()
+        year = int(m.group(3))
+        days = re.findall(r'\d{1,2}', m.group(2))
+        for day_str in days:
+            day = int(day_str)
+            try:
+                d = datetime.strptime(f"{month_name} {day} {year}", "%B %d %Y").date()
+                if latest is None or d > latest:
+                    latest = d
+            except Exception:
+                continue
 
-    month_name = m.group(1).title()
-    day = int(m.group(2))
-    year = int(m.group(3))
-    try:
-        return datetime.strptime(f"{month_name} {day} {year}", "%B %d %Y").date()
-    except Exception:
-        return None
+    return latest
 
 def parse_notice_date(soup):
     time_tag = soup.select_one("time.entry-date")
@@ -535,9 +543,19 @@ def get_notices():
             "processed_images": []
         }
 
+        # Check if notice covers today/future based on title/URL
+        # to avoid skipping images whose filenames only mention an earlier date
+        notice_latest_date = extract_notice_date_from_text(
+            f"{notice['title']} {notice['url']}"
+        )
+        notice_covers_future = (
+            notice_latest_date is not None and notice_latest_date >= date.today()
+        )
+
         for img_url in notice["images"]:
-            # Rapid-skip if URL specifies a fully past date
-            if is_filename_date_past(img_url):
+            # Rapid-skip if URL specifies a fully past date,
+            # but only when the notice itself doesn't cover today/future dates
+            if not notice_covers_future and is_filename_date_past(img_url):
                 print(f"Skipping past schedule image based on filename: {img_url}")
                 continue
                 
