@@ -746,7 +746,7 @@ export default function App() {
           {lastUpdated && (
             <p className="text-xs opacity-60">Data last updated: {lastUpdated}</p>
           )}
-          <p className="mt-3 text-sm opacity-30 transition-opacity hover:opacity-60" style={{ fontFamily: "'Dancing Script', cursive" }}>
+          {/* <p className="mt-3 text-sm opacity-30 transition-opacity hover:opacity-60" style={{ fontFamily: "'Dancing Script', cursive" }}>
             Made by{' '}
             <a
               href="https://github.com/iandotjs"
@@ -756,7 +756,7 @@ export default function App() {
             >
               @iandotjs
             </a>
-          </p>
+          </p> */}
         </motion.footer>
 
 
