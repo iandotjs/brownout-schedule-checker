@@ -50,8 +50,16 @@ export default function ReportPage() {
   const sectionTextClass = isLightMode ? 'text-slate-800' : 'text-white';
   const mutedTextClass = isLightMode ? 'text-slate-600' : 'text-white/60';
   const fieldClass = isLightMode
-    ? 'w-full px-4 py-3 bg-white/80 border border-amber-200 rounded-xl text-slate-800 appearance-none focus:outline-none focus:border-amber-500 focus:bg-white transition-all duration-300'
-    : 'w-full px-4 py-3 bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl text-white appearance-none focus:outline-none focus:border-yellow-400 focus:bg-white/20 transition-all duration-300';
+    ? 'w-full px-4 py-3 text-sm md:text-base bg-white/80 border border-amber-200 rounded-xl text-slate-800 appearance-none cursor-pointer focus:outline-none focus:border-amber-500 focus:ring-2 focus:ring-amber-400/30 focus:bg-white transition-all duration-300 hover:bg-white hover:shadow-md'
+    : 'w-full px-4 py-3 text-sm md:text-base bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl text-white appearance-none cursor-pointer focus:outline-none focus:border-yellow-400 focus:ring-2 focus:ring-yellow-400/20 focus:bg-white/20 transition-all duration-300 hover:bg-white/15 hover:shadow-md hover:shadow-black/10';
+  const chevronClass = isLightMode
+    ? 'absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400 transition-colors duration-300 group-hover:text-amber-500'
+    : 'absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-white/40 transition-colors duration-300 group-hover:text-yellow-400';
+  const chevronIcon = (
+    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+    </svg>
+  );
 
   const availableBarangays = useMemo(() => {
     const city = locations.find((c) => c.code === selectedCity);
@@ -207,12 +215,15 @@ export default function ReportPage() {
                   <label className={`flex items-center gap-2 mb-2 text-sm font-medium ${isLightMode ? 'text-slate-700' : 'text-white/90'}`}>
                     <Building2 className="w-4 h-4" /> City / Municipality
                   </label>
-                  <select value={selectedCity} onChange={(e) => handleCityChange(e.target.value)} className={fieldClass}>
-                    <option value="">Select a city</option>
-                    {locations.map((loc) => (
-                      <option key={loc.code} value={loc.code} className={isLightMode ? 'bg-white text-slate-800' : 'bg-gray-900'}>{loc.name}</option>
-                    ))}
-                  </select>
+                  <div className="relative group">
+                    <select value={selectedCity} onChange={(e) => handleCityChange(e.target.value)} className={fieldClass}>
+                      <option value="">Select a city</option>
+                      {locations.map((loc) => (
+                        <option key={loc.code} value={loc.code} className={isLightMode ? 'bg-white text-slate-800' : 'bg-gray-900'}>{loc.name}</option>
+                      ))}
+                    </select>
+                    <div className={chevronClass}>{chevronIcon}</div>
+                  </div>
                 </div>
 
                 {/* Barangay */}
@@ -220,17 +231,20 @@ export default function ReportPage() {
                   <label className={`flex items-center gap-2 mb-2 text-sm font-medium ${isLightMode ? 'text-slate-700' : 'text-white/90'}`}>
                     <MapPin className="w-4 h-4" /> Barangay
                   </label>
-                  <select
-                    value={selectedBarangay}
-                    onChange={(e) => setSelectedBarangay(e.target.value)}
-                    disabled={!selectedCity}
-                    className={`${fieldClass} disabled:opacity-50 disabled:cursor-not-allowed`}
-                  >
-                    <option value="">Select a barangay</option>
-                    {availableBarangays.map((b) => (
-                      <option key={b.code} value={b.code} className={isLightMode ? 'bg-white text-slate-800' : 'bg-gray-900'}>{b.name}</option>
-                    ))}
-                  </select>
+                  <div className="relative group">
+                    <select
+                      value={selectedBarangay}
+                      onChange={(e) => setSelectedBarangay(e.target.value)}
+                      disabled={!selectedCity}
+                      className={`${fieldClass} disabled:opacity-50 disabled:cursor-not-allowed`}
+                    >
+                      <option value="">Select a barangay</option>
+                      {availableBarangays.map((b) => (
+                        <option key={b.code} value={b.code} className={isLightMode ? 'bg-white text-slate-800' : 'bg-gray-900'}>{b.name}</option>
+                      ))}
+                    </select>
+                    <div className={chevronClass}>{chevronIcon}</div>
+                  </div>
                 </div>
 
                 {/* Location Type */}

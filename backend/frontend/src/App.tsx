@@ -3,6 +3,9 @@ import { motion, AnimatePresence } from 'motion/react';
 import { MapPin, Building2, Zap, Calendar, Clock, CheckCircle2, AlertCircle, Info, Sun, Moon, MessageSquarePlus, Shield } from 'lucide-react';
 import localLocations from './locations.json';
 import { Analytics } from '@vercel/analytics/react';
+import { useAuth } from './AuthContext';
+import AuthModal from './AuthModal';
+import NotificationBanner from './NotificationBanner';
 
 interface Location {
   code: string;
@@ -146,6 +149,20 @@ export default function App() {
     if (saved === 'light' || saved === 'dark') return saved;
     return 'dark';
   });
+  const [showAuthModal, setShowAuthModal] = useState(false);
+
+  const { profile, loading: authLoading } = useAuth();
+
+  // Auto-set saved default location when profile loads
+  useEffect(() => {
+    if (!authLoading && profile?.default_city && profile?.default_barangay) {
+      // Only auto-set if user hasn't already manually selected something
+      if (!selectedCity && !selectedBarangay) {
+        setSelectedCity(profile.default_city);
+        setSelectedBarangay(profile.default_barangay);
+      }
+    }
+  }, [authLoading, profile]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     const mobileQuery = window.matchMedia('(max-width: 640px)');
@@ -314,8 +331,8 @@ export default function App() {
   const sectionTextClass = isLightMode ? 'text-slate-800' : 'text-white';
   const mutedTextClass = isLightMode ? 'text-slate-600' : 'text-white/60';
   const fieldClass = isLightMode
-    ? 'w-full px-5 py-4 bg-white/80 border border-amber-200 rounded-2xl text-slate-800 appearance-none cursor-pointer focus:outline-none focus:border-amber-500 focus:bg-white transition-all duration-300 hover:bg-white'
-    : 'w-full px-5 py-4 bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl text-white appearance-none cursor-pointer focus:outline-none focus:border-yellow-400 focus:bg-white/20 transition-all duration-300 hover:bg-white/15';
+    ? 'w-full px-4 py-3 md:px-5 md:py-4 text-sm md:text-base bg-white/80 border border-amber-200 rounded-xl md:rounded-2xl text-slate-800 appearance-none cursor-pointer focus:outline-none focus:border-amber-500 focus:ring-2 focus:ring-amber-400/30 focus:bg-white transition-all duration-300 hover:bg-white hover:shadow-md'
+    : 'w-full px-4 py-3 md:px-5 md:py-4 text-sm md:text-base bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl md:rounded-2xl text-white appearance-none cursor-pointer focus:outline-none focus:border-yellow-400 focus:ring-2 focus:ring-yellow-400/20 focus:bg-white/20 transition-all duration-300 hover:bg-white/15 hover:shadow-md hover:shadow-black/10';
   const panelClass = isLightMode
     ? 'relative bg-white/80 border border-amber-200/70'
     : 'relative bg-white/10 backdrop-blur-sm border border-white/20';
@@ -534,6 +551,15 @@ export default function App() {
 
             {/* Form Section */}
             <div className="p-8 md:p-10 space-y-6">
+              {/* Notification CTA / User Panel */}
+              <NotificationBanner
+                isLightMode={isLightMode}
+                onLoginClick={() => setShowAuthModal(true)}
+                locations={locations}
+                selectedCity={selectedCity}
+                selectedBarangay={selectedBarangay}
+              />
+
               {/* City Selector */}
               <motion.div
                 initial={{ opacity: 0, x: -20 }}
@@ -558,8 +584,8 @@ export default function App() {
                       </option>
                     ))}
                   </select>
-                  <div className={`absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none ${isLightMode ? 'text-slate-500' : 'text-white/60'}`}>
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <div className={`absolute right-3 md:right-4 top-1/2 -translate-y-1/2 pointer-events-none transition-colors duration-300 ${isLightMode ? 'text-slate-400 group-hover:text-amber-500' : 'text-white/40 group-hover:text-yellow-400'}`}>
+                    <svg className="w-4 h-4 md:w-5 md:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                     </svg>
                   </div>
@@ -591,16 +617,15 @@ export default function App() {
                       </option>
                     ))}
                   </select>
-                  <div className={`absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none ${isLightMode ? 'text-slate-500' : 'text-white/60'}`}>
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <div className={`absolute right-3 md:right-4 top-1/2 -translate-y-1/2 pointer-events-none transition-colors duration-300 ${isLightMode ? 'text-slate-400 group-hover:text-amber-500' : 'text-white/40 group-hover:text-yellow-400'}`}>
+                    <svg className="w-4 h-4 md:w-5 md:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                     </svg>
                   </div>
                 </div>
               </motion.div>
 
-              {/* Status or Results Section */}
-              <AnimatePresence mode="wait">
+              {/* Status or Results Section */}              <AnimatePresence mode="wait">
                 {loading ? (
                   <motion.div
                     key="loading"
@@ -761,6 +786,7 @@ export default function App() {
 
 
       </div>
+    <AuthModal isOpen={showAuthModal} onClose={() => setShowAuthModal(false)} isLightMode={isLightMode} />
     <Analytics />
     </div>
   );
