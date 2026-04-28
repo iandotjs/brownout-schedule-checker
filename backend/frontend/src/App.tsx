@@ -39,12 +39,12 @@ const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY || '';
 const ADMIN_KEY = import.meta.env.VITE_ADMIN_KEY || '';
 
 const normalizeLocations = (data: unknown): Location[] => {
-  if (Array.isArray(data)) {
-    return data as Location[];
-  }
+  let result: Location[];
 
-  if (data && typeof data === 'object') {
-    return Object.entries(data as Record<string, string[]>).map(([city, barangays], idx) => ({
+  if (Array.isArray(data)) {
+    result = data as Location[];
+  } else if (data && typeof data === 'object') {
+    result = Object.entries(data as Record<string, string[]>).map(([city, barangays], idx) => ({
       code: `CITY-${idx}`,
       name: city,
       barangays: barangays.map((b, i) => ({
@@ -52,9 +52,13 @@ const normalizeLocations = (data: unknown): Location[] => {
         name: b,
       })),
     }));
+  } else {
+    return [];
   }
 
-  return [];
+  result.sort((a, b) => a.name.localeCompare(b.name));
+  result.forEach((loc) => loc.barangays.sort((a, b) => a.name.localeCompare(b.name)));
+  return result;
 };
 
 const normalizeText = (value: unknown): string =>

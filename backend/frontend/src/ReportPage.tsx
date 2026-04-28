@@ -16,8 +16,11 @@ const SUPABASE_URL = (import.meta.env.VITE_SUPABASE_URL || '').replace(/\/$/, ''
 const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY || '';
 
 const normalizeLocations = (data: unknown): Location[] => {
-  if (Array.isArray(data)) return data as Location[];
-  return [];
+  if (!Array.isArray(data)) return [];
+  const result = data as Location[];
+  result.sort((a, b) => a.name.localeCompare(b.name));
+  result.forEach((loc) => loc.barangays.sort((a, b) => a.name.localeCompare(b.name)));
+  return result;
 };
 
 export default function ReportPage() {
