@@ -562,6 +562,10 @@ export default function App() {
                 locations={locations}
                 selectedCity={selectedCity}
                 selectedBarangay={selectedBarangay}
+                onAutoLocation={(cityCode, barangayCode) => {
+                  setSelectedCity(cityCode);
+                  setSelectedBarangay(barangayCode);
+                }}
               />
 
               {/* City Selector */}
