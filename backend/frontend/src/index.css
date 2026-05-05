@@ -13,6 +13,12 @@ body {
   min-height: 100vh;
 }
 
+/* Hide native browser password reveal toggle (Edge/Chrome) */
+input::-ms-reveal,
+input::-ms-clear {
+  display: none;
+}
+
 /* Improved native select styling */
 select {
   -webkit-appearance: none;

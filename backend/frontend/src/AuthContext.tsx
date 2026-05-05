@@ -14,6 +14,7 @@ interface AuthContextValue {
   profile: UserProfile | null;
   loading: boolean;
   signInWithGoogle: () => Promise<{ error: string | null }>;
+  signInWithMagicLink: (email: string) => Promise<{ error: string | null }>;
   signOut: () => Promise<void>;
   saveProfile: (updates: Partial<UserProfile>) => Promise<{ error: string | null }>;
 }
@@ -84,6 +85,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return { error: error?.message ?? null };
   };
 
+  const signInWithMagicLink = async (email: string) => {
+    const { error } = await supabase.auth.signInWithOtp({
+      email,
+      options: { emailRedirectTo: window.location.origin },
+    });
+    return { error: error?.message ?? null };
+  };
+
   const signOut = async () => {
     await supabase.auth.signOut();
     setProfile(null);
@@ -103,7 +112,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   return (
-    <AuthContext.Provider value={{ user, session, profile, loading, signInWithGoogle, signOut, saveProfile }}>
+    <AuthContext.Provider value={{ user, session, profile, loading, signInWithGoogle, signInWithMagicLink, signOut, saveProfile }}>
       {children}
     </AuthContext.Provider>
   );
