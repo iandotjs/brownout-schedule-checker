@@ -160,7 +160,6 @@ export default function App() {
   // Auto-set saved default location when profile loads
   useEffect(() => {
     if (!authLoading && profile?.default_city && profile?.default_barangay) {
-      // Only auto-set if user hasn't already manually selected something
       if (!selectedCity && !selectedBarangay) {
         setSelectedCity(profile.default_city);
         setSelectedBarangay(profile.default_barangay);

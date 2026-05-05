@@ -1,7 +1,7 @@
-import { motion } from 'motion/react';
-import { Bell, BellOff, LogOut, MapPin, User, Zap } from 'lucide-react';
+import { useState, useEffect, useRef } from 'react';
+import { motion, AnimatePresence } from 'motion/react';
+import { Bell, LogOut, MapPin, Save, X as XIcon, Zap } from 'lucide-react';
 import { useAuth } from './AuthContext';
-import type { UserProfile } from './AuthContext';
 
 interface NotificationBannerProps {
   isLightMode: boolean;
@@ -9,6 +9,29 @@ interface NotificationBannerProps {
   locations: { code: string; name: string; barangays: { code: string; name: string }[] }[];
   selectedCity: string;
   selectedBarangay: string;
+}
+
+function getGreeting(): string {
+  const hour = new Date().getHours();
+  if (hour >= 5 && hour < 12) return 'Good morning';
+  if (hour >= 12 && hour < 13) return 'Good noon';
+  if (hour >= 13 && hour < 17) return 'Good afternoon';
+  if (hour >= 17 && hour < 21) return 'Good evening';
+  return 'Good night';
+}
+
+function getUserDisplayName(user: { email?: string; user_metadata?: Record<string, unknown> }): string {
+  const meta = user.user_metadata;
+  if (meta) {
+    const name = meta.full_name || meta.name;
+    if (typeof name === 'string' && name.trim()) {
+      return name.trim().split(' ')[0];
+    }
+  }
+  if (user.email) {
+    return user.email.split('@')[0];
+  }
+  return 'there';
 }
 
 export default function NotificationBanner({
@@ -19,31 +42,49 @@ export default function NotificationBanner({
   selectedBarangay,
 }: NotificationBannerProps) {
   const { user, profile, signOut, saveProfile } = useAuth();
+  const [showNotifications, setShowNotifications] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const modalRef = useRef<HTMLDivElement>(null);
+
+  // Close notification modal on outside click
+  useEffect(() => {
+    if (!showNotifications) return;
+    const handleClick = (e: MouseEvent) => {
+      if (modalRef.current && !modalRef.current.contains(e.target as Node)) {
+        setShowNotifications(false);
+      }
+    };
+    // Delay to avoid the bell click itself closing it
+    const timer = setTimeout(() => document.addEventListener('mousedown', handleClick), 0);
+    return () => {
+      clearTimeout(timer);
+      document.removeEventListener('mousedown', handleClick);
+    };
+  }, [showNotifications]);
+
+  const getLocationLabel = (cityCode: string, barangayCode: string) => {
+    const city = locations.find((l) => l.code === cityCode);
+    const barangay = city?.barangays.find((b) => b.code === barangayCode);
+    const cityName = city?.name ?? '';
+    const barangayName = barangay?.name ?? '';
+    if (barangayName && cityName) return `${barangayName}, ${cityName}`;
+    return cityName || 'Unknown location';
+  };
 
   const handleSaveLocation = async () => {
     if (!selectedCity || !selectedBarangay) return;
+    setSaving(true);
     await saveProfile({
       default_city: selectedCity,
       default_barangay: selectedBarangay,
-      notifications_enabled: true,
     });
+    setSaving(false);
   };
 
-  const handleToggleNotifications = async () => {
-    if (!profile) return;
-    await saveProfile({ notifications_enabled: !profile.notifications_enabled } as Partial<UserProfile>);
-  };
-
-  const barangayName =
-    locations
-      .find((l) => l.code === selectedCity)
-      ?.barangays.find((b) => b.code === selectedBarangay)?.name ?? '';
-
-  const savedCityName = locations.find((l) => l.code === profile?.default_city)?.name ?? '';
-  const savedBarangayName =
-    locations
-      .find((l) => l.code === profile?.default_city)
-      ?.barangays.find((b) => b.code === profile?.default_barangay)?.name ?? '';
+  const hasSavedLocation = profile?.default_city && profile?.default_barangay;
+  const currentMatchesSaved =
+    selectedCity === profile?.default_city && selectedBarangay === profile?.default_barangay;
+  const canSave = selectedCity && selectedBarangay && !currentMatchesSaved;
 
   // --- Guest banner ---
   if (!user) {
@@ -58,7 +99,6 @@ export default function NotificationBanner({
             : 'bg-white/5 border-white/10'
         }`}
       >
-        {/* Subtle electric shimmer */}
         <div
           className={`absolute inset-0 pointer-events-none ${
             isLightMode
@@ -66,29 +106,17 @@ export default function NotificationBanner({
               : 'bg-gradient-to-r from-yellow-400/5 via-transparent to-orange-400/5'
           }`}
         />
-
         <div className="relative flex flex-col sm:flex-row items-center gap-3 p-4">
-          {/* Icon */}
           <div
             className={`flex-shrink-0 w-9 h-9 rounded-xl flex items-center justify-center ${
-              isLightMode
-                ? 'bg-amber-100 text-amber-600'
-                : 'bg-yellow-400/15 text-yellow-400'
+              isLightMode ? 'bg-amber-100 text-amber-600' : 'bg-yellow-400/15 text-yellow-400'
             }`}
           >
             <Zap className="w-4 h-4" fill="currentColor" />
           </div>
-
-          {/* Text */}
-          <p
-            className={`text-sm flex-1 text-center sm:text-left leading-relaxed ${
-              isLightMode ? 'text-slate-600' : 'text-white/70'
-            }`}
-          >
+          <p className={`text-sm flex-1 text-center sm:text-left leading-relaxed ${isLightMode ? 'text-slate-600' : 'text-white/70'}`}>
             Get notified before brownouts hit your area.
           </p>
-
-          {/* CTA Button */}
           <button
             onClick={onLoginClick}
             className={`group relative whitespace-nowrap inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 ${
@@ -106,118 +134,202 @@ export default function NotificationBanner({
   }
 
   // --- Logged-in user panel ---
-  const hasSavedLocation = profile?.default_city && profile?.default_barangay;
-  const currentMatchesSaved =
-    selectedCity === profile?.default_city && selectedBarangay === profile?.default_barangay;
-  const canSave = selectedCity && selectedBarangay && !currentMatchesSaved;
+  const displayName = getUserDisplayName(user);
+  const greeting = getGreeting();
+  const avatarUrl = (user.user_metadata as Record<string, unknown>)?.avatar_url as string | undefined;
+  const savedLocationLabel = hasSavedLocation
+    ? getLocationLabel(profile.default_city!, profile.default_barangay!)
+    : null;
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: -8 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.35, ease: 'easeOut' }}
-      className={`rounded-2xl border p-4 space-y-3 ${
-        isLightMode
-          ? 'bg-emerald-50/80 border-emerald-200/70'
-          : 'bg-white/5 border-white/10'
-      }`}
-    >
-      {/* Top row: user info + sign out */}
-      <div className="flex items-center justify-between gap-2">
-        <div
-          className={`flex items-center gap-2 text-xs min-w-0 ${
-            isLightMode ? 'text-slate-500' : 'text-white/50'
-          }`}
-        >
-          <div
-            className={`flex-shrink-0 w-6 h-6 rounded-lg flex items-center justify-center ${
-              isLightMode ? 'bg-emerald-100 text-emerald-600' : 'bg-emerald-400/15 text-emerald-400'
-            }`}
-          >
-            <User className="w-3 h-3" />
+    <>
+      <motion.div
+        initial={{ opacity: 0, y: -8 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.35, ease: 'easeOut' }}
+        className="space-y-1"
+      >
+        {/* Greeting row */}
+        <div className="flex items-center justify-between gap-3">
+          <div className="flex items-center gap-2.5 min-w-0">
+            {avatarUrl ? (
+              <img
+                src={avatarUrl}
+                alt=""
+                className="w-8 h-8 rounded-full flex-shrink-0 object-cover"
+                referrerPolicy="no-referrer"
+              />
+            ) : (
+              <div
+                className={`w-8 h-8 rounded-full flex-shrink-0 flex items-center justify-center text-xs font-bold ${
+                  isLightMode ? 'bg-emerald-100 text-emerald-700' : 'bg-yellow-400/15 text-yellow-400'
+                }`}
+              >
+                {displayName[0]?.toUpperCase()}
+              </div>
+            )}
+            <div className="min-w-0">
+              <p className={`text-sm font-semibold truncate ${isLightMode ? 'text-slate-800' : 'text-white'}`}>
+                {greeting}, {displayName}!
+              </p>
+              {/* Saved location displayed under greeting */}
+              {savedLocationLabel ? (
+                <p className={`text-[11px] truncate flex items-center gap-1 ${isLightMode ? 'text-slate-400' : 'text-white/35'}`}>
+                  <MapPin className="w-2.5 h-2.5 flex-shrink-0" />
+                  {savedLocationLabel}
+                </p>
+              ) : canSave ? (
+                <button
+                  onClick={handleSaveLocation}
+                  disabled={saving}
+                  className={`text-[11px] flex items-center gap-1 transition-colors ${
+                    isLightMode
+                      ? 'text-emerald-500 hover:text-emerald-600'
+                      : 'text-yellow-400/60 hover:text-yellow-400/80'
+                  } disabled:opacity-50`}
+                >
+                  <Save className="w-2.5 h-2.5" />
+                  {saving ? 'Saving...' : 'Save current location'}
+                </button>
+              ) : null}
+            </div>
           </div>
-          <span className="truncate max-w-[160px] md:max-w-xs">{user.email}</span>
-        </div>
 
-        <button
-          onClick={signOut}
-          className={`flex-shrink-0 flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium transition-all duration-200 ${
-            isLightMode
-              ? 'text-slate-400 hover:text-slate-600 hover:bg-slate-100'
-              : 'text-white/30 hover:text-white/60 hover:bg-white/8'
-          }`}
-        >
-          <LogOut className="w-3 h-3" />
-          <span className="hidden sm:inline">Sign out</span>
-        </button>
-      </div>
-
-      {/* Saved location info */}
-      {hasSavedLocation && (
-        <div
-          className={`flex items-center gap-1.5 text-xs ${
-            isLightMode ? 'text-emerald-700' : 'text-emerald-300/80'
-          }`}
-        >
-          <MapPin className="w-3 h-3 flex-shrink-0" />
-          <span className="truncate">
-            Default: {savedBarangayName}, {savedCityName}
-          </span>
-          {profile.notifications_enabled && (
-            <span
-              className={`ml-auto flex-shrink-0 inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold ${
+          <div className="flex items-center gap-1.5 flex-shrink-0">
+            {/* Bell icon */}
+            <button
+              onClick={() => setShowNotifications(true)}
+              className={`relative p-2 rounded-lg transition-colors ${
                 isLightMode
-                  ? 'bg-emerald-100 text-emerald-700'
-                  : 'bg-emerald-400/15 text-emerald-400'
+                  ? 'text-slate-400 hover:text-slate-600 hover:bg-slate-100'
+                  : 'text-white/40 hover:text-white/70 hover:bg-white/8'
               }`}
+              aria-label="Notifications"
             >
-              <Bell className="w-2.5 h-2.5" />
-              On
-            </span>
-          )}
-        </div>
-      )}
+              <Bell className="w-4 h-4" />
+              {hasSavedLocation && (
+                <span className={`absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full ${
+                  isLightMode ? 'bg-emerald-500' : 'bg-yellow-400'
+                }`} />
+              )}
+            </button>
 
-      {/* Action buttons */}
-      {(canSave || hasSavedLocation) && (
-        <div className="flex flex-wrap gap-2 pt-0.5">
-          {canSave && (
+            {/* Sign out */}
+            <button
+              onClick={signOut}
+              className={`p-2 rounded-lg transition-colors ${
+                isLightMode
+                  ? 'text-slate-400 hover:text-slate-600 hover:bg-slate-100'
+                  : 'text-white/30 hover:text-white/60 hover:bg-white/8'
+              }`}
+              aria-label="Sign out"
+            >
+              <LogOut className="w-4 h-4" />
+            </button>
+          </div>
+        </div>
+
+        {/* Save location hint when saved location differs from current selection */}
+        {hasSavedLocation && canSave && (
+          <div className="flex items-center justify-between pl-[42px]">
             <button
               onClick={handleSaveLocation}
-              className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold transition-all duration-200 ${
+              disabled={saving}
+              className={`text-[11px] flex items-center gap-1 transition-colors ${
                 isLightMode
-                  ? 'bg-slate-900 text-white hover:bg-slate-700'
-                  : 'bg-yellow-400 text-slate-900 hover:bg-yellow-300'
-              }`}
+                  ? 'text-emerald-500 hover:text-emerald-600'
+                  : 'text-yellow-400/60 hover:text-yellow-400/80'
+              } disabled:opacity-50`}
             >
-              <MapPin className="w-3 h-3" />
-              Save {barangayName ? `"${barangayName}"` : 'location'} as default
+              <Save className="w-2.5 h-2.5" />
+              {saving ? 'Saving...' : 'Update saved location'}
             </button>
-          )}
+          </div>
+        )}
+      </motion.div>
 
-          {hasSavedLocation && (
-            <button
-              onClick={handleToggleNotifications}
-              className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium transition-all duration-200 ${
-                profile.notifications_enabled
-                  ? isLightMode
-                    ? 'bg-slate-100 text-slate-500 hover:bg-slate-200'
-                    : 'bg-white/8 text-white/50 hover:bg-white/12'
-                  : isLightMode
-                    ? 'bg-emerald-100 text-emerald-700 hover:bg-emerald-200'
-                    : 'bg-emerald-400/15 text-emerald-300 hover:bg-emerald-400/25'
+      {/* Notification modal - centered overlay with backdrop */}
+      <AnimatePresence>
+        {showNotifications && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.15 }}
+            className="fixed inset-0 z-50 flex items-center justify-center p-4"
+            style={{ backgroundColor: 'rgba(0, 0, 0, 0.4)', backdropFilter: 'blur(4px)' }}
+          >
+            <motion.div
+              ref={modalRef}
+              initial={{ opacity: 0, scale: 0.95, y: 8 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 8 }}
+              transition={{ duration: 0.2 }}
+              className={`w-full max-w-sm rounded-2xl border shadow-2xl overflow-hidden ${
+                isLightMode
+                  ? 'bg-white border-slate-200'
+                  : 'bg-slate-800 border-white/10'
               }`}
             >
-              {profile.notifications_enabled ? (
-                <BellOff className="w-3 h-3" />
-              ) : (
-                <Bell className="w-3 h-3" />
-              )}
-              {profile.notifications_enabled ? 'Disable notifications' : 'Enable notifications'}
-            </button>
-          )}
-        </div>
-      )}
-    </motion.div>
+              {/* Header */}
+              <div className={`flex items-center justify-between px-5 py-4 border-b ${isLightMode ? 'border-slate-100' : 'border-white/8'}`}>
+                <div>
+                  <p className={`text-sm font-semibold ${isLightMode ? 'text-slate-800' : 'text-white'}`}>
+                    Notifications
+                  </p>
+                  <p className={`text-[11px] mt-0.5 ${isLightMode ? 'text-slate-400' : 'text-white/35'}`}>
+                    Alerts for your saved location
+                  </p>
+                </div>
+                <button
+                  onClick={() => setShowNotifications(false)}
+                  className={`p-1.5 rounded-lg transition-colors ${
+                    isLightMode
+                      ? 'text-slate-400 hover:text-slate-600 hover:bg-slate-100'
+                      : 'text-white/30 hover:text-white/60 hover:bg-white/8'
+                  }`}
+                  aria-label="Close"
+                >
+                  <XIcon className="w-4 h-4" />
+                </button>
+              </div>
+
+              {/* Content */}
+              <div className="px-5 py-6">
+                {hasSavedLocation ? (
+                  <div className="space-y-4">
+                    <div className={`flex items-center gap-2.5 p-3 rounded-xl ${
+                      isLightMode ? 'bg-emerald-50' : 'bg-yellow-400/8'
+                    }`}>
+                      <MapPin className={`w-4 h-4 flex-shrink-0 ${isLightMode ? 'text-emerald-500' : 'text-yellow-400'}`} />
+                      <div className="min-w-0">
+                        <p className={`text-xs font-medium truncate ${isLightMode ? 'text-emerald-700' : 'text-yellow-400/90'}`}>
+                          {savedLocationLabel}
+                        </p>
+                        <p className={`text-[10px] mt-0.5 ${isLightMode ? 'text-emerald-500/70' : 'text-yellow-400/40'}`}>
+                          Monitoring for brownout schedules
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className={`text-center py-4 ${isLightMode ? 'text-slate-400' : 'text-white/25'}`}>
+                      <Bell className="w-8 h-8 mx-auto mb-2 opacity-40" />
+                      <p className="text-xs">No new alerts</p>
+                      <p className="text-[10px] mt-1">You'll see brownout notifications here when they're posted for your area.</p>
+                    </div>
+                  </div>
+                ) : (
+                  <div className={`text-center py-6 ${isLightMode ? 'text-slate-400' : 'text-white/30'}`}>
+                    <MapPin className="w-8 h-8 mx-auto mb-2 opacity-40" />
+                    <p className="text-xs font-medium">No location saved</p>
+                    <p className="text-[10px] mt-1">Select a city and barangay, then save it to receive alerts.</p>
+                  </div>
+                )}
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </>
   );
 }

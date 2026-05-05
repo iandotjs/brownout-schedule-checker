@@ -51,7 +51,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       return;
     }
 
-    setProfile(data ?? null);
+    if (data) {
+      setProfile(data);
+    } else {
+      setProfile(null);
+    }
   }, []);
 
   useEffect(() => {
