@@ -307,21 +307,23 @@ export default function NotificationBanner({
 
               {/* Content */}
               <div className="px-5 py-4">
-                {hasSavedLocation ? (
+                {(hasSavedLocation || defaultAlerts.length > 0) ? (
                   <div className="space-y-3">
-                    <div className={`flex items-center gap-2.5 p-3 rounded-xl ${
-                      isLightMode ? 'bg-emerald-50' : 'bg-yellow-400/8'
-                    }`}>
-                      <MapPin className={`w-4 h-4 flex-shrink-0 ${isLightMode ? 'text-emerald-500' : 'text-yellow-400'}`} />
-                      <div className="min-w-0">
-                        <p className={`text-xs font-medium truncate ${isLightMode ? 'text-emerald-700' : 'text-yellow-400/90'}`}>
-                          {savedLocationLabel}
-                        </p>
-                        <p className={`text-[10px] mt-0.5 ${isLightMode ? 'text-emerald-500/70' : 'text-yellow-400/40'}`}>
-                          Monitoring for brownout schedules
-                        </p>
+                    {savedLocationLabel && (
+                      <div className={`flex items-center gap-2.5 p-3 rounded-xl ${
+                        isLightMode ? 'bg-emerald-50' : 'bg-yellow-400/8'
+                      }`}>
+                        <MapPin className={`w-4 h-4 flex-shrink-0 ${isLightMode ? 'text-emerald-500' : 'text-yellow-400'}`} />
+                        <div className="min-w-0">
+                          <p className={`text-xs font-medium truncate ${isLightMode ? 'text-emerald-700' : 'text-yellow-400/90'}`}>
+                            {savedLocationLabel}
+                          </p>
+                          <p className={`text-[10px] mt-0.5 ${isLightMode ? 'text-emerald-500/70' : 'text-yellow-400/40'}`}>
+                            Monitoring for brownout schedules
+                          </p>
+                        </div>
                       </div>
-                    </div>
+                    )}
 
                     {defaultAlerts.length > 0 ? (
                       <div className="space-y-2 max-h-64 overflow-y-auto">

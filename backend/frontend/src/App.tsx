@@ -319,10 +319,10 @@ export default function App() {
     return matches;
   }, [notices, selectedCity, selectedBarangay, locations]);
 
-  // Get brownout schedules matching the user's saved default location
+  // Get brownout schedules matching the user's saved default location (or current selection as fallback)
   const defaultLocationAlerts = useMemo(() => {
-    const defCity = profile?.default_city;
-    const defBarangay = profile?.default_barangay;
+    const defCity = profile?.default_city || selectedCity;
+    const defBarangay = profile?.default_barangay || selectedBarangay;
     if (!defCity || !defBarangay) return [];
 
     const cityObj = locations.find((l) => l.code === defCity);
@@ -369,7 +369,7 @@ export default function App() {
       });
     });
     return alerts;
-  }, [notices, profile, locations]);
+  }, [notices, profile, locations, selectedCity, selectedBarangay]);
 
   const handleCityChange = (cityCode: string) => {
     setSelectedCity(cityCode);
