@@ -161,7 +161,7 @@ export default function AuthModal({ isOpen, onClose, isLightMode }: AuthModalPro
               <p className={`text-sm mt-1 ${mutedText}`}>
                 {magicLinkSent
                   ? 'We sent a magic link to your email'
-                  : 'Sign in to receive brownout alerts'}
+                  : 'Sign in to receive scheduled brownout alerts'}
               </p>
             </div>
 

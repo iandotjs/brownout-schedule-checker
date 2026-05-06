@@ -319,6 +319,58 @@ export default function App() {
     return matches;
   }, [notices, selectedCity, selectedBarangay, locations]);
 
+  // Get brownout schedules matching the user's saved default location
+  const defaultLocationAlerts = useMemo(() => {
+    const defCity = profile?.default_city;
+    const defBarangay = profile?.default_barangay;
+    if (!defCity || !defBarangay) return [];
+
+    const cityObj = locations.find((l) => l.code === defCity);
+    const cityName = cityObj?.name || '';
+    const barangayName = cityObj?.barangays.find((b) => b.code === defBarangay)?.name || '';
+
+    const alerts: MatchedSchedule[] = [];
+    notices.forEach((n) => {
+      if (!n.data?.processed_images) return;
+      n.data.processed_images.forEach((img: any) => {
+        if (!Array.isArray(img.structured)) return;
+        img.structured.forEach((s: any) => {
+          let hasMatch = false;
+          let matchedLocStr = '';
+          let matchedAffectedArea: string | null = null;
+
+          s.locations?.forEach((loc: any) => {
+            if (matchesMunicipality(loc.municipality, defCity, cityName)) {
+              loc.barangays?.forEach((b: any) => {
+                if (matchesBarangay(b, defBarangay, barangayName)) {
+                  hasMatch = true;
+                  const cName = cityName || String((typeof loc.municipality === 'object' && loc.municipality?.name) || loc.municipality || '');
+                  const bName = barangayName || String((typeof b === 'object' && b?.name) || b || '');
+                  matchedLocStr = `${bName}, ${cName}`;
+                  if (typeof b === 'object' && b?.affected_area) {
+                    matchedAffectedArea = b.affected_area;
+                  }
+                }
+              });
+            }
+          });
+
+          if (hasMatch) {
+            alerts.push({
+              id: n.id + '-def-' + Math.random().toString(36).substring(7),
+              url: n.url,
+              dateStr: Array.isArray(s.dates) && s.dates.length > 0 ? s.dates.join(', ') : new Date(n.created_at).toLocaleDateString(),
+              timeStr: Array.isArray(s.times) && s.times.length > 0 ? s.times.join(', ') : 'See official notice',
+              locationStr: matchedLocStr,
+              affectedArea: matchedAffectedArea,
+            });
+          }
+        });
+      });
+    });
+    return alerts;
+  }, [notices, profile, locations]);
+
   const handleCityChange = (cityCode: string) => {
     setSelectedCity(cityCode);
     setSelectedBarangay('');
@@ -561,6 +613,7 @@ export default function App() {
                 locations={locations}
                 selectedCity={selectedCity}
                 selectedBarangay={selectedBarangay}
+                defaultAlerts={defaultLocationAlerts}
               />
 
               {/* City Selector */}

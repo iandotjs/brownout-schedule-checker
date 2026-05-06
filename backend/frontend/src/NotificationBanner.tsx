@@ -1,7 +1,16 @@
 import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Bell, LogOut, MapPin, Save, X as XIcon, Zap } from 'lucide-react';
+import { Bell, LogOut, MapPin, Save, X as XIcon, Zap, Calendar, Clock, ExternalLink } from 'lucide-react';
 import { useAuth } from './AuthContext';
+
+interface MatchedSchedule {
+  id: string;
+  url: string;
+  locationStr: string;
+  dateStr: string;
+  timeStr: string;
+  affectedArea: string | null;
+}
 
 interface NotificationBannerProps {
   isLightMode: boolean;
@@ -9,6 +18,7 @@ interface NotificationBannerProps {
   locations: { code: string; name: string; barangays: { code: string; name: string }[] }[];
   selectedCity: string;
   selectedBarangay: string;
+  defaultAlerts: MatchedSchedule[];
 }
 
 function getGreeting(): string {
@@ -40,6 +50,7 @@ export default function NotificationBanner({
   locations,
   selectedCity,
   selectedBarangay,
+  defaultAlerts,
 }: NotificationBannerProps) {
   const { user, profile, signOut, saveProfile } = useAuth();
   const [showNotifications, setShowNotifications] = useState(false);
@@ -207,9 +218,9 @@ export default function NotificationBanner({
               aria-label="Notifications"
             >
               <Bell className="w-4 h-4" />
-              {hasSavedLocation && (
+              {defaultAlerts.length > 0 && (
                 <span className={`absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full ${
-                  isLightMode ? 'bg-emerald-500' : 'bg-yellow-400'
+                  isLightMode ? 'bg-red-500' : 'bg-yellow-400'
                 }`} />
               )}
             </button>
@@ -295,9 +306,9 @@ export default function NotificationBanner({
               </div>
 
               {/* Content */}
-              <div className="px-5 py-6">
+              <div className="px-5 py-4">
                 {hasSavedLocation ? (
-                  <div className="space-y-4">
+                  <div className="space-y-3">
                     <div className={`flex items-center gap-2.5 p-3 rounded-xl ${
                       isLightMode ? 'bg-emerald-50' : 'bg-yellow-400/8'
                     }`}>
@@ -312,11 +323,64 @@ export default function NotificationBanner({
                       </div>
                     </div>
 
-                    <div className={`text-center py-4 ${isLightMode ? 'text-slate-400' : 'text-white/25'}`}>
-                      <Bell className="w-8 h-8 mx-auto mb-2 opacity-40" />
-                      <p className="text-xs">No new alerts</p>
-                      <p className="text-[10px] mt-1">You'll see brownout notifications here when they're posted for your area.</p>
-                    </div>
+                    {defaultAlerts.length > 0 ? (
+                      <div className="space-y-2 max-h-64 overflow-y-auto">
+                        {defaultAlerts.map((alert) => (
+                          <div
+                            key={alert.id}
+                            className={`p-3 rounded-xl border ${
+                              isLightMode
+                                ? 'bg-red-50/80 border-red-200/60'
+                                : 'bg-red-400/8 border-red-400/15'
+                            }`}
+                          >
+                            <div className="flex items-start gap-2">
+                              <Zap className={`w-3.5 h-3.5 mt-0.5 flex-shrink-0 ${isLightMode ? 'text-red-500' : 'text-red-400'}`} />
+                              <div className="min-w-0 flex-1 space-y-1.5">
+                                <p className={`text-[11px] font-semibold ${isLightMode ? 'text-red-700' : 'text-red-300'}`}>
+                                  Scheduled Brownout
+                                </p>
+                                <div className="space-y-1">
+                                  <p className={`text-[11px] flex items-center gap-1.5 ${isLightMode ? 'text-slate-600' : 'text-white/50'}`}>
+                                    <Calendar className="w-3 h-3 flex-shrink-0" />
+                                    {alert.dateStr}
+                                  </p>
+                                  <p className={`text-[11px] flex items-center gap-1.5 ${isLightMode ? 'text-slate-600' : 'text-white/50'}`}>
+                                    <Clock className="w-3 h-3 flex-shrink-0" />
+                                    {alert.timeStr}
+                                  </p>
+                                  {alert.affectedArea && (
+                                    <p className={`text-[10px] ${isLightMode ? 'text-slate-500' : 'text-white/35'}`}>
+                                      Area: {alert.affectedArea}
+                                    </p>
+                                  )}
+                                </div>
+                                {alert.url && (
+                                  <a
+                                    href={alert.url}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className={`inline-flex items-center gap-1 text-[10px] font-medium mt-1 transition-colors ${
+                                      isLightMode
+                                        ? 'text-blue-500 hover:text-blue-700'
+                                        : 'text-blue-400 hover:text-blue-300'
+                                    }`}
+                                  >
+                                    View notice <ExternalLink className="w-2.5 h-2.5" />
+                                  </a>
+                                )}
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <div className={`text-center py-4 ${isLightMode ? 'text-slate-400' : 'text-white/25'}`}>
+                        <Bell className="w-8 h-8 mx-auto mb-2 opacity-40" />
+                        <p className="text-xs">No scheduled brownouts</p>
+                        <p className="text-[10px] mt-1">You'll see brownout alerts here when they're posted for your area.</p>
+                      </div>
+                    )}
                   </div>
                 ) : (
                   <div className={`text-center py-6 ${isLightMode ? 'text-slate-400' : 'text-white/30'}`}>
