@@ -325,6 +325,11 @@ export default function App() {
     const defBarangay = profile?.default_barangay || selectedBarangay;
     if (!defCity || !defBarangay) return [];
 
+    // If default location matches current selection, reuse matchedSchedules directly
+    if (defCity === selectedCity && defBarangay === selectedBarangay && matchedSchedules) {
+      return matchedSchedules;
+    }
+
     const cityObj = locations.find((l) => l.code === defCity);
     const cityName = cityObj?.name || '';
     const barangayName = cityObj?.barangays.find((b) => b.code === defBarangay)?.name || '';
@@ -369,7 +374,7 @@ export default function App() {
       });
     });
     return alerts;
-  }, [notices, profile, locations, selectedCity, selectedBarangay]);
+  }, [notices, profile, locations, selectedCity, selectedBarangay, matchedSchedules]);
 
   const handleCityChange = (cityCode: string) => {
     setSelectedCity(cityCode);
