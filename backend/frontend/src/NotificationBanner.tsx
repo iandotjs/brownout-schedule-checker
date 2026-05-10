@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'motion/react';
 import { Bell, LogOut, MapPin, Save, X as XIcon, Zap, Calendar, Clock, ExternalLink } from 'lucide-react';
 import { useAuth } from './AuthContext';
@@ -56,6 +57,16 @@ export default function NotificationBanner({
   const [showNotifications, setShowNotifications] = useState(false);
   const [saving, setSaving] = useState(false);
   const modalRef = useRef<HTMLDivElement>(null);
+
+  // Lock body scroll when notification modal is open
+  useEffect(() => {
+    if (showNotifications) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => { document.body.style.overflow = ''; };
+  }, [showNotifications]);
 
   // Close notification modal on outside click
   useEffect(() => {
@@ -259,17 +270,18 @@ export default function NotificationBanner({
         )}
       </motion.div>
 
-      {/* Notification modal - centered overlay with backdrop */}
-      <AnimatePresence>
-        {showNotifications && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.15 }}
-            className="fixed inset-0 z-50 flex items-center justify-center p-4"
-            style={{ backgroundColor: 'rgba(0, 0, 0, 0.4)', backdropFilter: 'blur(4px)' }}
-          >
+      {/* Notification modal - centered overlay with backdrop (portalled to body) */}
+      {createPortal(
+        <AnimatePresence>
+          {showNotifications && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.15 }}
+              className="fixed inset-0 z-50 flex items-center justify-center p-4"
+              style={{ backgroundColor: 'rgba(0, 0, 0, 0.4)', backdropFilter: 'blur(8px)', WebkitBackdropFilter: 'blur(8px)' }}
+            >
             <motion.div
               ref={modalRef}
               initial={{ opacity: 0, scale: 0.95, y: 8 }}
@@ -395,7 +407,9 @@ export default function NotificationBanner({
             </motion.div>
           </motion.div>
         )}
-      </AnimatePresence>
+      </AnimatePresence>,
+      document.body
+      )}
     </>
   );
 }
