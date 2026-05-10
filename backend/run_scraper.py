@@ -7,6 +7,7 @@ import os
 from dotenv import load_dotenv
 from logic import get_notices
 from db import save_notices_to_supabase, delete_old_notices
+from push import notify_affected_subscribers
 
 # Load environment variables
 load_dotenv()
@@ -29,13 +30,18 @@ def main():
         print(f"✓ Inserted {result['inserted']} notices")
         
         # Step 3: Clean up old expired notices
-        print("\n[3/3] Cleaning up expired notices...")
+        print("\n[3/4] Cleaning up expired notices...")
         deleted = delete_old_notices()
         print(f"✓ Deleted {deleted} old notices")
         
+        # Step 4: Send push notifications to affected subscribers
+        print("\n[4/4] Sending push notifications...")
+        pushed = notify_affected_subscribers(notices)
+        print(f"✓ Sent {pushed} push notification(s)")
+        
         print("\n" + "=" * 60)
         print("Scraper completed successfully!")
-        print(f"Summary: +{result['inserted']} new, -{deleted} old")
+        print(f"Summary: +{result['inserted']} new, -{deleted} old, {pushed} notified")
         print("=" * 60)
         
     except Exception as e:

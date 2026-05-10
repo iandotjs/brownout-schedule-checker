@@ -3,6 +3,7 @@ import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'motion/react';
 import { Bell, LogOut, MapPin, Save, X as XIcon, Zap, Calendar, Clock, ExternalLink } from 'lucide-react';
 import { useAuth } from './AuthContext';
+import { isPushSupported, isPushSubscribed, subscribeToPush, unsubscribeFromPush, updatePushLocation } from './pushManager';
 
 interface MatchedSchedule {
   id: string;
@@ -57,6 +58,17 @@ export default function NotificationBanner({
   const [showNotifications, setShowNotifications] = useState(false);
   const [saving, setSaving] = useState(false);
   const modalRef = useRef<HTMLDivElement>(null);
+  const [pushEnabled, setPushEnabled] = useState(false);
+  const [pushLoading, setPushLoading] = useState(false);
+  const [pushError, setPushError] = useState<string | null>(null);
+  const pushSupported = isPushSupported();
+
+  // Check initial push subscription status
+  useEffect(() => {
+    if (user && pushSupported) {
+      isPushSubscribed().then(setPushEnabled);
+    }
+  }, [user, pushSupported]);
 
   // Lock body scroll when notification modal is open
   useEffect(() => {
@@ -100,7 +112,50 @@ export default function NotificationBanner({
       default_city: selectedCity,
       default_barangay: selectedBarangay,
     });
+    // If push is enabled, update the subscription's location
+    if (pushEnabled) {
+      const city = locations.find((l) => l.code === selectedCity);
+      const barangay = city?.barangays.find((b) => b.code === selectedBarangay);
+      if (city && barangay) {
+        await updatePushLocation(city.name, barangay.name);
+      }
+    }
     setSaving(false);
+  };
+
+  const handlePushToggle = async () => {
+    if (!user || pushLoading) return;
+    setPushLoading(true);
+    setPushError(null);
+
+    if (pushEnabled) {
+      const { error } = await unsubscribeFromPush();
+      if (error) {
+        setPushError(error);
+      } else {
+        setPushEnabled(false);
+        await saveProfile({ notifications_enabled: false });
+      }
+    } else {
+      // Resolve saved location codes to names
+      const cityCode = profile?.default_city;
+      const brgyCode = profile?.default_barangay;
+      const city = locations.find((l) => l.code === cityCode);
+      const barangay = city?.barangays.find((b) => b.code === brgyCode);
+      if (!city || !barangay) {
+        setPushError('Save a default location first.');
+        setPushLoading(false);
+        return;
+      }
+      const { error } = await subscribeToPush(user.id, city.name, barangay.name);
+      if (error) {
+        setPushError(error);
+      } else {
+        setPushEnabled(true);
+        await saveProfile({ notifications_enabled: true });
+      }
+    }
+    setPushLoading(false);
   };
 
   const hasSavedLocation = profile?.default_city && profile?.default_barangay;
@@ -335,6 +390,49 @@ export default function NotificationBanner({
                           </p>
                         </div>
                       </div>
+                    )}
+
+                    {/* Push notification toggle */}
+                    {hasSavedLocation && pushSupported && (
+                      <div className={`flex items-center justify-between p-3 rounded-xl ${
+                        isLightMode ? 'bg-slate-50' : 'bg-white/5'
+                      }`}>
+                        <div className="flex items-center gap-2.5 min-w-0">
+                          <Bell className={`w-4 h-4 flex-shrink-0 ${
+                            pushEnabled
+                              ? (isLightMode ? 'text-emerald-500' : 'text-yellow-400')
+                              : (isLightMode ? 'text-slate-400' : 'text-white/30')
+                          }`} />
+                          <div className="min-w-0">
+                            <p className={`text-xs font-medium ${isLightMode ? 'text-slate-700' : 'text-white/80'}`}>
+                              Push Notifications
+                            </p>
+                            <p className={`text-[10px] ${isLightMode ? 'text-slate-400' : 'text-white/30'}`}>
+                              {pushEnabled ? 'You\'ll be notified of new brownouts' : 'Get alerts on your device'}
+                            </p>
+                          </div>
+                        </div>
+                        <button
+                          onClick={handlePushToggle}
+                          disabled={pushLoading}
+                          role="switch"
+                          aria-checked={pushEnabled}
+                          className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+                            pushEnabled
+                              ? (isLightMode ? 'bg-emerald-500' : 'bg-yellow-400')
+                              : (isLightMode ? 'bg-slate-300' : 'bg-white/20')
+                          } ${pushLoading ? 'opacity-50 cursor-wait' : 'cursor-pointer'}`}
+                        >
+                          <span className={`inline-block h-5 w-5 rounded-full bg-white shadow-sm transition-transform ${
+                            pushEnabled ? 'translate-x-[22px]' : 'translate-x-[2px]'
+                          }`} />
+                        </button>
+                      </div>
+                    )}
+                    {pushError && (
+                      <p className={`text-[10px] px-1 ${isLightMode ? 'text-red-500' : 'text-red-400'}`}>
+                        {pushError}
+                      </p>
                     )}
 
                     {defaultAlerts.length > 0 ? (
