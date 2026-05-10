@@ -12,3 +12,29 @@ body {
   margin: 0;
   min-height: 100vh;
 }
+
+/* Hide native browser password reveal toggle (Edge/Chrome) */
+input::-ms-reveal,
+input::-ms-clear {
+  display: none;
+}
+
+/* Improved native select styling */
+select {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  text-overflow: ellipsis;
+  padding-right: 2.5rem !important;
+}
+
+select option {
+  padding: 0.5rem 0.75rem;
+  font-size: 0.875rem;
+}
+
+/* Ensure selects have a good min-height for touch targets on mobile */
+@media (pointer: coarse) {
+  select {
+    min-height: 2.75rem;
+  }
+}

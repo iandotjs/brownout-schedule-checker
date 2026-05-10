@@ -1,10 +1,13 @@
-name: Daily Brownout Notice Scraper
+name: Brownout Notice Scraper
 
 on:
   schedule:
-    # Runs at 12:43 AM Philippine Time (UTC+8) daily
-    # In UTC, this is 4:43 PM (16:43) the previous day
-    - cron: '43 16 * * *'
+    # PROD: Every 2 hours (at minute 43)
+    # e.g. 12:43 AM, 2:43 AM, ... PHT (UTC+8)
+    - cron: '43 */2 * * *'
+    # DEV: Daily at 1:00 AM Philippine Time (UTC+8)
+    # In UTC, this is 5:00 PM (17:00) the previous day
+    - cron: '0 17 * * *'
   
   # Allow manual triggering from GitHub Actions tab
   workflow_dispatch:
@@ -21,8 +24,14 @@ on:
 jobs:
   scrape:
     runs-on: ubuntu-latest
-    # Schedule always targets prod. Manual dispatch can target dev/prod.
-    environment: ${{ github.event_name == 'schedule' && 'prod' || inputs.target_environment }}
+    # Map each scheduled cron to its environment; manual dispatch uses the input.
+    # github.event.schedule holds the cron expression that triggered the run.
+    environment: >-
+      ${{
+        github.event_name == 'schedule' && github.event.schedule == '0 17 * * *' && 'dev'
+        || github.event_name == 'schedule' && 'prod'
+        || inputs.target_environment
+      }}
     
     steps:
       - name: Checkout code
@@ -41,7 +50,7 @@ jobs:
 
       - name: Validate branch for target environment
         env:
-          TARGET_ENV: ${{ github.event_name == 'schedule' && 'prod' || inputs.target_environment }}
+          TARGET_ENV: ${{ github.event_name == 'schedule' && github.event.schedule == '0 17 * * *' && 'dev' || github.event_name == 'schedule' && 'prod' || inputs.target_environment }}
           BRANCH_NAME: ${{ github.ref_name }}
         run: |
           echo "Target environment: ${TARGET_ENV}"
@@ -62,7 +71,7 @@ jobs:
       - name: Run scraper
         working-directory: ./backend
         env:
-          TARGET_ENV: ${{ github.event_name == 'schedule' && 'prod' || inputs.target_environment }}
+          TARGET_ENV: ${{ github.event_name == 'schedule' && github.event.schedule == '0 17 * * *' && 'dev' || github.event_name == 'schedule' && 'prod' || inputs.target_environment }}
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
