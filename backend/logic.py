@@ -95,7 +95,7 @@ def scrape_notice_image_urls(limit=None):
         page_url = CATEGORY_URL if page == 1 else f"{CATEGORY_URL}page/{page}/"
         print(f"Scanning category page {page}/{max_pages}: {page_url}")
 
-        resp = requests.get(page_url, headers=REQUEST_HEADERS)
+        resp = requests.get(page_url, headers=REQUEST_HEADERS, timeout=30)
         resp.raise_for_status()
         soup = BeautifulSoup(resp.text, "html.parser")
 
@@ -138,7 +138,7 @@ def scrape_notice_image_urls(limit=None):
             else:
                 status = "active"  # default for non-cancelled notices
 
-            post_resp = requests.get(post_url, headers=REQUEST_HEADERS)
+            post_resp = requests.get(post_url, headers=REQUEST_HEADERS, timeout=30)
             post_resp.raise_for_status()
             post_soup = BeautifulSoup(post_resp.text, "html.parser")
 
@@ -229,7 +229,7 @@ def fetch_and_cache_locations(force_refresh=False):
 
     url = f"{PSGC_BASE}/provinces/{PROVINCE_CODE}/cities-municipalities/"
     headers = {**REQUEST_HEADERS, "accept": "application/json"}
-    resp = requests.get(url, headers=headers)
+    resp = requests.get(url, headers=headers, timeout=30)
     resp.raise_for_status()
     municipalities = resp.json()
 
@@ -240,7 +240,7 @@ def fetch_and_cache_locations(force_refresh=False):
 
         bgy_url = f"{PSGC_BASE}/cities-municipalities/{muni_code}/barangays/"
         headers = {**REQUEST_HEADERS, "accept": "application/json"}
-        bgy_resp = requests.get(bgy_url, headers=headers)
+        bgy_resp = requests.get(bgy_url, headers=headers, timeout=30)
         bgy_resp.raise_for_status()
         barangays = [
             {"code": b["code"], "name": b["name"].upper().strip()}
@@ -470,7 +470,7 @@ def snap_to_reference(name, choices):
 client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
 
 def load_image_from_url(url):
-    resp = requests.get(url, headers=REQUEST_HEADERS, stream=True)
+    resp = requests.get(url, headers=REQUEST_HEADERS, stream=True, timeout=30)
     resp.raise_for_status()
     # load directly into PIL memory safely
     img = Image.open(BytesIO(resp.content))

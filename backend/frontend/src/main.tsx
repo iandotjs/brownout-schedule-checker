@@ -9,13 +9,10 @@ import AdminPage from './AdminPage.tsx'
 import { AuthProvider } from './AuthContext.tsx'
 
 const path = window.location.pathname
-const ADMIN_KEY = import.meta.env.VITE_ADMIN_KEY || ''
-const adminParam = new URLSearchParams(window.location.search).get('admin')
-const isAdmin = ADMIN_KEY && adminParam === ADMIN_KEY
 
 const isHome = path === '/'
 const isReport = path === '/report'
-const isAdminPage = path === '/admin' && isAdmin
+const isAdminPage = path === '/admin'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>

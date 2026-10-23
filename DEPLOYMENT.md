@@ -13,7 +13,6 @@ Frontend is already set up for Vercel. To redeploy with latest changes:
    VITE_SUPABASE_URL=your-supabase-url
    VITE_SUPABASE_ANON_KEY=your-supabase-key
    VITE_API_BASE_URL=https://your-backend-domain.com  # Set after deploying backend
-   VITE_ADMIN_KEY=your-secret-admin-key
    ```
 4. Redeploy (Settings → Deployments → Deploy)
 
@@ -101,15 +100,16 @@ For other timezones, use [crontab.guru](https://crontab.guru) to convert.
 
 ## Admin Manual Trigger
 
-The web app includes an admin panel accessible via:
-```
-https://your-vercel-app.vercel.app?admin=your-secret-admin-key
+The admin panel is at `/admin`. Sign in with a Supabase account whose user id is in the `public.admins` table:
+```sql
+insert into public.admins (user_id)
+select id from auth.users where email = 'admin@example.com';
 ```
 
 **To manually trigger a scrape:**
-1. Visit the admin URL with your secret key
-2. Click "Fetch New Notices" button
-3. The app will call your deployed Flask backend to run the scraper
+1. Sign in and open `/admin`
+2. Go to Settings and click the scrape trigger
+3. The backend dispatches the GitHub Actions workflow
 
 ---
 
@@ -125,15 +125,11 @@ https://your-vercel-app.vercel.app?admin=your-secret-admin-key
 ```bash
 # Verify it's running
 curl https://your-backend-domain.com/
-
-# Manually trigger scraper (requires proper auth in production)
-curl -X POST https://your-backend-domain.com/api/notices
 ```
 
 ### Test Admin Panel
-1. Visit: `https://your-app.vercel.app?admin=your-secret-key`
-2. You should see admin panel at bottom
-3. Click "Fetch New Notices" to test manual triggering
+1. Sign in with an admin account and visit `https://your-app.vercel.app/admin`
+2. The Admin link also appears in the header for admins
 
 ---
 
@@ -150,8 +146,8 @@ curl -X POST https://your-backend-domain.com/api/notices
 - Review deployment logs for errors
 
 ### Admin panel doesn't appear
-- Verify `VITE_ADMIN_KEY` is set in Vercel env vars
-- Double-check URL parameter: `?admin=` matches `VITE_ADMIN_KEY` value
+- Verify your user id is in `public.admins`
+- Verify `VITE_API_BASE_URL` points to the backend and the backend has `SUPABASE_SERVICE_ROLE_KEY`
 - Redeploy after changing env vars
 
 ### Scraper doesn't fetch new notices

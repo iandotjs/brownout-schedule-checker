@@ -11,11 +11,8 @@ from dotenv import load_dotenv
 # Load .env at the very beginning
 load_dotenv()
 
-from logic import get_notices
-from db import save_notices_to_supabase, delete_old_notices
 from supabase_client import supabase
 
-ADMIN_KEY = os.getenv("ADMIN_KEY", "")
 GITHUB_TOKEN = os.getenv("GITHUB_TOKEN", "")
 GITHUB_REPO = os.getenv("GITHUB_REPO", "iandotjs/brownout-schedule-checker")
 GITHUB_WORKFLOW = os.getenv("GITHUB_WORKFLOW", "scraper.yml")
@@ -33,7 +30,7 @@ CORS(
     app,
     resources={r"/api/.*": {"origins": ALLOWED_ORIGINS}},
     methods=["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
-    allow_headers=["Content-Type", "Authorization", "X-Admin-Key"],
+    allow_headers=["Content-Type", "Authorization"],
 )
 
 
@@ -44,38 +41,51 @@ def add_cors_headers(response):
         response.headers["Access-Control-Allow-Origin"] = origin
         response.headers["Vary"] = "Origin"
         response.headers["Access-Control-Allow-Methods"] = "GET,POST,PUT,PATCH,DELETE,OPTIONS"
-        response.headers["Access-Control-Allow-Headers"] = "Content-Type,Authorization,X-Admin-Key"
+        response.headers["Access-Control-Allow-Headers"] = "Content-Type,Authorization"
     return response
 
 @app.route("/")
 def index():
     return "Hello Flask!"
 
-### API endpoint for notices
-@app.route("/api/notices", methods=['GET', 'POST', 'OPTIONS'])
-def scrape_and_save_notices():
-    if request.method == "OPTIONS":
-        return ("", 204)
-
-    try:
-        notices = get_notices()  # scrape fresh notices
-        result = save_notices_to_supabase(notices)  # save via db.py
-        deleted = delete_old_notices() # clean up fully expired schedules
-        return jsonify({"message": f"Saved {result['inserted']} notices. Deleted {deleted} old notices."}), 201
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
-
-
 # ==============================
 # Admin helpers
 # ==============================
 
+def server_error(e):
+    app.logger.exception(e)
+    return jsonify({"error": "Internal server error"}), 500
+
+
 def require_admin():
-    """Check X-Admin-Key header matches ADMIN_KEY."""
-    key = request.headers.get("X-Admin-Key", "")
-    if not ADMIN_KEY or key != ADMIN_KEY:
+    """Verify the Supabase access token and check the user is in public.admins."""
+    auth_header = request.headers.get("Authorization", "")
+    if not auth_header.startswith("Bearer "):
         return jsonify({"error": "Unauthorized"}), 401
+    token = auth_header[len("Bearer "):].strip()
+    try:
+        user = supabase.auth.get_user(token).user
+    except Exception:
+        user = None
+    if not user:
+        return jsonify({"error": "Unauthorized"}), 401
+    try:
+        res = supabase.table("admins").select("user_id").eq("user_id", user.id).limit(1).execute()
+    except Exception as e:
+        return server_error(e)
+    if not res.data:
+        return jsonify({"error": "Forbidden"}), 403
     return None
+
+
+@app.route("/api/admin/me", methods=["GET", "OPTIONS"])
+def admin_me():
+    if request.method == "OPTIONS":
+        return ("", 204)
+    auth_err = require_admin()
+    if auth_err:
+        return auth_err
+    return jsonify({"admin": True})
 
 
 # ==============================
@@ -96,7 +106,7 @@ def admin_get_learned_locations():
             .execute()
         return jsonify(res.data or [])
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        return server_error(e)
 
 
 @app.route("/api/admin/learned-locations/<int:loc_id>", methods=["PATCH", "DELETE", "OPTIONS"])
@@ -121,7 +131,7 @@ def admin_update_learned_location(loc_id):
         res = supabase.table("learned_locations").update(updates).eq("id", loc_id).execute()
         return jsonify(res.data[0] if res.data else {})
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        return server_error(e)
 
 
 # ==============================
@@ -142,7 +152,7 @@ def admin_get_reports():
             .execute()
         return jsonify(res.data or [])
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        return server_error(e)
 
 
 @app.route("/api/admin/reports/<int:report_id>", methods=["PATCH", "DELETE", "OPTIONS"])
@@ -164,7 +174,7 @@ def admin_update_report(report_id):
         res = supabase.table("community_reports").update({"status": status}).eq("id", report_id).execute()
         return jsonify(res.data[0] if res.data else {})
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        return server_error(e)
 
 
 # ==============================
@@ -192,7 +202,7 @@ def admin_maintenance():
         ).execute()
         return jsonify({"enabled": enabled == "true"})
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        return server_error(e)
 
 
 # ==============================
@@ -229,7 +239,7 @@ def admin_trigger_scrape():
         else:
             return jsonify({"error": f"GitHub API returned {resp.status_code}: {resp.text}"}), resp.status_code
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        return server_error(e)
 
 
 
