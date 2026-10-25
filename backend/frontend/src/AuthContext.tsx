@@ -2,6 +2,8 @@ import { createContext, useContext, useEffect, useState, useCallback, type React
 import { supabase } from './supabaseClient';
 import type { User, Session } from '@supabase/supabase-js';
 
+const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL || '').replace(/\/$/, '');
+
 export interface UserProfile {
   default_city: string | null;
   default_barangay: string | null;
@@ -13,6 +15,8 @@ interface AuthContextValue {
   session: Session | null;
   profile: UserProfile | null;
   loading: boolean;
+  isAdmin: boolean;
+  adminChecking: boolean;
   signInWithGoogle: () => Promise<{ error: string | null }>;
   signInWithMagicLink: (email: string) => Promise<{ error: string | null }>;
   signOut: () => Promise<void>;
@@ -32,7 +36,27 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [session, setSession] = useState<Session | null>(null);
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
-    
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [checkedToken, setCheckedToken] = useState<string | null>(null);
+  // Only block on the first check so token refreshes don't unmount the admin panel.
+  const adminChecking = !!session?.access_token && checkedToken === null;
+
+  // UI hint only; the backend re-checks admin status on every request.
+  useEffect(() => {
+    const token = session?.access_token;
+    if (!token) {
+      setIsAdmin(false);
+      setCheckedToken(null);
+      return;
+    }
+    let cancelled = false;
+    fetch(`${API_BASE_URL}/api/admin/me`, { headers: { Authorization: `Bearer ${token}` } })
+      .then((res) => { if (!cancelled) setIsAdmin(res.ok); })
+      .catch(() => { if (!cancelled) setIsAdmin(false); })
+      .finally(() => { if (!cancelled) setCheckedToken(token); });
+    return () => { cancelled = true; };
+  }, [session?.access_token]);
+
   const fetchProfile = useCallback(async (userId: string) => {
     const { data, error } = await supabase
       .from('user_profiles')
@@ -116,7 +140,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   return (
-    <AuthContext.Provider value={{ user, session, profile, loading, signInWithGoogle, signInWithMagicLink, signOut, saveProfile }}>
+    <AuthContext.Provider value={{ user, session, profile, loading, isAdmin, adminChecking, signInWithGoogle, signInWithMagicLink, signOut, saveProfile }}>
       {children}
     </AuthContext.Provider>
   );

@@ -36,7 +36,6 @@ type ThemeMode = 'light' | 'dark';
 
 const SUPABASE_URL = (import.meta.env.VITE_SUPABASE_URL || '').replace(/\/$/, '');
 const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY || '';
-const ADMIN_KEY = import.meta.env.VITE_ADMIN_KEY || '';
 
 const normalizeLocations = (data: unknown): Location[] => {
   let result: Location[];
@@ -155,7 +154,7 @@ export default function App() {
   });
   const [showAuthModal, setShowAuthModal] = useState(false);
 
-  const { profile, loading: authLoading } = useAuth();
+  const { profile, loading: authLoading, isAdmin } = useAuth();
 
   // Auto-set saved default location when profile loads
   useEffect(() => {
@@ -189,8 +188,6 @@ export default function App() {
     localStorage.setItem('themeMode', themeMode);
   }, [themeMode]);
 
-  const isAdmin = ADMIN_KEY && new URLSearchParams(window.location.search).get('admin') === ADMIN_KEY;
-
   // Maintenance mode state
   const [maintenanceMode, setMaintenanceMode] = useState(false);
 
@@ -213,11 +210,7 @@ export default function App() {
           if (maintRes.ok) {
             const maintData = await maintRes.json();
             if (Array.isArray(maintData) && maintData.length > 0 && maintData[0].value === 'true') {
-              if (!isAdmin) {
-                setMaintenanceMode(true);
-                setLoading(false);
-                return;
-              }
+              setMaintenanceMode(true);
             }
           }
         } catch {
@@ -430,7 +423,7 @@ export default function App() {
     );
   }
 
-  if (maintenanceMode) {
+  if (maintenanceMode && !isAdmin) {
     return (
       <div className={`min-h-screen w-full flex items-center justify-center p-6 transition-colors duration-500 ${containerBgClass}`}>
         <div className={`w-full max-w-xl rounded-3xl p-8 text-center backdrop-blur-xl ${cardClass}`}>
@@ -575,7 +568,7 @@ export default function App() {
               <div className="absolute right-4 top-4 flex items-center gap-1.5">
                 {isAdmin && (
                   <a
-                    href={`/admin?admin=${ADMIN_KEY}`}
+                    href="/admin"
                     className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold transition-colors ${isLightMode ? 'bg-white/80 text-slate-700 hover:bg-white' : 'bg-black/30 text-white hover:bg-black/40'}`}
                     title="Admin Panel"
                   >

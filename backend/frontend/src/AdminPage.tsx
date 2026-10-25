@@ -5,11 +5,13 @@ import {
   CheckCircle2, XCircle, ChevronUp,
   RefreshCw, Sun, Moon, Home, AlertTriangle, Loader2, Pencil,
 } from 'lucide-react';
+import { supabase } from './supabaseClient';
+import { useAuth } from './AuthContext';
+import AuthModal from './AuthModal';
 
 type ThemeMode = 'light' | 'dark';
 
 const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL || '').replace(/\/$/, '');
-const ADMIN_KEY = import.meta.env.VITE_ADMIN_KEY || '';
 
 // ---------- Types ----------
 
@@ -60,11 +62,12 @@ const STATUS_COLORS_LIGHT: Record<string, string> = {
 // ---------- API helpers ----------
 
 async function adminFetch(path: string, options: RequestInit = {}) {
+  const { data: { session } } = await supabase.auth.getSession();
   const res = await fetch(`${API_BASE_URL}${path}`, {
     ...options,
     headers: {
       'Content-Type': 'application/json',
-      'X-Admin-Key': ADMIN_KEY,
+      Authorization: `Bearer ${session?.access_token ?? ''}`,
       ...(options.headers || {}),
     },
   });
@@ -78,6 +81,40 @@ async function adminFetch(path: string, options: RequestInit = {}) {
 // ---------- Component ----------
 
 export default function AdminPage() {
+  const { user, loading, isAdmin, adminChecking } = useAuth();
+  const [showAuthModal, setShowAuthModal] = useState(false);
+  const isLight = localStorage.getItem('themeMode') === 'light';
+
+  if (loading || adminChecking) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <Loader2 className="w-6 h-6 animate-spin" />
+      </div>
+    );
+  }
+
+  if (!isAdmin) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center gap-4 p-4 text-center">
+        <Shield className="w-8 h-8" />
+        <p className="text-sm">{user ? 'This account does not have admin access.' : 'Sign in with an admin account to continue.'}</p>
+        <div className="flex gap-2">
+          {!user && (
+            <button type="button" onClick={() => setShowAuthModal(true)} className="px-4 py-2 bg-yellow-400 hover:bg-yellow-300 text-black font-semibold rounded-xl text-sm">
+              Sign in
+            </button>
+          )}
+          <a href="/" className="px-4 py-2 rounded-xl text-sm border">Back to home</a>
+        </div>
+        <AuthModal isOpen={showAuthModal} onClose={() => setShowAuthModal(false)} isLightMode={isLight} />
+      </div>
+    );
+  }
+
+  return <AdminPanel />;
+}
+
+function AdminPanel() {
   const [themeMode, setThemeMode] = useState<ThemeMode>(() => {
     const saved = localStorage.getItem('themeMode');
     return saved === 'light' ? 'light' : 'dark';

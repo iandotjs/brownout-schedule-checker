@@ -2,6 +2,7 @@ import { useState, useMemo } from 'react';
 import { motion } from 'motion/react';
 import { MapPin, Building2, Home, Phone, MessageSquare, Send, CheckCircle2, AlertTriangle, Mail, Clock, MapPinned } from 'lucide-react';
 import localLocations from './locations.json';
+import Turnstile from './Turnstile';
 
 type ThemeMode = 'light' | 'dark';
 type TabId = 'location' | 'issue' | 'suggestion';
@@ -12,8 +13,8 @@ interface Location {
   barangays: { code: string; name: string }[];
 }
 
-const SUPABASE_URL = (import.meta.env.VITE_SUPABASE_URL || '').replace(/\/$/, '');
-const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY || '';
+const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL || '').replace(/\/$/, '');
+const TURNSTILE_SITE_KEY = import.meta.env.VITE_TURNSTILE_SITE_KEY || '';
 
 const normalizeLocations = (data: unknown): Location[] => {
   if (!Array.isArray(data)) return [];
@@ -32,6 +33,9 @@ export default function ReportPage() {
   const [activeTab, setActiveTab] = useState<TabId>('location');
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
+  const [turnstileKey, setTurnstileKey] = useState(0);
 
   // Location report state
   const [selectedCity, setSelectedCity] = useState('');
@@ -82,68 +86,60 @@ export default function ReportPage() {
     setSelectedBarangay('');
   };
 
-  const handleSubmitLocation = async () => {
-    if (!selectedCity || !selectedBarangay || !locationName.trim()) return;
+  const submitReport = async (payload: Record<string, string>): Promise<boolean> => {
+    if (!turnstileToken) return false;
     setSubmitting(true);
+    setSubmitError(null);
     try {
-      const payload = {
-        type: 'location_report',
-        municipality: selectedCityName,
-        barangay: selectedBarangayName,
-        location_type: locationType,
-        location_name: locationName.trim(),
-        created_at: new Date().toISOString(),
-      };
-      const res = await fetch(`${SUPABASE_URL}/rest/v1/community_reports`, {
+      const res = await fetch(`${API_BASE_URL}/api/reports`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          apikey: SUPABASE_ANON_KEY,
-          Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
-        },
-        body: JSON.stringify(payload),
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ...payload, turnstile_token: turnstileToken }),
       });
-      if (res.ok || res.status === 201) {
-        setSubmitted(true);
-        setLocationName('');
-        setTimeout(() => setSubmitted(false), 3000);
+      if (!res.ok) {
+        const body = await res.json().catch(() => ({}));
+        setSubmitError(body.error || 'Something went wrong. Please try again.');
+        return false;
       }
+      setSubmitted(true);
+      setTimeout(() => setSubmitted(false), 3000);
+      return true;
     } catch {
-      // silently fail — user can retry
+      setSubmitError('Network error. Please try again.');
+      return false;
     } finally {
       setSubmitting(false);
+      setTurnstileToken(null);
+      setTurnstileKey((k) => k + 1);
     }
+  };
+
+  const handleSubmitLocation = async () => {
+    if (!selectedCity || !selectedBarangay || !locationName.trim()) return;
+    const ok = await submitReport({
+      type: 'location_report',
+      municipality: selectedCityName,
+      barangay: selectedBarangayName,
+      location_type: locationType,
+      location_name: locationName.trim(),
+    });
+    if (ok) setLocationName('');
   };
 
   const handleSubmitSuggestion = async () => {
     if (!suggestionText.trim()) return;
-    setSubmitting(true);
-    try {
-      const payload = {
-        type: 'suggestion',
-        message: suggestionText.trim(),
-        created_at: new Date().toISOString(),
-      };
-      const res = await fetch(`${SUPABASE_URL}/rest/v1/community_reports`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          apikey: SUPABASE_ANON_KEY,
-          Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
-        },
-        body: JSON.stringify(payload),
-      });
-      if (res.ok || res.status === 201) {
-        setSubmitted(true);
-        setSuggestionText('');
-        setTimeout(() => setSubmitted(false), 3000);
-      }
-    } catch {
-      // silently fail
-    } finally {
-      setSubmitting(false);
-    }
+    const ok = await submitReport({ type: 'suggestion', message: suggestionText.trim() });
+    if (ok) setSuggestionText('');
   };
+
+  const turnstileWidget = (
+    <Turnstile
+      key={turnstileKey}
+      siteKey={TURNSTILE_SITE_KEY}
+      theme={isLightMode ? 'light' : 'dark'}
+      onToken={setTurnstileToken}
+    />
+  );
 
   const tabs: { id: TabId; label: string; icon: React.ReactNode }[] = [
     { id: 'location', label: 'Report Location', icon: <MapPin className="w-4 h-4" /> },
@@ -171,7 +167,7 @@ export default function ReportPage() {
             {tabs.map((tab) => (
               <button
                 key={tab.id}
-                onClick={() => { setActiveTab(tab.id); setSubmitted(false); }}
+                onClick={() => { setActiveTab(tab.id); setSubmitted(false); setSubmitError(null); setTurnstileToken(null); }}
                 className={`flex-1 flex items-center justify-center gap-1.5 px-3 py-3 text-xs sm:text-sm font-medium transition-colors ${
                   activeTab === tab.id
                     ? isLightMode
@@ -203,6 +199,13 @@ export default function ReportPage() {
                   Thank you! Your report has been submitted.
                 </p>
               </motion.div>
+            )}
+
+            {submitError && (
+              <div className={`flex items-center gap-3 p-4 rounded-xl ${isLightMode ? 'bg-red-100 border border-red-300' : 'bg-red-500/20 border border-red-400/30'}`}>
+                <AlertTriangle className="w-5 h-5 text-red-500 flex-shrink-0" />
+                <p className={`text-sm font-medium ${isLightMode ? 'text-red-800' : 'text-red-200'}`}>{submitError}</p>
+              </div>
             )}
 
             {/* Tab: Report Location */}
@@ -284,6 +287,7 @@ export default function ReportPage() {
                   <input
                     type="text"
                     value={locationName}
+                    maxLength={200}
                     onChange={(e) => setLocationName(e.target.value)}
                     placeholder={
                       locationType === 'purok' ? 'e.g., Prk. Greenleaves' :
@@ -295,10 +299,12 @@ export default function ReportPage() {
                   />
                 </div>
 
+                {turnstileWidget}
+
                 {/* Submit */}
                 <button
                   onClick={handleSubmitLocation}
-                  disabled={submitting || !selectedCity || !selectedBarangay || !locationName.trim()}
+                  disabled={submitting || !turnstileToken || !selectedCity || !selectedBarangay || !locationName.trim()}
                   className={`w-full flex items-center justify-center gap-2 py-3 rounded-xl font-semibold text-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${
                     isLightMode
                       ? 'bg-cyan-500 hover:bg-cyan-600 text-white'
@@ -430,6 +436,7 @@ export default function ReportPage() {
                   </label>
                   <textarea
                     value={suggestionText}
+                    maxLength={1000}
                     onChange={(e) => setSuggestionText(e.target.value)}
                     placeholder="e.g., The schedule for Brgy. Galas was incorrect on April 10..."
                     rows={4}
@@ -437,9 +444,11 @@ export default function ReportPage() {
                   />
                 </div>
 
+                {turnstileWidget}
+
                 <button
                   onClick={handleSubmitSuggestion}
-                  disabled={submitting || !suggestionText.trim()}
+                  disabled={submitting || !turnstileToken || !suggestionText.trim()}
                   className={`w-full flex items-center justify-center gap-2 py-3 rounded-xl font-semibold text-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${
                     isLightMode
                       ? 'bg-cyan-500 hover:bg-cyan-600 text-white'

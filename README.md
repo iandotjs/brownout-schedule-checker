@@ -150,7 +150,8 @@ Create frontend `.env` file in `backend/frontend/`:
 VITE_SUPABASE_URL=https://your-project.supabase.co
 VITE_SUPABASE_ANON_KEY=your-supabase-anon-key
 VITE_API_BASE_URL=http://127.0.0.1:5000
-VITE_ADMIN_KEY=your-secret-admin-key
+# Cloudflare's always-pass test key for local dev
+VITE_TURNSTILE_SITE_KEY=1x00000000000000000000AA
 ```
 
 Run frontend dev server:
@@ -175,8 +176,8 @@ python run_scraper.py
 ```
 
 - Admin web trigger:
-	- Open your app with `?admin=your-secret-admin-key`
-	- Click Fetch New Notices
+	- Sign in with an account listed in `public.admins` and open `/admin`
+	- Use the scrape trigger in Settings
 
 ## Deployment Summary
 
