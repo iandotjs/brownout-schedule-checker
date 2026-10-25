@@ -150,6 +150,8 @@ Create frontend `.env` file in `backend/frontend/`:
 VITE_SUPABASE_URL=https://your-project.supabase.co
 VITE_SUPABASE_ANON_KEY=your-supabase-anon-key
 VITE_API_BASE_URL=http://127.0.0.1:5000
+# Cloudflare's always-pass test key for local dev
+VITE_TURNSTILE_SITE_KEY=1x00000000000000000000AA
 ```
 
 Run frontend dev server:

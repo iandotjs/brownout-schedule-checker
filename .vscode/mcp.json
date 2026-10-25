@@ -2,7 +2,7 @@
   "inputs": [
     {
       "type": "promptString",
-      "id": "render-api-key",
+      "id": "render-api-key-v2",
       "description": "Render API key",
       "password": true
     }
@@ -11,6 +11,10 @@
     "supabase": {
       "type": "http",
       "url": "https://mcp.supabase.com/mcp?project_ref=idbckahqgkgajwffvhyc&read_only=true"
+    },
+    "supabase-prod": {
+      "type": "http",
+      "url": "https://mcp.supabase.com/mcp?project_ref=jafaltvwoqykorndkltx&read_only=true"
     },
     "github": {
       "type": "http",
@@ -27,7 +31,7 @@
       "type": "http",
       "url": "https://mcp.render.com/mcp",
       "headers": {
-        "Authorization": "Bearer ${input:render-api-key}"
+        "Authorization": "Bearer ${input:render-api-key-v2}"
       }
     }
   }

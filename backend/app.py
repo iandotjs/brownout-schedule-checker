@@ -2,6 +2,8 @@ import truststore
 truststore.inject_into_ssl()
 
 import os
+import time
+import threading
 import requests as http_requests
 
 from flask import Flask, jsonify, request
@@ -16,6 +18,7 @@ from supabase_client import supabase
 GITHUB_TOKEN = os.getenv("GITHUB_TOKEN", "")
 GITHUB_REPO = os.getenv("GITHUB_REPO", "iandotjs/brownout-schedule-checker")
 GITHUB_WORKFLOW = os.getenv("GITHUB_WORKFLOW", "scraper.yml")
+TURNSTILE_SECRET_KEY = os.getenv("TURNSTILE_SECRET_KEY", "")
 
 # --- Flask app setup ---
 app = Flask(__name__)
@@ -47,6 +50,95 @@ def add_cors_headers(response):
 @app.route("/")
 def index():
     return "Hello Flask!"
+
+
+# ==============================
+# Public: Community Reports
+# ==============================
+
+REPORT_LIMIT = 5
+REPORT_WINDOW_SECONDS = 600
+LOCATION_TYPES = {"purok", "landmark", "street", "establishment"}
+_report_hits: dict[str, list[float]] = {}
+_report_hits_lock = threading.Lock()
+
+
+def client_ip():
+    forwarded = request.headers.get("X-Forwarded-For", "")
+    return forwarded.split(",")[0].strip() if forwarded else (request.remote_addr or "")
+
+
+def rate_limited(ip):
+    """Best-effort per-instance limit; Turnstile is the primary control."""
+    now = time.time()
+    with _report_hits_lock:
+        for key in [k for k, v in _report_hits.items() if v[-1] < now - REPORT_WINDOW_SECONDS]:
+            del _report_hits[key]
+        hits = [t for t in _report_hits.get(ip, []) if t > now - REPORT_WINDOW_SECONDS]
+        if len(hits) >= REPORT_LIMIT:
+            _report_hits[ip] = hits
+            return True
+        hits.append(now)
+        _report_hits[ip] = hits
+        return False
+
+
+def verify_turnstile(token, ip):
+    resp = http_requests.post(
+        "https://challenges.cloudflare.com/turnstile/v0/siteverify",
+        data={"secret": TURNSTILE_SECRET_KEY, "response": token, "remoteip": ip},
+        timeout=10,
+    )
+    return resp.json().get("success") is True
+
+
+def clean_text(value, max_len):
+    if not isinstance(value, str):
+        return None
+    value = value.strip()
+    return value if 0 < len(value) <= max_len else None
+
+
+@app.route("/api/reports", methods=["POST", "OPTIONS"])
+def submit_report():
+    if request.method == "OPTIONS":
+        return ("", 204)
+    if not TURNSTILE_SECRET_KEY:
+        app.logger.error("TURNSTILE_SECRET_KEY not configured")
+        return jsonify({"error": "Reports are temporarily unavailable"}), 503
+
+    body = request.get_json(silent=True) or {}
+    token = body.get("turnstile_token")
+    if not isinstance(token, str) or not token or len(token) > 2048:
+        return jsonify({"error": "Verification required"}), 400
+
+    report_type = body.get("type")
+    if report_type == "location_report":
+        row = {
+            "type": report_type,
+            "municipality": clean_text(body.get("municipality"), 100),
+            "barangay": clean_text(body.get("barangay"), 100),
+            "location_type": body.get("location_type") if body.get("location_type") in LOCATION_TYPES else None,
+            "location_name": clean_text(body.get("location_name"), 200),
+        }
+    elif report_type == "suggestion":
+        row = {"type": report_type, "message": clean_text(body.get("message"), 1000)}
+    else:
+        return jsonify({"error": "Invalid report type"}), 400
+    if any(v is None for v in row.values()):
+        return jsonify({"error": "Invalid or missing fields"}), 400
+
+    ip = client_ip()
+    if rate_limited(ip):
+        return jsonify({"error": "Too many reports. Please try again later."}), 429
+
+    try:
+        if not verify_turnstile(token, ip):
+            return jsonify({"error": "Verification failed. Please try again."}), 403
+        supabase.table("community_reports").insert(row).execute()
+        return jsonify({"message": "Report submitted"}), 201
+    except Exception as e:
+        return server_error(e)
 
 # ==============================
 # Admin helpers
