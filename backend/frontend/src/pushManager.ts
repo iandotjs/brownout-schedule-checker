@@ -86,6 +86,35 @@ export async function subscribeToPush(
   }
 }
 
+// Re-save this device's subscription for the signed-in user (e.g. if the server row was lost)
+export async function syncPushSubscription(
+  userId: string,
+  cityName: string,
+  barangayName: string,
+): Promise<boolean> {
+  if (!isPushSupported()) return false;
+  try {
+    const registration = await navigator.serviceWorker.ready;
+    const subscription = await registration.pushManager.getSubscription();
+    if (!subscription || !usesCurrentKey(subscription)) return false;
+    const json = subscription.toJSON();
+    const { error } = await supabase.from('push_subscriptions').upsert(
+      {
+        user_id: userId,
+        endpoint: json.endpoint,
+        p256dh: json.keys?.p256dh,
+        auth: json.keys?.auth,
+        city_name: cityName,
+        barangay_name: barangayName,
+      },
+      { onConflict: 'endpoint' },
+    );
+    return !error;
+  } catch {
+    return false;
+  }
+}
+
 export async function unsubscribeFromPush(): Promise<{ error: string | null }> {
   try {
     const registration = await navigator.serviceWorker.ready;
