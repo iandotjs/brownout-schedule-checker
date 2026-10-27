@@ -17,12 +17,21 @@ export function isPushSupported(): boolean {
   return 'serviceWorker' in navigator && 'PushManager' in window && 'Notification' in window;
 }
 
+// A subscription made with a previous VAPID key can't receive pushes signed with the current one
+function usesCurrentKey(subscription: PushSubscription): boolean {
+  const key = subscription.options?.applicationServerKey;
+  if (!key || !VAPID_PUBLIC_KEY) return false;
+  const current = urlBase64ToUint8Array(VAPID_PUBLIC_KEY);
+  const existing = new Uint8Array(key);
+  return existing.length === current.length && existing.every((b, i) => b === current[i]);
+}
+
 export async function isPushSubscribed(): Promise<boolean> {
   if (!isPushSupported()) return false;
   try {
     const registration = await navigator.serviceWorker.ready;
     const subscription = await registration.pushManager.getSubscription();
-    return !!subscription;
+    return !!subscription && usesCurrentKey(subscription);
   } catch {
     return false;
   }
@@ -47,6 +56,11 @@ export async function subscribeToPush(
 
   try {
     const registration = await navigator.serviceWorker.ready;
+    const existing = await registration.pushManager.getSubscription();
+    if (existing && !usesCurrentKey(existing)) {
+      await supabase.from('push_subscriptions').delete().eq('endpoint', existing.endpoint);
+      await existing.unsubscribe();
+    }
     const subscription = await registration.pushManager.subscribe({
       userVisibleOnly: true,
       applicationServerKey: urlBase64ToUint8Array(VAPID_PUBLIC_KEY),
