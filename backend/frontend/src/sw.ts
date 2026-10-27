@@ -64,12 +64,15 @@ self.addEventListener('push', (event) => {
 
 self.addEventListener('notificationclick', (event) => {
   event.notification.close();
-  const url: string = event.notification.data?.url || '/';
+  // Only open pages on this site, whatever the push payload says
+  const target = new URL(event.notification.data?.url || '/', self.location.origin);
+  const url = target.origin === self.location.origin ? target.href : `${self.location.origin}/`;
   event.waitUntil(
-    self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then((windowClients) => {
+    self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then(async (windowClients) => {
       for (const client of windowClients) {
-        if (client.url.includes(self.location.origin) && 'focus' in client) {
-          return client.focus();
+        if (client.url.startsWith(self.location.origin)) {
+          const navigated = client.url === url ? client : await client.navigate(url).catch(() => null);
+          return (navigated ?? client).focus();
         }
       }
       return self.clients.openWindow(url);

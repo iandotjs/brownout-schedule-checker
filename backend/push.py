@@ -8,15 +8,37 @@ matches newly scraped brownout schedules.
 import os
 import re
 import json
+from urllib.parse import urlencode
 from pywebpush import webpush, WebPushException
 from supabase_client import supabase
 
 VAPID_PRIVATE_KEY = os.getenv("VAPID_PRIVATE_KEY", "")
 VAPID_EMAIL = os.getenv("VAPID_EMAIL", "admin@example.com")
 
+_LOCATIONS_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "zamboanga_del_norte_locations.json")
+_location_codes: dict | None = None
+
 
 def _normalize(text: str) -> str:
     return re.sub(r"[^A-Z0-9\s]", " ", str(text).upper()).strip()
+
+
+def location_url(city_name: str, barangay_name: str) -> str:
+    """App link that opens the results for this barangay (same ?city=&brgy= codes the frontend uses)."""
+    global _location_codes
+    if _location_codes is None:
+        _location_codes = {}
+        try:
+            with open(_LOCATIONS_PATH, encoding="utf-8") as f:
+                for city in json.load(f):
+                    for brgy in city.get("barangays", []):
+                        key = (_normalize(city["name"]), _normalize(brgy["name"]))
+                        _location_codes[key] = (city["code"], brgy["code"])
+        except (OSError, ValueError, KeyError) as e:
+            print(f"  Could not load location codes: {e}")
+
+    codes = _location_codes.get((_normalize(city_name), _normalize(barangay_name)))
+    return f"/?{urlencode({'city': codes[0], 'brgy': codes[1]})}" if codes else "/"
 
 
 def _extract_affected_locations(notices: list) -> set:
@@ -115,6 +137,7 @@ def notify_affected_subscribers(notices: list) -> int:
                 },
                 title="\u26a1 Brownout Alert",
                 body=f"New brownout scheduled for {sub.get('barangay_name', '')}, {sub.get('city_name', '')}. Tap to view.",
+                url=location_url(sub.get("city_name", ""), sub.get("barangay_name", "")),
                 tag=f"brownout-{sub_city}-{sub_brgy}",
             )
             if ok:

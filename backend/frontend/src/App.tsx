@@ -466,6 +466,15 @@ export default function App() {
   }, [notices, profile, locations, selectedCity, selectedBarangay, matchedSchedules]);
 
   // Ended schedules are hidden; the rest are ordered by when they next start
+  const upcomingDefaultAlerts = useMemo(() => {
+    const now = Date.now();
+    return defaultLocationAlerts
+      .map((alert) => ({ alert, timing: getScheduleTiming(alert.dates, alert.times, now) }))
+      .filter((v) => !v.timing.isPast)
+      .sort((a, b) => (a.timing.next?.start ?? Infinity) - (b.timing.next?.start ?? Infinity))
+      .map((v) => v.alert);
+  }, [defaultLocationAlerts]);
+
   const scheduleViews = useMemo(() => {
     if (!matchedSchedules) return null;
     const now = Date.now();
@@ -1057,7 +1066,7 @@ export default function App() {
                 locations={locations}
                 selectedCity={selectedCity}
                 selectedBarangay={selectedBarangay}
-                defaultAlerts={defaultLocationAlerts}
+                defaultAlerts={upcomingDefaultAlerts}
               />
             </div>
           </div>
