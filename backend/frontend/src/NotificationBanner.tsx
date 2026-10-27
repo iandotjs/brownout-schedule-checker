@@ -3,7 +3,7 @@ import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'motion/react';
 import { Bell, LogOut, MapPin, Save, X as XIcon, Zap, Calendar, Clock, ExternalLink } from 'lucide-react';
 import { useAuth } from './AuthContext';
-import { isPushSupported, isPushSubscribed, subscribeToPush, unsubscribeFromPush, updatePushLocation } from './pushManager';
+import { isPushSupported, isPushSubscribed, subscribeToPush, syncPushSubscription, unsubscribeFromPush, updatePushLocation } from './pushManager';
 
 interface MatchedSchedule {
   id: string;
@@ -72,12 +72,26 @@ export default function NotificationBanner({
   const pushSupported = isPushSupported();
   const needsHomeScreenInstall = !pushSupported && isIOS() && !isStandalone();
 
-  // Check initial push subscription status
+  // Check initial push subscription status and make sure the server knows about this device
   useEffect(() => {
-    if (user && pushSupported) {
-      isPushSubscribed().then(setPushEnabled);
-    }
-  }, [user, pushSupported]);
+    if (!user || !pushSupported) return;
+    let cancelled = false;
+    void (async () => {
+      const subscribed = await isPushSubscribed();
+      if (cancelled) return;
+      if (!subscribed) {
+        setPushEnabled(false);
+        return;
+      }
+      const city = locations.find((l) => l.code === profile?.default_city);
+      const barangay = city?.barangays.find((b) => b.code === profile?.default_barangay);
+      const synced = city && barangay ? await syncPushSubscription(user.id, city.name, barangay.name) : false;
+      if (!cancelled) setPushEnabled(synced);
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [user, pushSupported, profile?.default_city, profile?.default_barangay, locations]);
 
   // Lock body scroll when notification modal is open
   useEffect(() => {
