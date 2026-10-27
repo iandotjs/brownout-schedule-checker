@@ -169,7 +169,7 @@ export default function NotificationBanner({
       <motion.div
         initial={{ opacity: 0, y: -8 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.5, duration: 0.4, ease: 'easeOut' }}
+        transition={{ duration: 0.2, ease: 'easeOut' }}
         className={`relative overflow-hidden rounded-2xl border ${
           isLightMode
             ? 'bg-amber-50/80 border-amber-200/80'
