@@ -46,6 +46,14 @@ function getUserDisplayName(user: { email?: string; user_metadata?: Record<strin
   return 'there';
 }
 
+const isIOS = (): boolean =>
+  /iPad|iPhone|iPod/.test(navigator.userAgent) ||
+  (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+
+const isStandalone = (): boolean =>
+  window.matchMedia('(display-mode: standalone)').matches ||
+  (navigator as Navigator & { standalone?: boolean }).standalone === true;
+
 export default function NotificationBanner({
   isLightMode,
   onLoginClick,
@@ -62,6 +70,7 @@ export default function NotificationBanner({
   const [pushLoading, setPushLoading] = useState(false);
   const [pushError, setPushError] = useState<string | null>(null);
   const pushSupported = isPushSupported();
+  const needsHomeScreenInstall = !pushSupported && isIOS() && !isStandalone();
 
   // Check initial push subscription status
   useEffect(() => {
@@ -251,24 +260,28 @@ export default function NotificationBanner({
               </p>
               {/* Saved location displayed under greeting */}
               {savedLocationLabel ? (
-                <p className={`text-[11px] truncate flex items-center gap-1 ${isLightMode ? 'text-slate-400' : 'text-white/35'}`}>
-                  <MapPin className="w-2.5 h-2.5 flex-shrink-0" />
+                <p className={`text-xs truncate flex items-center gap-1 ${isLightMode ? 'text-slate-600' : 'text-white/70'}`}>
+                  <MapPin className="w-3 h-3 flex-shrink-0" aria-hidden="true" />
                   {savedLocationLabel}
                 </p>
               ) : canSave ? (
                 <button
                   onClick={handleSaveLocation}
                   disabled={saving}
-                  className={`text-[11px] flex items-center gap-1 transition-colors ${
+                  className={`text-xs font-medium flex items-center gap-1 transition-colors ${
                     isLightMode
-                      ? 'text-emerald-500 hover:text-emerald-600'
-                      : 'text-yellow-400/60 hover:text-yellow-400/80'
+                      ? 'text-emerald-700 hover:text-emerald-800'
+                      : 'text-yellow-300 hover:text-yellow-200'
                   } disabled:opacity-50`}
                 >
-                  <Save className="w-2.5 h-2.5" />
+                  <Save className="w-3 h-3" aria-hidden="true" />
                   {saving ? 'Saving...' : 'Save current location'}
                 </button>
-              ) : null}
+              ) : (
+                <p className={`text-xs ${isLightMode ? 'text-slate-600' : 'text-white/70'}`}>
+                  Pick a barangay above, then save it to get alerts.
+                </p>
+              )}
             </div>
           </div>
 
@@ -278,10 +291,10 @@ export default function NotificationBanner({
               onClick={() => setShowNotifications(true)}
               className={`relative p-2 rounded-lg transition-colors ${
                 isLightMode
-                  ? 'text-slate-400 hover:text-slate-600 hover:bg-slate-100'
-                  : 'text-white/40 hover:text-white/70 hover:bg-white/8'
+                  ? 'text-slate-600 hover:text-slate-800 hover:bg-slate-100'
+                  : 'text-white/75 hover:text-white hover:bg-white/10'
               }`}
-              aria-label="Notifications"
+              aria-label={defaultAlerts.length > 0 ? `Alerts (${defaultAlerts.length} upcoming)` : 'Alerts'}
             >
               <Bell className="w-4 h-4" />
               {defaultAlerts.length > 0 && (
@@ -296,8 +309,8 @@ export default function NotificationBanner({
               onClick={signOut}
               className={`p-2 rounded-lg transition-colors ${
                 isLightMode
-                  ? 'text-slate-400 hover:text-slate-600 hover:bg-slate-100'
-                  : 'text-white/30 hover:text-white/60 hover:bg-white/8'
+                  ? 'text-slate-600 hover:text-slate-800 hover:bg-slate-100'
+                  : 'text-white/75 hover:text-white hover:bg-white/10'
               }`}
               aria-label="Sign out"
             >
@@ -312,15 +325,65 @@ export default function NotificationBanner({
             <button
               onClick={handleSaveLocation}
               disabled={saving}
-              className={`text-[11px] flex items-center gap-1 transition-colors ${
+              className={`text-xs font-medium flex items-center gap-1 transition-colors ${
                 isLightMode
-                  ? 'text-emerald-500 hover:text-emerald-600'
-                  : 'text-yellow-400/60 hover:text-yellow-400/80'
+                  ? 'text-emerald-700 hover:text-emerald-800'
+                  : 'text-yellow-300 hover:text-yellow-200'
               } disabled:opacity-50`}
             >
-              <Save className="w-2.5 h-2.5" />
+              <Save className="w-3 h-3" aria-hidden="true" />
               {saving ? 'Saving...' : 'Update saved location'}
             </button>
+          </div>
+        )}
+
+        {/* Push alerts */}
+        {hasSavedLocation && (
+          <div className={`mt-2 rounded-xl p-3 ${isLightMode ? 'bg-slate-50 border border-slate-200' : 'bg-white/5 border border-white/10'}`}>
+            {pushSupported ? (
+              <div className="flex items-center justify-between gap-3">
+                <div className="min-w-0">
+                  <p className={`text-sm font-medium ${isLightMode ? 'text-slate-800' : 'text-white'}`}>
+                    Push alerts
+                  </p>
+                  <p className={`text-xs ${isLightMode ? 'text-slate-600' : 'text-white/70'}`}>
+                    {pushEnabled
+                      ? 'On — you\'ll be notified when a brownout is posted for your saved location.'
+                      : 'Get notified on this device when a brownout is posted for your saved location.'}
+                  </p>
+                </div>
+                <button
+                  onClick={handlePushToggle}
+                  disabled={pushLoading}
+                  role="switch"
+                  aria-checked={pushEnabled}
+                  aria-label="Push alerts"
+                  className={`relative inline-flex h-6 w-11 flex-shrink-0 items-center rounded-full transition-colors ${
+                    pushEnabled
+                      ? (isLightMode ? 'bg-emerald-600' : 'bg-yellow-400')
+                      : (isLightMode ? 'bg-slate-300' : 'bg-white/25')
+                  } ${pushLoading ? 'opacity-50 cursor-wait' : 'cursor-pointer'}`}
+                >
+                  <span className={`inline-block h-5 w-5 rounded-full bg-white shadow-sm transition-transform ${
+                    pushEnabled ? 'translate-x-[22px]' : 'translate-x-[2px]'
+                  }`} />
+                </button>
+              </div>
+            ) : needsHomeScreenInstall ? (
+              <p className={`text-xs ${isLightMode ? 'text-slate-700' : 'text-white/80'}`}>
+                <span className="font-semibold">Want alerts on iPhone?</span> Open this site in Safari, tap{' '}
+                <span className="font-semibold">Share → Add to Home Screen</span>, then open the app from your home screen and turn on push alerts.
+              </p>
+            ) : (
+              <p className={`text-xs ${isLightMode ? 'text-slate-700' : 'text-white/80'}`}>
+                This browser doesn't support push alerts. Try Chrome, Edge, Firefox or Samsung Internet.
+              </p>
+            )}
+            {pushError && (
+              <p role="alert" className={`mt-2 text-xs ${isLightMode ? 'text-red-700' : 'text-red-300'}`}>
+                {pushError}
+              </p>
+            )}
           </div>
         )}
       </motion.div>
@@ -353,18 +416,18 @@ export default function NotificationBanner({
               <div className={`flex items-center justify-between px-5 py-4 border-b ${isLightMode ? 'border-slate-100' : 'border-white/8'}`}>
                 <div>
                   <p className={`text-sm font-semibold ${isLightMode ? 'text-slate-800' : 'text-white'}`}>
-                    Notifications
+                    Upcoming brownouts
                   </p>
-                  <p className={`text-[11px] mt-0.5 ${isLightMode ? 'text-slate-400' : 'text-white/35'}`}>
-                    Alerts for your saved location
+                  <p className={`text-xs mt-0.5 ${isLightMode ? 'text-slate-600' : 'text-white/70'}`}>
+                    For your saved location
                   </p>
                 </div>
                 <button
                   onClick={() => setShowNotifications(false)}
                   className={`p-1.5 rounded-lg transition-colors ${
                     isLightMode
-                      ? 'text-slate-400 hover:text-slate-600 hover:bg-slate-100'
-                      : 'text-white/30 hover:text-white/60 hover:bg-white/8'
+                      ? 'text-slate-600 hover:text-slate-800 hover:bg-slate-100'
+                      : 'text-white/75 hover:text-white hover:bg-white/10'
                   }`}
                   aria-label="Close"
                 >
@@ -382,57 +445,14 @@ export default function NotificationBanner({
                       }`}>
                         <MapPin className={`w-4 h-4 flex-shrink-0 ${isLightMode ? 'text-emerald-500' : 'text-yellow-400'}`} />
                         <div className="min-w-0">
-                          <p className={`text-xs font-medium truncate ${isLightMode ? 'text-emerald-700' : 'text-yellow-400/90'}`}>
+                          <p className={`text-xs font-medium truncate ${isLightMode ? 'text-emerald-800' : 'text-yellow-300'}`}>
                             {savedLocationLabel}
                           </p>
-                          <p className={`text-[10px] mt-0.5 ${isLightMode ? 'text-emerald-500/70' : 'text-yellow-400/40'}`}>
+                          <p className={`text-xs mt-0.5 ${isLightMode ? 'text-emerald-700' : 'text-yellow-200/80'}`}>
                             Monitoring for brownout schedules
                           </p>
                         </div>
                       </div>
-                    )}
-
-                    {/* Push notification toggle */}
-                    {hasSavedLocation && pushSupported && (
-                      <div className={`flex items-center justify-between p-3 rounded-xl ${
-                        isLightMode ? 'bg-slate-50' : 'bg-white/5'
-                      }`}>
-                        <div className="flex items-center gap-2.5 min-w-0">
-                          <Bell className={`w-4 h-4 flex-shrink-0 ${
-                            pushEnabled
-                              ? (isLightMode ? 'text-emerald-500' : 'text-yellow-400')
-                              : (isLightMode ? 'text-slate-400' : 'text-white/30')
-                          }`} />
-                          <div className="min-w-0">
-                            <p className={`text-xs font-medium ${isLightMode ? 'text-slate-700' : 'text-white/80'}`}>
-                              Push Notifications
-                            </p>
-                            <p className={`text-[10px] ${isLightMode ? 'text-slate-400' : 'text-white/30'}`}>
-                              {pushEnabled ? 'You\'ll be notified of new brownouts' : 'Get alerts on your device'}
-                            </p>
-                          </div>
-                        </div>
-                        <button
-                          onClick={handlePushToggle}
-                          disabled={pushLoading}
-                          role="switch"
-                          aria-checked={pushEnabled}
-                          className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                            pushEnabled
-                              ? (isLightMode ? 'bg-emerald-500' : 'bg-yellow-400')
-                              : (isLightMode ? 'bg-slate-300' : 'bg-white/20')
-                          } ${pushLoading ? 'opacity-50 cursor-wait' : 'cursor-pointer'}`}
-                        >
-                          <span className={`inline-block h-5 w-5 rounded-full bg-white shadow-sm transition-transform ${
-                            pushEnabled ? 'translate-x-[22px]' : 'translate-x-[2px]'
-                          }`} />
-                        </button>
-                      </div>
-                    )}
-                    {pushError && (
-                      <p className={`text-[10px] px-1 ${isLightMode ? 'text-red-500' : 'text-red-400'}`}>
-                        {pushError}
-                      </p>
                     )}
 
                     {defaultAlerts.length > 0 ? (
@@ -449,20 +469,20 @@ export default function NotificationBanner({
                             <div className="flex items-start gap-2">
                               <Zap className={`w-3.5 h-3.5 mt-0.5 flex-shrink-0 ${isLightMode ? 'text-red-500' : 'text-red-400'}`} />
                               <div className="min-w-0 flex-1 space-y-1.5">
-                                <p className={`text-[11px] font-semibold ${isLightMode ? 'text-red-700' : 'text-red-300'}`}>
+                                <p className={`text-xs font-semibold ${isLightMode ? 'text-red-700' : 'text-red-300'}`}>
                                   Scheduled Brownout
                                 </p>
                                 <div className="space-y-1">
-                                  <p className={`text-[11px] flex items-center gap-1.5 ${isLightMode ? 'text-slate-600' : 'text-white/50'}`}>
-                                    <Calendar className="w-3 h-3 flex-shrink-0" />
+                                  <p className={`text-xs flex items-center gap-1.5 ${isLightMode ? 'text-slate-700' : 'text-white/80'}`}>
+                                    <Calendar className="w-3 h-3 flex-shrink-0" aria-hidden="true" />
                                     {alert.dateStr}
                                   </p>
-                                  <p className={`text-[11px] flex items-center gap-1.5 ${isLightMode ? 'text-slate-600' : 'text-white/50'}`}>
-                                    <Clock className="w-3 h-3 flex-shrink-0" />
+                                  <p className={`text-xs flex items-center gap-1.5 ${isLightMode ? 'text-slate-700' : 'text-white/80'}`}>
+                                    <Clock className="w-3 h-3 flex-shrink-0" aria-hidden="true" />
                                     {alert.timeStr}
                                   </p>
                                   {alert.affectedArea && (
-                                    <p className={`text-[10px] ${isLightMode ? 'text-slate-500' : 'text-white/35'}`}>
+                                    <p className={`text-xs ${isLightMode ? 'text-slate-600' : 'text-white/70'}`}>
                                       Area: {alert.affectedArea}
                                     </p>
                                   )}
@@ -472,13 +492,13 @@ export default function NotificationBanner({
                                     href={alert.url}
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    className={`inline-flex items-center gap-1 text-[10px] font-medium mt-1 transition-colors ${
+                                    className={`inline-flex items-center gap-1 text-xs font-medium mt-1 transition-colors ${
                                       isLightMode
-                                        ? 'text-blue-500 hover:text-blue-700'
-                                        : 'text-blue-400 hover:text-blue-300'
+                                        ? 'text-blue-700 hover:text-blue-900'
+                                        : 'text-blue-300 hover:text-blue-200'
                                     }`}
                                   >
-                                    View notice <ExternalLink className="w-2.5 h-2.5" />
+                                    View notice <ExternalLink className="w-3 h-3" aria-hidden="true" />
                                   </a>
                                 )}
                               </div>
@@ -487,18 +507,18 @@ export default function NotificationBanner({
                         ))}
                       </div>
                     ) : (
-                      <div className={`text-center py-4 ${isLightMode ? 'text-slate-400' : 'text-white/25'}`}>
-                        <Bell className="w-8 h-8 mx-auto mb-2 opacity-40" />
-                        <p className="text-xs">No scheduled brownouts</p>
-                        <p className="text-[10px] mt-1">You'll see brownout alerts here when they're posted for your area.</p>
+                      <div className={`text-center py-4 ${isLightMode ? 'text-slate-600' : 'text-white/70'}`}>
+                        <Bell className="w-8 h-8 mx-auto mb-2 opacity-40" aria-hidden="true" />
+                        <p className="text-sm">No upcoming brownouts</p>
+                        <p className="text-xs mt-1">Scheduled brownouts for your saved location will appear here.</p>
                       </div>
                     )}
                   </div>
                 ) : (
-                  <div className={`text-center py-6 ${isLightMode ? 'text-slate-400' : 'text-white/30'}`}>
-                    <MapPin className="w-8 h-8 mx-auto mb-2 opacity-40" />
-                    <p className="text-xs font-medium">No location saved</p>
-                    <p className="text-[10px] mt-1">Select a city and barangay, then save it to receive alerts.</p>
+                  <div className={`text-center py-6 ${isLightMode ? 'text-slate-600' : 'text-white/70'}`}>
+                    <MapPin className="w-8 h-8 mx-auto mb-2 opacity-40" aria-hidden="true" />
+                    <p className="text-sm font-medium">No location saved</p>
+                    <p className="text-xs mt-1">Select a city and barangay, then save it to receive alerts.</p>
                   </div>
                 )}
               </div>
