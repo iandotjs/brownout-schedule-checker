@@ -1,14 +1,17 @@
 /// <reference lib="webworker" />
-import { precacheAndRoute } from 'workbox-precaching';
-import { registerRoute } from 'workbox-routing';
+import { precacheAndRoute, createHandlerBoundToURL } from 'workbox-precaching';
+import { registerRoute, NavigationRoute } from 'workbox-routing';
 import { CacheFirst } from 'workbox-strategies';
 import { ExpirationPlugin } from 'workbox-expiration';
 import { CacheableResponsePlugin } from 'workbox-cacheable-response';
 
 declare const self: ServiceWorkerGlobalScope;
 
-// Precache static assets (manifest injected by vite-plugin-pwa)
-precacheAndRoute(self.__WB_MANIFEST);
+// Precache static assets (manifest injected by vite-plugin-pwa); ignore ?city=&brgy= so shared links load offline
+precacheAndRoute(self.__WB_MANIFEST, { ignoreURLParametersMatching: [/.*/] });
+
+// SPA routes (/report, /admin, ...) fall back to the cached app shell when offline
+registerRoute(new NavigationRoute(createHandlerBoundToURL('index.html')));
 
 // Cache Google Fonts stylesheets
 registerRoute(
