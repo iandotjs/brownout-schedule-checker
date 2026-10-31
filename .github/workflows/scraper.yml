@@ -24,6 +24,9 @@ on:
 jobs:
   scrape:
     runs-on: ubuntu-latest
+    concurrency:
+      group: scraper-${{ github.event_name == 'schedule' && github.event.schedule == '0 17 * * *' && 'dev' || github.event_name == 'schedule' && 'prod' || inputs.target_environment }}
+      cancel-in-progress: false
     # Map each scheduled cron to its environment; manual dispatch uses the input.
     # github.event.schedule holds the cron expression that triggered the run.
     environment: >-

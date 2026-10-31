@@ -224,6 +224,7 @@ export default function App() {
 
   // Maintenance mode state
   const [maintenanceMode, setMaintenanceMode] = useState(false);
+  const noticesLoadingRef = useRef(false);
 
   // Locations are bundled so dropdown works without backend runtime dependencies.
 
@@ -243,27 +244,26 @@ export default function App() {
 
   // Fetch notices directly from Supabase
   const loadNotices = async () => {
+    if (noticesLoadingRef.current) return;
+    noticesLoadingRef.current = true;
     setLoading(true);
     setLoadError(null);
     try {
       // Check maintenance mode
       if (SUPABASE_URL && SUPABASE_ANON_KEY) {
-        try {
-          const maintUrl = new URL(`${SUPABASE_URL}/rest/v1/app_settings`);
-          maintUrl.searchParams.set('select', 'value');
-          maintUrl.searchParams.set('key', 'eq.maintenance_mode');
-          const maintRes = await fetch(maintUrl.toString(), {
-            headers: { apikey: SUPABASE_ANON_KEY, Authorization: `Bearer ${SUPABASE_ANON_KEY}` },
-          });
-          if (maintRes.ok) {
-            const maintData = await maintRes.json();
-            if (Array.isArray(maintData) && maintData.length > 0 && maintData[0].value === 'true') {
-              setMaintenanceMode(true);
-            }
-          }
-        } catch {
-          // non-critical
-        }
+        const maintUrl = new URL(`${SUPABASE_URL}/rest/v1/app_settings`);
+        maintUrl.searchParams.set('select', 'key,value');
+        maintUrl.searchParams.set('key', 'in.(maintenance_mode,gemini_maintenance)');
+        const maintRes = await fetch(maintUrl.toString(), {
+          headers: { apikey: SUPABASE_ANON_KEY, Authorization: `Bearer ${SUPABASE_ANON_KEY}` },
+        });
+        if (!maintRes.ok) throw new Error(`Maintenance status request failed: ${maintRes.status}`);
+        const maintData = await maintRes.json();
+        if (!Array.isArray(maintData)) throw new Error('Invalid maintenance status');
+        setMaintenanceMode(maintData.some((setting: { key: string; value: string }) =>
+          setting.key === 'maintenance_mode' ? setting.value === 'true' :
+            setting.key === 'gemini_maintenance' && Boolean(setting.value)
+        ));
       }
 
       const supabaseNotices = await fetchNoticesFromSupabase();
@@ -290,12 +290,20 @@ export default function App() {
         setLoadError('Unable to load latest schedules right now.');
       }
     } finally {
+      noticesLoadingRef.current = false;
       setLoading(false);
     }
   };
 
   useEffect(() => {
     void loadNotices();
+    const refresh = () => { void loadNotices(); };
+    const interval = window.setInterval(refresh, 2 * 60 * 1000);
+    window.addEventListener('online', refresh);
+    return () => {
+      window.clearInterval(interval);
+      window.removeEventListener('online', refresh);
+    };
   }, []);
 
   useEffect(() => {
@@ -643,7 +651,7 @@ export default function App() {
     ? 'relative bg-white/80 border border-amber-200/70'
     : 'relative bg-white/10 backdrop-blur-sm border border-white/20';
 
-  if (loadError) {
+  if (loadError && !(maintenanceMode && !isAdmin)) {
     return (
       <div className={`min-h-screen w-full flex items-center justify-center p-6 transition-colors duration-500 ${containerBgClass}`}>
         <div className={`w-full max-w-xl rounded-3xl p-8 text-center backdrop-blur-xl ${cardClass}`}>
@@ -685,12 +693,12 @@ export default function App() {
           </div>
           <h1 className={`text-2xl font-bold ${sectionTextClass}`}>Maintenance in progress</h1>
           <p className={`mt-3 text-sm ${mutedTextClass}`}>
-            We're performing scheduled maintenance. Please check back shortly.
+            We're temporarily unable to show the latest schedules. Please check back shortly.
           </p>
           <div className="mt-6 flex flex-wrap justify-center gap-3">
             <button
               type="button"
-              onClick={() => { setMaintenanceMode(false); void loadNotices(); }}
+              onClick={() => void loadNotices()}
               className="rounded-xl bg-yellow-400 px-4 py-2 text-sm font-semibold text-slate-900 hover:bg-yellow-300 transition-colors"
             >
               Try Again

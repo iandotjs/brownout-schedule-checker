@@ -179,6 +179,20 @@ python run_scraper.py
 	- Sign in with an account listed in `public.admins` and open `/admin`
 	- Use the scrape trigger in Settings
 
+When Gemini cannot process a new notice because its models are unavailable or
+rate-limited, the scraper stores the notice URL in the `gemini_maintenance` row
+of `app_settings`. The app shows maintenance until that notice is processed and
+saved. This setting is separate from the admin-controlled `maintenance_mode`.
+The public Supabase role must be allowed to read both settings; only trusted
+server credentials should write them.
+
+If the pending notice is removed, expires, or falls outside the scraper's scan,
+an administrator must verify the official notice and clear the value of the
+`gemini_maintenance` row in the appropriate Supabase project's `app_settings`.
+Do not clear `maintenance_mode` as part of this recovery. GitHub Actions
+scrapes are serialized per environment; avoid running local scrapers against
+the same database concurrently.
+
 ## Deployment Summary
 
 - Frontend deploys to Vercel
