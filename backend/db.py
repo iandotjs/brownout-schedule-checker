@@ -60,6 +60,18 @@ def get_processed_urls() -> set:
         return set()
 
 
+def get_gemini_maintenance() -> str:
+    result = supabase.table("app_settings").select("value").eq("key", "gemini_maintenance").execute()
+    return result.data[0]["value"] if result.data else ""
+
+
+def set_gemini_maintenance(notice_url: str):
+    supabase.table("app_settings").upsert(
+        {"key": "gemini_maintenance", "value": notice_url},
+        on_conflict="key",
+    ).execute()
+
+
 def save_learned_locations(mappings: list):
     """
     Save purok/landmark → barangay mappings learned from ZANECO notices.

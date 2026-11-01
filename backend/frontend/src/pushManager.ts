@@ -2,7 +2,7 @@ import { supabase } from './supabaseClient';
 
 const VAPID_PUBLIC_KEY = import.meta.env.VITE_VAPID_PUBLIC_KEY || '';
 
-function urlBase64ToUint8Array(base64String: string): Uint8Array {
+function urlBase64ToUint8Array(base64String: string): Uint8Array<ArrayBuffer> {
   const padding = '='.repeat((4 - (base64String.length % 4)) % 4);
   const base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/');
   const rawData = window.atob(base64);
@@ -41,7 +41,9 @@ export async function subscribeToPush(
   userId: string,
   cityName: string,
   barangayName: string,
+  canContinue: () => boolean = () => true,
 ): Promise<{ error: string | null }> {
+  if (!canContinue()) return { error: 'Account operation cancelled.' };
   if (!isPushSupported()) {
     return { error: 'Push notifications are not supported in this browser.' };
   }
@@ -50,22 +52,31 @@ export async function subscribeToPush(
   }
 
   const permission = await Notification.requestPermission();
+  if (!canContinue()) return { error: 'Account operation cancelled.' };
   if (permission !== 'granted') {
     return { error: 'Notification permission was denied.' };
   }
 
   try {
     const registration = await navigator.serviceWorker.ready;
+    if (!canContinue()) return { error: 'Account operation cancelled.' };
     const existing = await registration.pushManager.getSubscription();
+    if (!canContinue()) return { error: 'Account operation cancelled.' };
     if (existing && !usesCurrentKey(existing)) {
       await supabase.from('push_subscriptions').delete().eq('endpoint', existing.endpoint);
+      if (!canContinue()) return { error: 'Account operation cancelled.' };
       await existing.unsubscribe();
     }
+    if (!canContinue()) return { error: 'Account operation cancelled.' };
     const subscription = await registration.pushManager.subscribe({
       userVisibleOnly: true,
       applicationServerKey: urlBase64ToUint8Array(VAPID_PUBLIC_KEY),
     });
 
+    if (!canContinue()) {
+      await subscription.unsubscribe();
+      return { error: 'Account operation cancelled.' };
+    }
     const json = subscription.toJSON();
     const { error } = await supabase.from('push_subscriptions').upsert(
       {
@@ -91,11 +102,14 @@ export async function syncPushSubscription(
   userId: string,
   cityName: string,
   barangayName: string,
+  canContinue: () => boolean = () => true,
 ): Promise<boolean> {
-  if (!isPushSupported()) return false;
+  if (!canContinue() || !isPushSupported()) return false;
   try {
     const registration = await navigator.serviceWorker.ready;
+    if (!canContinue()) return false;
     const subscription = await registration.pushManager.getSubscription();
+    if (!canContinue()) return false;
     if (!subscription || !usesCurrentKey(subscription)) return false;
     const json = subscription.toJSON();
     const { error } = await supabase.from('push_subscriptions').upsert(
@@ -115,14 +129,19 @@ export async function syncPushSubscription(
   }
 }
 
-export async function unsubscribeFromPush(): Promise<{ error: string | null }> {
+export async function unsubscribeFromPush(canContinue: () => boolean = () => true): Promise<{ error: string | null }> {
   try {
+    if (!canContinue()) return { error: 'Account operation cancelled.' };
     const registration = await navigator.serviceWorker.ready;
+    if (!canContinue()) return { error: 'Account operation cancelled.' };
     const subscription = await registration.pushManager.getSubscription();
+    if (!canContinue()) return { error: 'Account operation cancelled.' };
     if (subscription) {
       const endpoint = subscription.endpoint;
+      const { error } = await supabase.from('push_subscriptions').delete().eq('endpoint', endpoint);
+      if (error) return { error: error.message };
+      if (!canContinue()) return { error: 'Account operation cancelled.' };
       await subscription.unsubscribe();
-      await supabase.from('push_subscriptions').delete().eq('endpoint', endpoint);
     }
     return { error: null };
   } catch (err) {
@@ -133,12 +152,14 @@ export async function unsubscribeFromPush(): Promise<{ error: string | null }> {
 export async function updatePushLocation(
   cityName: string,
   barangayName: string,
+  canContinue: () => boolean = () => true,
 ): Promise<void> {
-  if (!isPushSupported()) return;
+  if (!canContinue() || !isPushSupported()) return;
   try {
     const registration = await navigator.serviceWorker.ready;
+    if (!canContinue()) return;
     const subscription = await registration.pushManager.getSubscription();
-    if (subscription) {
+    if (subscription && canContinue()) {
       await supabase
         .from('push_subscriptions')
         .update({ city_name: cityName, barangay_name: barangayName })
@@ -146,5 +167,33 @@ export async function updatePushLocation(
     }
   } catch {
     // Non-critical — don't break the UX
+  }
+}
+
+export async function unsubscribeBrowserPush(): Promise<{ error: string | null }> {
+  if (typeof navigator === 'undefined' || !('serviceWorker' in navigator)) return { error: null };
+  let timer: ReturnType<typeof setTimeout> | undefined;
+  let finished = false;
+  try {
+    await Promise.race([
+      (async () => {
+        const registration = await navigator.serviceWorker.getRegistration();
+        if (finished) return;
+        const subscription = await registration?.pushManager?.getSubscription();
+        if (finished) return;
+        if (subscription && !await subscription.unsubscribe()) {
+          throw new Error('Browser push cleanup could not complete. Disable this site\'s notifications in browser settings.');
+        }
+      })(),
+      new Promise<never>((_resolve, reject) => {
+        timer = setTimeout(() => reject(new Error('Browser push cleanup timed out. Disable this site\'s notifications in browser settings.')), 5000);
+      }),
+    ]);
+    return { error: null };
+  } catch (error) {
+    return { error: error instanceof Error ? `Browser push cleanup: ${error.message}` : 'Browser push cleanup could not complete.' };
+  } finally {
+    finished = true;
+    clearTimeout(timer);
   }
 }

@@ -2,6 +2,7 @@ from google import genai
 import json
 import re
 import requests
+import httpx
 from io import BytesIO
 from PIL import Image
 from rapidfuzz import process
@@ -469,6 +470,11 @@ def snap_to_reference(name, choices):
 
 client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
 
+class GeminiUnavailableError(RuntimeError):
+    def __init__(self, message, notice_url=None):
+        super().__init__(message)
+        self.notice_url = notice_url
+
 def load_image_from_url(url):
     resp = requests.get(url, headers=REQUEST_HEADERS, stream=True, timeout=30)
     resp.raise_for_status()
@@ -492,6 +498,7 @@ def extract_json(text: str):
 def safe_generate(prompt, retries=5, backoff=30):
     models = ["gemini-3.1-flash-lite-preview", "gemini-3-flash-preview", "gemini-2.5-flash", "gemini-2.5-flash-lite"]
     last_error = None
+    had_unavailable = False
 
     for model in models:
         for attempt in range(retries):
@@ -508,6 +515,7 @@ def safe_generate(prompt, retries=5, backoff=30):
                 last_error = e
 
                 if "RESOURCE_EXHAUSTED" in error_str or "429" in error_str:
+                    had_unavailable = True
                     # Rate limited — wait and retry the SAME model
                     # Try to extract retry delay from error message
                     wait_time = backoff
@@ -524,6 +532,7 @@ def safe_generate(prompt, retries=5, backoff=30):
                     break
             except genai_errors.ServerError as e:
                 last_error = e
+                had_unavailable = True
                 if "UNAVAILABLE" in str(e) or "overloaded" in str(e).lower():
                     wait_time = backoff
                     print(f"    >> {model} overloaded (attempt {attempt+1}/{retries}), retrying in {wait_time}s...")
@@ -531,10 +540,18 @@ def safe_generate(prompt, retries=5, backoff=30):
                 else:
                     print(f"    >> {model} ServerError: {e}. Trying next model...")
                     break
+            except (httpx.RequestError, requests.RequestException) as e:
+                last_error = e
+                had_unavailable = True
+                print(f"    >> {model} connection failed (attempt {attempt+1}/{retries}), retrying in {backoff}s...")
+                time.sleep(backoff)
         else:
             print(f"    >> {model} failed after {retries} attempts, trying next model...")
 
-    raise RuntimeError(f"All Gemini models failed. Last error: {last_error}")
+    error = f"All Gemini models failed. Last error: {last_error}"
+    if had_unavailable:
+        raise GeminiUnavailableError(error)
+    raise RuntimeError(error)
 
 def is_filename_date_past(url: str) -> bool:
     """
@@ -747,8 +764,14 @@ def get_notices():
             """
 
             # Pass both the text prompt and the raw PIL image natively to Gemini!
-            response_text = safe_generate([image_prompt, img])
+            try:
+                response_text = safe_generate([image_prompt, img])
+            except GeminiUnavailableError as error:
+                error.notice_url = notice["url"]
+                raise
             result_json = extract_json(response_text)
+            if not isinstance(result_json, dict) or not isinstance(result_json.get("notices"), list):
+                raise ValueError(f"Gemini returned invalid schedule data for {notice['url']}")
 
             today = date.today()
             valid_schedules = []
