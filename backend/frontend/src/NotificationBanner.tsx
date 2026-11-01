@@ -1,8 +1,10 @@
 import { useState, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'motion/react';
-import { Bell, LogOut, MapPin, Save, X as XIcon, Zap, Calendar, Clock, ExternalLink } from 'lucide-react';
+import { Bell, LogOut, MapPin, Save, X as XIcon, Zap, Calendar, Clock, ExternalLink, Trash2 } from 'lucide-react';
 import { useAuth } from './AuthContext';
+import AccountDeletionModal from './AccountDeletionModal';
+import { consumeDeletionRedirect } from './accountDeletion';
 import { isPushSupported, isPushSubscribed, subscribeToPush, syncPushSubscription, unsubscribeFromPush, updatePushLocation } from './pushManager';
 
 interface MatchedSchedule {
@@ -62,7 +64,9 @@ export default function NotificationBanner({
   selectedBarangay,
   defaultAlerts,
 }: NotificationBannerProps) {
-  const { user, profile, signOut, saveProfile } = useAuth();
+  const { user, profile, signOut, saveProfile, isDeletingAccount, accountDeletionStatus, captureAccountOperation } = useAuth();
+  const [returnedFromReauthentication] = useState(() => new URL(window.location.href).searchParams.get('account') === 'delete');
+  const [showAccountDeletion, setShowAccountDeletion] = useState(returnedFromReauthentication);
   const [showNotifications, setShowNotifications] = useState(false);
   const [saving, setSaving] = useState(false);
   const modalRef = useRef<HTMLDivElement>(null);
@@ -72,26 +76,32 @@ export default function NotificationBanner({
   const pushSupported = isPushSupported();
   const needsHomeScreenInstall = !pushSupported && isIOS() && !isStandalone();
 
+  useEffect(() => {
+    const url = new URL(window.location.href);
+    if (consumeDeletionRedirect(url)) window.history.replaceState(window.history.state, '', `${url.pathname}${url.search}${url.hash}`);
+  }, []);
+
   // Check initial push subscription status and make sure the server knows about this device
   useEffect(() => {
-    if (!user || !pushSupported) return;
+    if (!user || !pushSupported || isDeletingAccount) return;
     let cancelled = false;
+    const canContinue = captureAccountOperation();
     void (async () => {
       const subscribed = await isPushSubscribed();
-      if (cancelled) return;
+      if (cancelled || !canContinue()) return;
       if (!subscribed) {
         setPushEnabled(false);
         return;
       }
       const city = locations.find((l) => l.code === profile?.default_city);
       const barangay = city?.barangays.find((b) => b.code === profile?.default_barangay);
-      const synced = city && barangay ? await syncPushSubscription(user.id, city.name, barangay.name) : false;
-      if (!cancelled) setPushEnabled(synced);
+      const synced = city && barangay ? await syncPushSubscription(user.id, city.name, barangay.name, () => !cancelled && canContinue()) : false;
+      if (!cancelled && canContinue()) setPushEnabled(synced);
     })();
     return () => {
       cancelled = true;
     };
-  }, [user, pushSupported, profile?.default_city, profile?.default_barangay, locations]);
+  }, [user, pushSupported, profile?.default_city, profile?.default_barangay, locations, isDeletingAccount, captureAccountOperation]);
 
   // Lock body scroll when notification modal is open
   useEffect(() => {
@@ -129,30 +139,33 @@ export default function NotificationBanner({
   };
 
   const handleSaveLocation = async () => {
-    if (!selectedCity || !selectedBarangay) return;
+    const canContinue = captureAccountOperation();
+    if (!canContinue() || saving || !selectedCity || !selectedBarangay) return;
     setSaving(true);
-    await saveProfile({
+    const result = await saveProfile({
       default_city: selectedCity,
       default_barangay: selectedBarangay,
     });
     // If push is enabled, update the subscription's location
-    if (pushEnabled) {
+    if (pushEnabled && !result.error && canContinue()) {
       const city = locations.find((l) => l.code === selectedCity);
       const barangay = city?.barangays.find((b) => b.code === selectedBarangay);
       if (city && barangay) {
-        await updatePushLocation(city.name, barangay.name);
+        await updatePushLocation(city.name, barangay.name, canContinue);
       }
     }
     setSaving(false);
   };
 
   const handlePushToggle = async () => {
-    if (!user || pushLoading) return;
+    const canContinue = captureAccountOperation();
+    if (!user || pushLoading || !canContinue()) return;
     setPushLoading(true);
     setPushError(null);
 
     if (pushEnabled) {
-      const { error } = await unsubscribeFromPush();
+      const { error } = await unsubscribeFromPush(canContinue);
+      if (!canContinue()) { setPushLoading(false); return; }
       if (error) {
         setPushError(error);
       } else {
@@ -170,7 +183,8 @@ export default function NotificationBanner({
         setPushLoading(false);
         return;
       }
-      const { error } = await subscribeToPush(user.id, city.name, barangay.name);
+      const { error } = await subscribeToPush(user.id, city.name, barangay.name, canContinue);
+      if (!canContinue()) { setPushLoading(false); return; }
       if (error) {
         setPushError(error);
       } else {
@@ -189,6 +203,8 @@ export default function NotificationBanner({
   // --- Guest banner ---
   if (!user) {
     return (
+      <>
+      {accountDeletionStatus && <p role="status" className={`mb-3 text-sm ${isLightMode ? 'text-slate-700' : 'text-white/80'}`}>{accountDeletionStatus}</p>}
       <motion.div
         initial={{ opacity: 0, y: -8 }}
         animate={{ opacity: 1, y: 0 }}
@@ -219,6 +235,7 @@ export default function NotificationBanner({
           </p>
           <button
             onClick={onLoginClick}
+            disabled={isDeletingAccount}
             className={`group relative whitespace-nowrap inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 ${
               isLightMode
                 ? 'bg-slate-900 text-white hover:bg-slate-700 focus-visible:ring-slate-900 focus-visible:ring-offset-amber-50'
@@ -230,6 +247,7 @@ export default function NotificationBanner({
           </button>
         </div>
       </motion.div>
+      </>
     );
   }
 
@@ -281,7 +299,7 @@ export default function NotificationBanner({
               ) : canSave ? (
                 <button
                   onClick={handleSaveLocation}
-                  disabled={saving}
+                  disabled={saving || isDeletingAccount}
                   className={`text-xs font-medium flex items-center gap-1 transition-colors ${
                     isLightMode
                       ? 'text-emerald-700 hover:text-emerald-800'
@@ -320,7 +338,8 @@ export default function NotificationBanner({
 
             {/* Sign out */}
             <button
-              onClick={signOut}
+              onClick={() => { if (captureAccountOperation()()) void signOut(); }}
+              disabled={isDeletingAccount}
               className={`p-2 rounded-lg transition-colors ${
                 isLightMode
                   ? 'text-slate-600 hover:text-slate-800 hover:bg-slate-100'
@@ -338,7 +357,7 @@ export default function NotificationBanner({
           <div className="flex items-center justify-between pl-[42px]">
             <button
               onClick={handleSaveLocation}
-              disabled={saving}
+              disabled={saving || isDeletingAccount}
               className={`text-xs font-medium flex items-center gap-1 transition-colors ${
                 isLightMode
                   ? 'text-emerald-700 hover:text-emerald-800'
@@ -368,7 +387,7 @@ export default function NotificationBanner({
                 </div>
                 <button
                   onClick={handlePushToggle}
-                  disabled={pushLoading}
+                  disabled={pushLoading || isDeletingAccount}
                   role="switch"
                   aria-checked={pushEnabled}
                   aria-label="Push alerts"
@@ -400,7 +419,14 @@ export default function NotificationBanner({
             )}
           </div>
         )}
+        <button type="button" onClick={() => { setShowNotifications(false); setShowAccountDeletion(true); }} disabled={isDeletingAccount}
+          className={`mt-3 inline-flex items-center gap-1.5 rounded-lg px-2 py-1.5 text-xs font-medium focus-visible:outline-2 focus-visible:outline-red-500 disabled:opacity-50 ${isLightMode ? 'text-red-700 hover:bg-red-50' : 'text-red-300 hover:bg-red-400/10'}`}>
+          <Trash2 className="h-3.5 w-3.5" aria-hidden="true" /> Delete account
+        </button>
       </motion.div>
+
+      {showAccountDeletion && <AccountDeletionModal isLightMode={isLightMode} returnedFromReauthentication={returnedFromReauthentication}
+        onClose={() => setShowAccountDeletion(false)} />}
 
       {/* Notification modal - centered overlay with backdrop (portalled to body) */}
       {createPortal(
